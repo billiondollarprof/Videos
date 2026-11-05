@@ -54,9 +54,12 @@ Vertical first: **1080 x 1920, 30 fps**, for TikTok, Shorts and Reels.
 
 **Cutting**
 1. Cut **between phrases, never inside one**. A phrase is what is said in one breath.
-2. **Never speed up his voice.** Silent screen action may be fast-forwarded, with a
-   "Speeding up" badge and no voice over it.
+2. **His speech plays at 1.1 times speed** (his choice, 2026-11-05), with the pitch kept.
+   Silent screen action may be fast-forwarded further, with no label on screen.
 3. Keep the last clean take of a repeated line, unless Anthony picks the other.
+3a. **Cut his fillers everywhere**: "uh", "um", "eh", "so now", "alright", "so so", repeated
+   starts. Transcribe with a filler-friendly prompt so Whisper writes them down.
+3b. The opening is where viewers leave. Give the first 15 seconds its own careful pass.
 4. Cut lists go to Anthony **before** cutting, as numbered lines with times and words.
 5. Select exact frames in **one pass** (no joining separately encoded pieces). Joining
    pieces drifts lip sync.
@@ -93,6 +96,9 @@ Vertical first: **1080 x 1920, 30 fps**, for TikTok, Shorts and Reels.
    Font: Plus Jakarta Sans.
 2. Every shot moves a little (a slow push-in, a zoom at a cut). No frozen frames.
 3. A hook in the first 3 seconds. A clear ending. Never claim a result he did not show.
+4. **Never put the editing itself on screen** ("Speeding up", "Cut here", "Zooming"). On screen
+   is only his message, the B-roll, and what concerns the video.
+5. Track his face. In the circle it stays centred, however he moves.
 
 ## 6. Nothing is done until it has been checked
 

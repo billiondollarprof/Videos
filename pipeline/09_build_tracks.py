@@ -14,7 +14,8 @@ FPS=30
 P=json.load(open("project.json"))
 SCREEN_OFFSET=P["screen_offset"]  # face time when the screen recording starts (03_sync.py)
 SCREEN_RATE=P["screen_rate"]      # how much faster the screen clock runs (03_sync.py)
-STATUS_BAR=P.get("status_bar_px", 0)  # height of the phone status bar to crop off the top
+STATUS_BAR=P.get("status_bar_px", 0)
+SPEED=P.get("speed", 1.0)   # his speech speed: 1.1 since 2026-11-05 (his choice), pitch kept  # height of the phone status bar to crop off the top
 EDL=json.load(open("edl.json"))
 WORDS=json.load(open("aligned_words.json"))
 
@@ -32,7 +33,7 @@ terms=[]
 for p in pieces:
     if p["step"]==1: terms.append(f"between(n,{p['na']},{p['nb']-1})")
     else: terms.append(f"between(n,{p['na']},{p['nb']-1})*not(mod(n-{p['na']},{p['step']}))")
-select="select='"+"+".join(terms)+"',setpts=N/30/TB"
+select="select='"+"+".join(terms)+"',setpts=N/30/TB"+(f",setpts=PTS/{SPEED},fps=30" if SPEED!=1 else "")
 
 # --- 2. Face video: steady 30 fps, cut, gentle colour and sharpening ---
 open("face_filter.txt","w").write(
@@ -45,7 +46,6 @@ if not os.environ.get("SKIP_FACE"): subprocess.run(["ffmpeg","-v","error","-y","
 open("screen_filter.txt","w").write(
   "[0:v]split[a][b];[b]boxblur=16:4[bl];[1:v]format=gray[m];[bl][m]alphamerge[bm];[a][bm]overlay=0:0,"
   f"crop=iw:ih-{STATUS_BAR}:0:{STATUS_BAR},"   # cut off the phone status bar (time, signal, battery)
-  "
   f"setpts=PTS*{SCREEN_RATE},tpad=start_duration={SCREEN_OFFSET}:color=black:stop_mode=clone:stop_duration=60,"
   f"fps=30,{select},format=yuv420p[v]")
 subprocess.run(["ffmpeg","-v","error","-y","-i",P["screen_video"],"-i","mask.mkv","-filter_complex_script","screen_filter.txt",
@@ -63,21 +63,24 @@ for p in pieces:
     ramp=np.linspace(0,1,F); seg[:F]*=ramp; seg[-F:]*=ramp[::-1]
     out.append(seg)
 y=np.concatenate(out)
-wo=wave.open("voice_cut_raw.wav","w"); wo.setnchannels(1); wo.setsampwidth(2); wo.setframerate(SR)
+wo=wave.open("_voice_1x.wav","w"); wo.setnchannels(1); wo.setsampwidth(2); wo.setframerate(SR)
 wo.writeframes(np.clip(y,-32768,32767).astype(np.int16).tobytes()); wo.close()
+# speed the voice up with atempo (keeps the pitch), to exactly the picture's length
+subprocess.run(["ffmpeg","-v","error","-y","-i","_voice_1x.wav","-af",f"atempo={SPEED}",
+                "-t",f"{round(total_frames/SPEED)/FPS}","voice_cut_raw.wav"],check=True)
 
 # --- 5. Timeline: where each kept word lands in the finished video ---
 def to_out(t):
     for p in pieces:
         if p["type"]=="talk" and p["na"]/FPS-0.05<=t<=p["nb"]/FPS+0.05:
-            return round((p["out"]+(t*FPS-p["na"]))/FPS,3)
+            return round((p["out"]+(t*FPS-p["na"]))/FPS/SPEED,3)
     return None
 tw=[]
 for i,wd in enumerate(WORDS):
     s,e=to_out(wd["s"]),to_out(wd["e"])
     if s is not None and e is not None and e>s: tw.append({"i":i,"w":wd["w"],"s":s,"e":e})
-screen_out=next(p["out"] for p in pieces if p["na"]/FPS>=SCREEN_OFFSET)/FPS
-json.dump({"fps":FPS,"frames":total_frames,"screenStart":screen_out,
-           "pieces":[{"type":p["type"],"src":p["na"]/FPS,"out":p["out"]/FPS,"len":p["count"]/FPS} for p in pieces],
+screen_out=next(p["out"] for p in pieces if p["na"]/FPS>=SCREEN_OFFSET)/FPS/SPEED
+json.dump({"fps":FPS,"frames":round(total_frames/SPEED),"screenStart":screen_out,"speed":SPEED,
+           "pieces":[{"type":p["type"],"src":p["na"]/FPS,"out":p["out"]/FPS/SPEED,"len":p["count"]/FPS/SPEED} for p in pieces],
            "words":tw},open("timeline.json","w"))
-print("frames",total_frames,"=",round(total_frames/FPS,1),"s; screen appears at",round(screen_out,2),"s; words placed",len(tw))
+print("frames",round(total_frames/SPEED),"=",round(total_frames/SPEED/FPS,1),"s; screen appears at",round(screen_out,2),"s; words placed",len(tw))

@@ -43,3 +43,13 @@ Newest at the bottom. Read this before every edit.
   an inbox or feed: blur the whole list lightly and keep only bars with nothing private sharp.
   Then check the bottom strip too: when the tab bar hides while scrolling, real emails show there.
 - A flash timed in seconds left one unflashed frame (a flicker). Time flashes in frame numbers.
+
+## Video 1, notes on version 1 (2026-11-05)
+
+| Note | Now lives in |
+|---|---|
+| The first 5 seconds repeat "so your mailbox is full" with an awkward silence. Re-transcribe the opening carefully, start where he starts cleanly, and move the title there. | `cut-plan` (the opening gets its own careful pass) |
+| Never write what the editing is doing on screen ("Speeding up"). On screen is only his message, the B-roll and what concerns the video. Speed-ups stay, silently. | CLAUDE.md 5 (Look), Overlays |
+| His speech at 1.1 times speed. | CLAUDE.md 5 (Cutting), `09_build_tracks.py` |
+| Cut fillers all through: "uh", "um", "eh", "so now", "alright", "so so", repeated starts. They are his own kind of fillers, not only the usual ones. | `cut-plan`, `filler` step |
+| The face drifts right inside the circle when he moves. Track the face and keep it centred. | `People.tsx` face tracking |

@@ -28,17 +28,16 @@ cues = [
     (0.00, "camera-shutter.wav", 0.45),          # opening camera snap, with the flash
     (0.15, "tap-soft.wav", 0.35),                # hook card lands
     (3.25, "whoosh-air-short.wav", 0.25),        # hook card leaves
-    (M["screenStart"] - 0.10, "whoosh-air.wav", 0.30),   # face shrinks, screen rises
 ]
+# every change of layout: the face moving between full screen and the circle
+for seg in M.get("segments", [{"t": M["screenStart"]}]):
+    if seg["t"] > 0.5:
+        cues.append((seg["t"] - 0.10, "whoosh-air.wav", 0.28))
 for s in M["steps"][1:]:
     cues.append((s["t"] + 0.15, "paper-flick.wav", 0.30))   # step label slides in
 for t in M["tips"]:
     cues.append((t["t"], "tick-warm.wav", 0.28))            # tip card pops
-last_click = -99
-for p in D["pieces"]:
-    if p["type"] == "fast" and p["out"] - last_click > 6:   # "Speeding up" badge, not too often
-        cues.append((p["out"], "mouse-click-cc0.ogg", 0.25))
-        last_click = p["out"]
+# (2026-11-05) No click on fast-forwards: the badge is gone, and a sound needs something to see.
 for t, name, g in D.get("extra_cues", []):                 # B-roll moments, set per video
     cues.append((t, name, g))
 cues.append((M["end"] - 0.10, "whoosh-air.wav", 0.30))     # into the end card
