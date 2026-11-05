@@ -6,7 +6,7 @@
 #           stereo file the platforms will play
 #        4. adds a white camera flash at the start and on the end card
 #        5. joins picture and sound into the final MP4
-# Use  : python3 11_finish.py video_silent.mp4 voice_cut_raw.wav final.mp4
+# Use  : python3 11_finish.py video_silent.mp4 voice_cut_raw.wav final.mp4 [path to data.json]
 # Never: never let a sound effect cover a word. Voice stays the loudest thing.
 # ============================================================
 import json
@@ -18,7 +18,7 @@ import sys
 SILENT, VOICE, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
 HERE = os.path.dirname(os.path.abspath(__file__))
 SFX = os.path.join(HERE, "..", "sfx")
-D = json.load(open(os.path.join(HERE, "remotion", "src", "data.json")))
+D = json.load(open(sys.argv[4] if len(sys.argv) > 4 else os.path.join(HERE, "remotion", "src", "data.json")))
 M = D["moments"]
 END_CARD = 4.0                                   # seconds, must match Root.tsx
 
@@ -57,7 +57,9 @@ subprocess.run(["ffmpeg", "-v", "error", "-y", *inputs, "-filter_complex", mix, 
                 "-c:a", "pcm_s16le", "_mix.wav"], check=True)
 
 
-# --- 3. Loudness, measured on the stereo mix, then corrected once ---
+# --- 3. Loudness: -14 LUFS, true peak at or below -1.5 dB, measured on the ENCODED sound ---
+# AAC encoding (the sound compression every platform uses) pushes peaks up after the
+# limiter. Video 1's first try came out at -0.2 dB. So: encode, measure, correct, repeat.
 def measure(path):
     r = subprocess.run(["ffmpeg", "-v", "info", "-i", path, "-af", "ebur128=peak=true:framelog=quiet",
                         "-f", "null", "-"], capture_output=True, text=True).stderr
@@ -66,10 +68,30 @@ def measure(path):
     return i, pk
 
 
-i, pk = measure("_mix.wav")
-gain = -14.0 - i
-subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", "_mix.wav", "-af",
-                f"volume={gain:.2f}dB,alimiter=limit=0.84:level=false", "-c:a", "pcm_s16le", "_final.wav"], check=True)
+# The raw voice sits near -27 LUFS, so it needs about +13 dB. A plain limiter cannot
+# hold the peaks against that much boost (video 1: peaks came out at +4 dB). loudnorm
+# (FFmpeg's broadcast loudness filter) can: pass 1 measures, pass 2 applies.
+def loudnorm_measure(path, target, tp):
+    r = subprocess.run(["ffmpeg", "-v", "info", "-i", path, "-af",
+                        f"loudnorm=I={target}:TP={tp}:LRA=11:print_format=json", "-f", "null", "-"],
+                       capture_output=True, text=True).stderr
+    return json.loads(r[r.rindex("{"):r.rindex("}") + 1])
+
+
+target, tp = -14.0, -2.0                 # aim the peaks at -2 dB, leaving room for the encoder
+for attempt in range(3):
+    m = loudnorm_measure("_mix.wav", target, tp)
+    ln = (f"loudnorm=I={target}:TP={tp}:LRA=11:measured_I={m['input_i']}:measured_TP={m['input_tp']}:"
+          f"measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}:offset={m['target_offset']}")
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", "_mix.wav", "-af", ln + ",aresample=48000",
+                    "-c:a", "aac", "-b:a", "192k", "_final.m4a"], check=True)
+    i, pk = measure("_final.m4a")
+    print(f"  sound pass {attempt + 1}: {i} LUFS, peak {pk} dB")
+    if abs(i + 14.0) <= 0.5 and pk <= -1.5:
+        break
+    if pk > -1.5:
+        tp -= 0.5                         # the encoder still overshot: aim the peaks lower
+    target += -14.0 - i                   # and nudge the level towards -14
 
 # --- 4. Camera flash: white, fading out over 6 frames, at the start and on the end card ---
 def flash(t0):
@@ -81,9 +103,9 @@ def flash(t0):
 vf = flash(0.0) + "," + flash(M["end"] + 0.30)
 
 # --- 5. The final file: H.264 picture, AAC stereo sound, ready for TikTok / Shorts / Reels ---
-subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", SILENT, "-i", "_final.wav", "-vf", vf,
+subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", SILENT, "-i", "_final.m4a", "-vf", vf,
                 "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-maxrate", "12M", "-bufsize", "24M",
-                "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart",
+                "-pix_fmt", "yuv420p", "-c:a", "copy", "-movflags", "+faststart",
                 "-shortest", OUT], check=True)
 i2, pk2 = measure(OUT)
 print(f"{len(cues)} sound effects. Final file: {i2} LUFS, peak {pk2} dBFS -> {OUT}")

@@ -28,3 +28,5 @@ Newest at the bottom. Read this before every edit.
   Always scan sign-in screens.
 - Text reading at double size took 47 s a frame and found nothing more. Read at normal size.
 - A mono file measures 3 dB quieter than stereo. Measure loudness on the stereo delivery.
+- The raw voice sits near -27 LUFS. Boosting it 13 dB into a plain limiter left peaks at +4 dB
+  after AAC encoding. `11_finish.py` now uses two-pass loudnorm and measures the encoded sound.
