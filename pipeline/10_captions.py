@@ -103,5 +103,5 @@ moments = {
     "end": T["frames"] / T["fps"],
 }
 json.dump({"captions": caps, "moments": moments, "frames": T["frames"], "fps": T["fps"],
-           "pieces": T["pieces"], "text": P["text"]}, open("remotion/src/data.json", "w"))
+           "pieces": T["pieces"], "speed": T.get("speed", 1), "text": P["text"]}, open("remotion/src/data.json", "w"))
 print(len(caps), "caption groups,", len(steps), "steps,", len(moments["tips"]), "tips")
