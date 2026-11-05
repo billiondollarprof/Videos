@@ -1,0 +1,10 @@
+# Footage, project data and anything private stay out of this public repo.
+projects/
+*.mp4
+*.mov
+*.mkv
+*.raw
+*.wav
+!sfx/*.wav
+node_modules/
+__pycache__/

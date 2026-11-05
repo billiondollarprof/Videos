@@ -1,0 +1,36 @@
+{
+  "_what": "Settings for one video. Copy to projects/<name>/project.json and fill in. Never commit the real one.",
+
+  "face_video": "raw/face.mov",
+  "screen_video": "raw/screen.mp4",
+  "transcript": "transcript.txt",
+
+  "_sync": "Filled in by 03_sync.py. Seconds into the face video where the screen recording starts, and how much faster the screen clock runs.",
+  "screen_offset": null,
+  "screen_rate": null,
+
+  "_cuts": "Word ranges to cut, from 05_sentences.py. Each is [first word, last word, why]. Approved by Anthony before 06_edl.py runs.",
+  "cuts": [[0, 9, "false start"]],
+
+  "_privacy": "Lower case. surnames: blurred. always_blur: blurred fully. keep: left readable (a public business account).",
+  "privacy": {
+    "surnames": ["surname1", "surname2"],
+    "always_blur": ["firstname"],
+    "keep": ["businessname"],
+    "extra_spans": []
+  },
+
+  "_overlays": "Word numbers come from 05_sentences.py. Step labels and tip cards appear on that word.",
+  "text": {
+    "hook_line_1": "Clean your Gmail",
+    "hook_line_2": "with Claude",
+    "hook_pill": "Works on the free plan",
+    "end_line_1": "Try it on",
+    "end_line_2": "your inbox today",
+    "end_name": "Anthony Nwobosi",
+    "end_sub": "Follow for more AI how-tos"
+  },
+  "steps": [[220, "Tell Claude what you want"]],
+  "first_step_label": "Connect Gmail",
+  "tips": [[372, 5.0, "Tip", "Ask Claude to interview you first"]]
+}
