@@ -4,12 +4,13 @@
 #        centre is (0 to 1 across, 0 to 1 down) to faceTrack.json, smoothed over 1 second.
 # Why  : in the circle his face drifted right when he moved (his note on version 1).
 #        People.tsx uses this to keep the face centred.
-# Use  : python3 09b_face_track.py face_cut.mp4 remotion/src/faceTrack.json [yunet.onnx]
+# Use  : python3 09b_face_track.py face_cut.mp4 remotion/src/faceTrack.json [yunet.onnx; default: models/ in the repo, from setup.sh]
 # How  : YuNet (a small, free face detector built into OpenCV; model file models/yunet.onnx,
 #        from huggingface.co/opencv/face_detection_yunet).
 #        A frame where no face is found keeps the last known position.
 # ============================================================
 import json
+import os
 import subprocess
 import sys
 
@@ -25,7 +26,7 @@ raw = subprocess.run(["ffmpeg", "-v", "error", "-i", VIDEO, "-vf", f"fps={RATE},
 frames = np.frombuffer(raw, dtype=np.uint8).reshape(-1, H, W)
 
 # --- 2. Find the biggest face in each frame ---
-finder = cv2.FaceDetectorYN.create(sys.argv[3] if len(sys.argv) > 3 else "models/yunet.onnx", "", (W, H), 0.6)
+finder = cv2.FaceDetectorYN.create(sys.argv[3] if len(sys.argv) > 3 else os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "models", "yunet.onnx"), "", (W, H), 0.6)
 centres, last, found = [], (0.5, 0.55), 0
 for f in frames:
     _, faces = finder.detect(cv2.cvtColor(f, cv2.COLOR_GRAY2BGR))

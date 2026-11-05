@@ -125,7 +125,8 @@ His watch on his phone is the final check. Nothing is "done" before he says so.
 
 ## 7. Files
 
-- `pipeline/`: the scripts, one job each, numbered in the order they run.
+- `pipeline/`: the scripts, one job each, numbered in the order they run. `setup.sh` installs
+  everything in a fresh session; `build_all.sh` and `finish_all.sh` chain the build and the finish.
 - `pipeline/endcard/`: the "watch on YouTube" end card and the thumbnail (Remotion).
 - `pipeline/remotion/`: the layout, captions and overlays (Remotion, which builds video
   from code).
@@ -156,5 +157,6 @@ the skill in the same change and say so. Never skip a step.
 | Sound effects and the final mix | `sound-mix` |
 | Make the short that stops at a hook and sends people to YouTube | `short-cut` |
 | YouTube thumbnail from his real photo | `thumbnail` |
+| Title, description, chapters, caption for posting | `publish-copy` |
 | Learn from somebody else's video | `study-reference` |
 | Turn a note from Anthony into a rule | `lesson` |

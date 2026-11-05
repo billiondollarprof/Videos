@@ -29,9 +29,10 @@ video on YouTube", a search bar that types his name, and his channel header as t
 (round photo, name, handle, the tagline from his own channel page). No numbers of any kind.
 1. Make the round photo: crop his brand photo square around his face (600 x 600 around the
    face, resized to 420) and save it as `avatar.jpg` in the Remotion `public/`. Never commit it.
-2. Copy `pipeline/endcard/` into a Remotion project (`Root.tsx`, `Background.tsx`, `theme.ts`,
-   `remotion.config.ts`, the font). The card size must match the video (1088 x 1920 on video 1).
-3. `npx remotion render src/Root.tsx Continue endcard.mp4 --muted` (6 s, about 50 s to render).
+2. Work in a copy of `pipeline/endcard/` (it is self-contained: `src/`, config, font). Put `avatar.jpg`
+   in its `public/` and `npm install`. The card size is set at the top of `src/Root.tsx` (`W`, `H`)
+   and must match the video (1088 x 1920 on video 1).
+3. `npx remotion render src/Root.tsx Continue ../endcard.mp4 --muted` (6 s, about 50 s to render).
 4. Look at 5 stills: the button pressed, the headline, the typing, the header result, the end.
    Check the layout fills the screen top to bottom and the name sits on one line.
 5. Only say what is true on his own page. Change the handle and tagline in `Root.tsx` per channel.

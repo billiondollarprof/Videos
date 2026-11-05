@@ -6,7 +6,8 @@ scripts. Vertical first (TikTok, YouTube Shorts, Instagram Reels).
 - `CLAUDE.md`: the rules. Every agent reads it first.
 - `LESSONS.md`: every note Anthony has given, and where it became a rule.
 - `.claude/skills/`: one skill per job. `vertical-edit` runs a whole edit.
-- `pipeline/`: the scripts, numbered in the order they run, and the Remotion layout.
+- `pipeline/`: the scripts, numbered in the order they run, the Remotion layout, `setup.sh` for a
+  fresh session, and `build_all.sh` / `finish_all.sh`.
 - `sfx/`: the sound-effect palette.
 - `THIRD_PARTY.md`: what was borrowed, from where, under which licence.
 

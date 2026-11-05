@@ -36,3 +36,14 @@ First edit. The starting point:
   "Watch the full video on YouTube" end card showing his channel page. `13_short_cut.py`, `short-cut`.
   No long re-render: about 2 minutes in total.
 - Thumbnail from his real photo, background removed only, in his channel's style. `14_cutout.py`, `thumbnail`.
+
+### Made ready for the next video (2026-11-05)
+- One command sets up a fresh session (`pipeline/setup.sh`): tools, three models, Remotion packages.
+- Voice cleaning, B-roll fitting and the B-roll sounds are scripts now (`04b`, `10b`), not steps done by hand.
+- `build_all.sh` and `finish_all.sh` chain the build and the finish; `12_check_final.py` listens to the result.
+- The end card and thumbnail folder is self-contained (`pipeline/endcard/`).
+- New skill `publish-copy`: title options, description with chapters, short caption, hashtags.
+- Checked: the repo's own `02_align` + `06_edl` rebuild video 1's exact edit list from `project.json`
+  alone; `04b` ran on his real recording; `10b` reproduced the B-roll slot and 12 sound cues; the
+  thumbnail renders from the repo folder identical to the one sent. Not yet run end to end on a new video:
+  `build_all.sh` and `finish_all.sh` (syntax checked; each step they call was run on video 1).

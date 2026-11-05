@@ -4,11 +4,11 @@ import json, re, difflib
 # What : gives every word of Anthony's own transcript a start and end time, by lining
 #        it up with Whisper's words. Words Whisper missed get times spread between
 #        their neighbours.
-# Use  : python3 02_align.py   (reads face_words.json and project.json "transcript")
+# Use  : python3 02_align.py   (reads face_words_fillers.json and project.json "transcript")
 # Out  : aligned_words.json
 # ============================================================
 P = json.load(open("project.json"))
-W = json.load(open("face_words.json"))["words"]
+W = json.load(open("face_words_fillers.json"))["words"]
 T = open(P["transcript"]).read().split()
 norm = lambda x: re.sub(r"[^a-z0-9']", "", x.lower())
 wn = [norm(w["w"]) for w in W]; tn = [norm(t) for t in T]

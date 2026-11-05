@@ -12,6 +12,7 @@
 # Use  : python3 09c_soft_background.py face_cut.mp4 face_soft.mp4 [--still SECONDS out.png]
 # Never: never change his face or body. Only pixels the model marks as background change.
 # ============================================================
+import os
 import subprocess
 import sys
 
@@ -34,7 +35,7 @@ LIFT = 6                    # and shadows lifted by this much (0 to 255), so it 
 MASK_SMOOTH = 0.55          # 0 = no smoothing over time, closer to 1 = smoother
 
 seg = vision.ImageSegmenter.create_from_options(vision.ImageSegmenterOptions(
-    base_options=mpt.BaseOptions(model_asset_path="models/selfie_segmenter.tflite"), output_confidence_masks=True))
+    base_options=mpt.BaseOptions(model_asset_path=os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "models", "selfie_segmenter.tflite")), output_confidence_masks=True))
 
 
 def process(rgb, prev_mask):

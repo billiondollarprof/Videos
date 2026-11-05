@@ -47,6 +47,8 @@
     {"word": 85, "face": "full"}
   ],
   "problem_label": "A full inbox",
+  "_broll": "Optional. A screen recording used as B-roll in the opening (his inbox). crop_top removes the phone status bar, keep_bottom_px is the bottom bar left sharp, windows are [start, end] pieces of the clip with the last one [start] filling the rest of the slot. A scrolling list is blurred as a whole.",
+  "broll": {"clip": "raw/inbox.mp4", "crop_top": 100, "keep_bottom_px": 115, "windows": [[5.0, 6.8], [8.0]]},
   "_moments": "Named moments the B-roll animations use: [word number, seconds offset].",
   "moments": {"junkAt": [22, 0], "connectAt": [93, 0.3], "cleanAt": [105, 0.6], "notifyAt": [1003, -0.2]}
 }

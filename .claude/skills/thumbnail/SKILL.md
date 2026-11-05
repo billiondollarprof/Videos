@@ -30,9 +30,10 @@ description: Make a YouTube thumbnail (1280 x 720) from Anthony's real photo - b
 2. `python3 ../../pipeline/14_cutout.py photo.jpg cutout.png` (rembg). Look at it on a blue
    background: ceiling, door and curtain must be gone and the outline smooth. If a loose line is
    left, the script already removes disconnected specks; never erase with a rectangle.
-3. Build the `Thumb` composition (see `pipeline/endcard/Root.tsx`): cut-out bottom-aligned on the
+3. Use the `Thumb` composition in `pipeline/endcard/src/Root.tsx` (put the cut-out in `public/` as
+   `anthony_cutout.png`, change the words in the file): cut-out bottom-aligned on the
    right, head about 60 px from the top, text on the left, pill at the bottom.
-4. `npx remotion still src/Root.tsx Thumb thumb.png --frame=0`, export a JPG at quality 92
+4. `npx remotion still src/Root.tsx Thumb ../thumb.png --frame=0`, export a JPG at quality 92
    (YouTube allows up to 2 MB; this comes to about 200 KB).
 5. Zoom into the shoulder outline and the corners to check for specks and notches.
 6. Send it with 2 or 3 title options for the video (different from the thumbnail words).
