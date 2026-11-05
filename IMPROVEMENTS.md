@@ -28,3 +28,11 @@ First edit. The starting point:
 - Face tracked and centred in the circle.
 - Background softly blurred with a warm glow behind him.
 - Skills `cut-plan` (rewritten) and `speed-change` (new) hold all of this for the next video.
+
+### From Anthony's own cut (2026-11-05)
+- Pause rule learned from his hand-made cut: tight, with a few real breaths, and longer pauses
+  only where the screen is doing something (typing, Claude working). `06_edl.py`, `cut-plan`.
+- Short version for Reels, Shorts and TikTok: the finished video cut at a hook, plus a 5 s
+  "Watch the full video on YouTube" end card showing his channel page. `13_short_cut.py`, `short-cut`.
+  No long re-render: about 2 minutes in total.
+- Thumbnail from his real photo, background removed only, in his channel's style. `14_cutout.py`, `thumbnail`.

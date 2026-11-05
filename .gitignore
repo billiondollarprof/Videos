@@ -10,3 +10,8 @@ node_modules/
 __pycache__/
 pipeline/remotion/src/data.json
 pipeline/remotion/src/faceTrack.json
+
+*.jpg
+*.jpeg
+*.png
+!sfx/*.png

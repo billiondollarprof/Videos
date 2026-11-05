@@ -126,6 +126,7 @@ His watch on his phone is the final check. Nothing is "done" before he says so.
 ## 7. Files
 
 - `pipeline/`: the scripts, one job each, numbered in the order they run.
+- `pipeline/endcard/`: the "watch on YouTube" end card and the thumbnail (Remotion).
 - `pipeline/remotion/`: the layout, captions and overlays (Remotion, which builds video
   from code).
 - `sfx/`: the sound palette. `make_sfx.py` builds our own sounds.
@@ -153,5 +154,7 @@ the skill in the same change and say so. Never skip a step.
 | Speed his speech up or down ("speed it up a bit" = 1.1) | `speed-change` |
 | Blur names and emails | `privacy-blur` |
 | Sound effects and the final mix | `sound-mix` |
+| Make the short that stops at a hook and sends people to YouTube | `short-cut` |
+| YouTube thumbnail from his real photo | `thumbnail` |
 | Learn from somebody else's video | `study-reference` |
 | Turn a note from Anthony into a rule | `lesson` |
