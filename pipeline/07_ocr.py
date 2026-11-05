@@ -5,7 +5,8 @@
 # Why  : a few stills miss things. On video 1 an email showed on 23 different frames.
 # Speed: only frames that changed are read (277 of 961 on video 1), at normal size.
 #        Reading at double size was 100 times slower and found nothing more.
-# Use  : python3 07_ocr.py
+# Use  : python3 07_ocr.py   (project.json "ocr_fps": 2 for a still screen, the full frame
+#        rate for a clip that scrolls, so the blur keeps up with the moving text)
 # Out  : ocr_out/f_NNNN.tsv (one per read frame), ocr_reuse.json (which read frame
 #        stands for each half second)
 # ============================================================
@@ -17,16 +18,17 @@ from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 
 P = json.load(open("project.json"))
+OCR_FPS = P.get("ocr_fps", 2)              # readings per second
 os.makedirs("ocr", exist_ok=True)
 os.makedirs("ocr_out", exist_ok=True)
 
-# --- 1. Frames, twice a second, in grey ---
-subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", P["screen_video"], "-vf", "fps=2,format=gray",
+# --- 1. Frames, OCR_FPS times a second, in grey ---
+subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", P["screen_video"], "-vf", f"fps={OCR_FPS},format=gray",
                 "ocr/f_%04d.png"], check=True)
 frames = sorted(os.listdir("ocr"))
 
 # --- 2. Which frames changed? Compare small copies ---
-subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", P["screen_video"], "-vf", "fps=2,scale=216:480,format=gray",
+subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", P["screen_video"], "-vf", f"fps={OCR_FPS},scale=216:480,format=gray",
                 "-f", "rawvideo", "small.raw"], check=True)
 small = np.fromfile("small.raw", dtype=np.uint8).reshape(-1, 480, 216).astype(np.float32)
 reuse, keep, last = {}, [], None

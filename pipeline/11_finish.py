@@ -39,6 +39,8 @@ for p in D["pieces"]:
     if p["type"] == "fast" and p["out"] - last_click > 6:   # "Speeding up" badge, not too often
         cues.append((p["out"], "mouse-click-cc0.ogg", 0.25))
         last_click = p["out"]
+for t, name, g in D.get("extra_cues", []):                 # B-roll moments, set per video
+    cues.append((t, name, g))
 cues.append((M["end"] - 0.10, "whoosh-air.wav", 0.30))     # into the end card
 cues.append((M["end"] + 0.30, "camera-shutter.wav", 0.45)) # end card snap, with the flash
 
@@ -95,9 +97,12 @@ for attempt in range(3):
 
 # --- 4. Camera flash: white, fading out over 6 frames, at the start and on the end card ---
 def flash(t0):
-    steps = [(0.85, 0, 2), (0.55, 2, 4), (0.25, 4, 6)]       # (strength, from frame, to frame)
+    # Frame numbers, not seconds: with seconds, rounding left one unflashed frame in the
+    # middle of the flash on video 1, which showed as a flicker.
+    n0 = round(t0 * 30)
+    steps = [(0.85, 0, 1), (0.55, 2, 3), (0.25, 4, 5)]       # (strength, first frame, last frame)
     return ",".join(f"drawbox=x=0:y=0:w=iw:h=ih:color=white@{a}:t=fill:"
-                    f"enable='between(t,{t0 + f0 / 30:.3f},{t0 + f1 / 30 - 0.001:.3f})'" for a, f0, f1 in steps)
+                    f"enable='between(n,{n0 + f0},{n0 + f1})'" for a, f0, f1 in steps)
 
 
 vf = flash(0.0) + "," + flash(M["end"] + 0.30)

@@ -7,11 +7,12 @@
 #   2. Names on the Google account chooser: blur the second half (the surname).
 #   3. A name that is not his, in a greeting or a list: blurred fully (privacy.always_blur).
 #   4. A business account he names as public: left readable (privacy.keep).
+#   5. Security codes and account numbers (5 or more digits): always blurred.
 # How  : 07_ocr.py read the text on every changed frame into ocr_out/ (tesseract, a free
 #        text-reading tool). The names to blur come from project.json, never from this file.
 # Never: never leave a gap. Each box is held 0.4 s either side of where it was seen.
 # ============================================================
-import glob, json, os, re, subprocess
+import difflib, glob, json, os, re, subprocess
 import numpy as np
 
 P = json.load(open("project.json"))
@@ -22,12 +23,29 @@ W, H = probe["streams"][0]["width"], probe["streams"][0]["height"]
 num, den = probe["streams"][0]["r_frame_rate"].split("/"); FPS = round(int(num) / int(den))
 DUR = float(probe["format"]["duration"])
 N = int(DUR * FPS) + 1
-PAD_T = 0.4           # seconds a box is held before and after it was seen
+
 PAD_PX = 8            # extra pixels around each box
 SURNAMES = set(P["privacy"]["surnames"])        # blurred (the second half of a name)
 ALWAYS = set(P["privacy"]["always_blur"])       # blurred in full
 KEEP = tuple(P["privacy"]["keep"])               # left readable
 OWN_EMAIL_PARTS = tuple(P["privacy"].get("email_parts", []))  # bits of an address the reader may split off
+OCR_FPS = P.get("ocr_fps", 2)                    # must match 07_ocr.py
+STEP = 1 / OCR_FPS                               # seconds between readings
+PAD_T = 0.4 if OCR_FPS <= 2 else STEP            # hold a box this long either side of where it was seen
+
+
+def close_to(word, targets):
+    """True when the word is one of the targets, a cut-off start of one ("OKECHUK..."),
+    or a near misreading of one ("hugosiithx" for "hugocliffx")."""
+    letters = re.sub(r"[^a-z]", "", word)
+    if len(letters) < 4:
+        return False
+    for t in targets:
+        if t in letters or (len(letters) >= 5 and t.startswith(letters)):
+            return True
+        if difflib.SequenceMatcher(None, letters[:len(t)], t).ratio() > 0.75:
+            return True
+    return False
 
 # --- 1. Boxes from the text reading ---
 reuse = {int(k): v for k, v in json.load(open("ocr_reuse.json")).items()}
@@ -49,14 +67,16 @@ for k, src in reuse.items():
             if re.search(r"[a-z0-9._-]{3,}@[a-z0-9-]+\.[a-z]{2,}", low):   # a real email address
                 frac = word.index("@") / len(word)          # blur up to the "@"
                 found.append((x, y, x + w * frac, y + h))
-            elif "gmail.com" in low or any(p in low for p in OWN_EMAIL_PARTS):
+            elif "gmail.com" in low or close_to(low, OWN_EMAIL_PARTS):
                 cut = low.find("gmail.com")                  # "@" misread: blur up to "gmail"
                 frac = (cut / len(word)) if cut > 0 else 1.0
                 found.append((x, y, x + w * frac, y + h))
-            elif re.sub(r"[^a-z]", "", low) in SURNAMES | ALWAYS:
+            elif re.fullmatch(r"[\d\s-]{5,12}", word) and sum(ch.isdigit() for ch in word) >= 5:
+                found.append((x, y, x + w, y + h))           # a code or account number (rule 5)
+            elif close_to(low, SURNAMES | ALWAYS):
                 found.append((x, y, x + w, y + h))
         seen[src] = found
-    t = (k - 1) / 2
+    t = (k - 1) * STEP
     for b in seen[src]:
         boxes.append((t, *b))
 
@@ -64,7 +84,7 @@ for k, src in reuse.items():
 # Each is [start s, end s, x0, y0, x1, y1] in screen-recording time and pixels.
 spans = [tuple(x) for x in P["privacy"].get("extra_spans", [])]
 for t, x0, y0, x1, y1 in boxes:
-    spans.append((t - PAD_T, t + 0.5 + PAD_T, x0 - PAD_PX, y0 - PAD_PX, x1 + PAD_PX, y1 + PAD_PX))
+    spans.append((t - PAD_T, t + STEP + PAD_T, x0 - PAD_PX, y0 - PAD_PX, x1 + PAD_PX, y1 + PAD_PX))
 json.dump(spans, open("mask_spans.json", "w"))
 
 # --- 3. Write the mask video, one frame at a time ---

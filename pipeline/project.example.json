@@ -8,6 +8,8 @@
   "_sync": "Filled in by 03_sync.py. Seconds into the face video where the screen recording starts, and how much faster the screen clock runs.",
   "screen_offset": null,
   "screen_rate": null,
+  "_status_bar": "Pixels of phone status bar (time, signal, battery) to crop off the top of the screen recording. 80 for a 864 x 1920 recording.",
+  "status_bar_px": 80,
 
   "_cuts": "Word ranges to cut, from 05_sentences.py. Each is [first word, last word, why]. Approved by Anthony before 06_edl.py runs.",
   "cuts": [[0, 9, "false start"]],

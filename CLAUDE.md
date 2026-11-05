@@ -74,7 +74,7 @@ Vertical first: **1080 x 1920, 30 fps**, for TikTok, Shorts and Reels.
 2. Other people's names: blur the second half (the surname).
 3. A name in a greeting that is not his: blur it fully.
 4. A business account he names as public may stay readable.
-5. Security codes, bank names and statements, and account numbers: always blurred, even his own.
+5. Security codes, bank statements and account numbers: always blurred, even his own.
 6. Scan **every frame** with text reading (skill `privacy-blur`). Never trust a few stills.
 
 **Sound**

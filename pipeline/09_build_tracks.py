@@ -14,6 +14,7 @@ FPS=30
 P=json.load(open("project.json"))
 SCREEN_OFFSET=P["screen_offset"]  # face time when the screen recording starts (03_sync.py)
 SCREEN_RATE=P["screen_rate"]      # how much faster the screen clock runs (03_sync.py)
+STATUS_BAR=P.get("status_bar_px", 0)  # height of the phone status bar to crop off the top
 EDL=json.load(open("edl.json"))
 WORDS=json.load(open("aligned_words.json"))
 
@@ -43,6 +44,8 @@ if not os.environ.get("SKIP_FACE"): subprocess.run(["ffmpeg","-v","error","-y","
 # --- 3. Screen video: blur names and emails (mask.mkv, see make_mask.py), line up, cut ---
 open("screen_filter.txt","w").write(
   "[0:v]split[a][b];[b]boxblur=16:4[bl];[1:v]format=gray[m];[bl][m]alphamerge[bm];[a][bm]overlay=0:0,"
+  f"crop=iw:ih-{STATUS_BAR}:0:{STATUS_BAR},"   # cut off the phone status bar (time, signal, battery)
+  "
   f"setpts=PTS*{SCREEN_RATE},tpad=start_duration={SCREEN_OFFSET}:color=black:stop_mode=clone:stop_duration=60,"
   f"fps=30,{select},format=yuv420p[v]")
 subprocess.run(["ffmpeg","-v","error","-y","-i",P["screen_video"],"-i","mask.mkv","-filter_complex_script","screen_filter.txt",

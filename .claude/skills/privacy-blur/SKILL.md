@@ -24,3 +24,10 @@ account may stay.
    **scan the whole cut screen** for the unblurred text (template match or a second
    text read). A readable name scores about 1.0; a blurred one about 0.5.
 7. Tell Anthony which details were blurred and which were left, and why.
+
+## A clip that scrolls (B-roll of an inbox or a feed)
+Text reading misses words on moving lists, and scroll tracking (`08b_track_mask.py`) can lock
+onto the wrong row because rows look alike. The safe way: lightly blur the whole list
+(`boxblur=9:3`) so it still reads as a busy inbox, keep only bars with nothing private sharp,
+and check the bottom strip of every sampled frame. Say on screen what the viewer should take
+from it (on video 1: "About 9,700 promotions", the real number Claude gave him).

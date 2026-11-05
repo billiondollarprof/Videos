@@ -38,3 +38,8 @@ Newest at the bottom. Read this before every edit.
 | Keep a record of every improvement, so the next video is better than the last. | `IMPROVEMENTS.md`, CLAUDE.md 1 |
 | The phone's status bar (time, network, battery) must not show. Crop it out. | CLAUDE.md 5 (Look) |
 | The video needs B-roll. Plan it yourself; ask me for a ChatGPT image only if one is needed. | `vertical-edit`, `IMPROVEMENTS.md` |
+- Text reading misses words on a scrolling list (it read "Copy code: 852029" as "coe )"), and
+  tracking the scroll locks onto the wrong row because rows look alike. For scrolling B-roll of
+  an inbox or feed: blur the whole list lightly and keep only bars with nothing private sharp.
+  Then check the bottom strip too: when the tab bar hides while scrolling, real emails show there.
+- A flash timed in seconds left one unflashed frame (a flicker). Time flashes in frame numbers.
