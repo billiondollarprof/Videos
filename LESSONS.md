@@ -62,5 +62,6 @@ Newest at the bottom. Read this before every edit.
 | Remove every silence, completely. No gaps between phrases. Aim for about 3 minutes. | CLAUDE.md 5 (2a), `06_edl.py`, `cut-plan` |
 | Do not speed up again once the silences are gone. | `speed-change` (1.1 stays) |
 | The first frames are washed white (it was the camera flash on frame 0). | `11_finish.py`, CLAUDE.md 5 (Look 7) |
-| Less blur on the background. The light did not show: darken the background a bit and use a coloured light, blue to red. | `09c_soft_background.py`, CLAUDE.md 5 (Look 6) |
+| Less blur on the background. The light did not show: darken the background a bit and use a coloured light, blue to red. (Tried, then reversed: see the next row.) | `09c_soft_background.py` |
+| The coloured light looks fake because the room is not dark. Remove it. Tone the blur down and brighten the background a tiny bit. | `09c_soft_background.py`, CLAUDE.md 5 (Look 6) |
 | "filling in, filling up" said twice. Cut the repeat. | `cut-plan` step 3 |

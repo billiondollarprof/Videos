@@ -100,8 +100,9 @@ Vertical first: **1080 x 1920, 30 fps**, for TikTok, Shorts and Reels.
 4. **Never put the editing itself on screen** ("Speeding up", "Cut here", "Zooming"). On screen
    is only his message, the B-roll, and what concerns the video.
 5. Track his face. In the circle it stays centred, however he moves.
-6. His background gets a light blur, is dimmed a little, and gets two coloured lights, blue
-   from the left and red from the right (`09c_soft_background.py`). He is never changed.
+6. His background gets a light blur and is made a tiny bit brighter (`09c_soft_background.py`).
+   **No coloured lights**: they looked fake in a lit room (his note, 2026-11-05). Coloured light
+   only suits a really dark room. He is never changed, only the background.
 7. Nothing white or washed out on the first frame: it is what people see before pressing play.
 
 ## 6. Nothing is done until it has been checked

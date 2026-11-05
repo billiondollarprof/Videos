@@ -1,12 +1,11 @@
 # ============================================================
-# 09c SOFT BACKGROUND: a little blur and a soft light behind him
+# 09c SOFT BACKGROUND: a little blur and a slightly brighter background
 # What : separates Anthony from his background in every frame of the face video, then
 #        1. blurs the background a little (not a heavy "portrait mode" blur),
-#        2. dims it a little and adds two coloured lights (blue left, red right),
-#        3. darkens the edges of the background a little more,
+#        2. brightens it a tiny bit (no coloured lights: they looked fake in a lit room),
 #        and puts him back on top, untouched.
-# Why  : his note (2026-11-05): "a little blurring of my background... more focus on my own
-#        body... a very little soft lighting... while still keeping everything okay".
+# Why  : his notes (2026-11-05): a little blur on the background so the focus is on him; the
+#        coloured lights looked fake, so they were removed: only a tiny brightening is left.
 # How  : MediaPipe's selfie segmenter (a small free model that marks which pixels are a
 #        person; models/selfie_segmenter.tflite). The mask is smoothed over time so the
 #        edge never flickers, and feathered so the edge is soft.
@@ -27,25 +26,12 @@ STILL = float(sys.argv[4]) if len(sys.argv) > 4 and sys.argv[3] == "--still" els
 W, H, FPS = 720, 1280, 30
 
 # --- 1. The look (change these to taste) ---
-# v3 (his note on version 2): less blur, a darker background so the light shows, and a
-# coloured light: blue from one side, red from the other.
-BLUR_SIGMA = 2.5            # background blur: small = "a little"
-DARKEN = 0.62               # the whole background is dimmed to this, so the lights show
-LIGHTS = [                  # (across, down, size, strength, colour R G B)
-    (0.00, 0.28, 0.36, 0.30, (60, 110, 255)),    # blue, from the left
-    (1.00, 0.36, 0.36, 0.26, (255, 60, 90)),     # red, from the right
-]
-EDGE_DARKEN = 0.25          # how much the background edges darken further
+# v4 (his note on version 3): the coloured lights looked fake because the room is not dark.
+# So: no lights. Only a light blur and the background a tiny bit brighter than it was filmed.
+BLUR_SIGMA = 2.0            # background blur: small = "a little"
+BRIGHTEN = 1.07             # background brightness: 1.0 = as filmed, 1.07 = a tiny bit brighter
+LIFT = 6                    # and shadows lifted by this much (0 to 255), so it is not muddy
 MASK_SMOOTH = 0.55          # 0 = no smoothing over time, closer to 1 = smoother
-
-# --- 2. The light and edge-darkening maps, made once ---
-yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
-light_maps = []
-for lx, ly, size, strength, colour in LIGHTS:
-    d = np.sqrt(((xx / W - lx) * W / H) ** 2 + (yy / H - ly) ** 2)
-    light_maps.append((np.exp(-(d / size) ** 2)[..., None] * strength, np.array(colour, np.float32)))
-dv = np.sqrt(((xx / W - 0.5) * 1.2) ** 2 + ((yy / H - 0.45) * 1.0) ** 2)
-vignette = (1 - EDGE_DARKEN * np.clip((dv - 0.25) / 0.45, 0, 1) ** 1.5)[..., None]
 
 seg = vision.ImageSegmenter.create_from_options(vision.ImageSegmenterOptions(
     base_options=mpt.BaseOptions(model_asset_path="models/selfie_segmenter.tflite"), output_confidence_masks=True))
@@ -61,9 +47,7 @@ def process(rgb, prev_mask):
     # 3b. the background: a little blur, the warm light, the darker edges
     f = rgb.astype(np.float32)
     bg = cv2.GaussianBlur(f, (0, 0), BLUR_SIGMA)
-    bg = bg * DARKEN * vignette
-    for amount, colour in light_maps:             # each light adds its colour, like a gel
-        bg = bg + colour * amount * (1 - bg / 255) # "screen" blend: brightens, never clips hard
+    bg = np.clip(bg * BRIGHTEN + LIFT, 0, 255)
     # 3c. him on top, untouched
     out = soft * f + (1 - soft) * bg
     return np.clip(out, 0, 255).astype(np.uint8), m
