@@ -2,7 +2,8 @@
 # 13 SHORT CUT: turn a finished video into a short that stops at a hook
 # What : cuts the finished long video at a chosen moment (a hook: the question just asked,
 #        the choice on screen, the result about to come), then adds the "Watch the full video
-#        on YouTube" end card, with its sounds, and sets the loudness for the platforms.
+#        on YouTube" end card (a red play button that is pressed, a search bar that types his name,
+#        his channel header; no numbers, no "link in bio"), with its sounds, and sets the loudness for the platforms.
 # Why  : Anthony posts the full video on YouTube and a shorter version on Instagram Reels,
 #        YouTube Shorts and TikTok, to send people to his channel. No long re-render: the
 #        finished video is only trimmed, and the end card is a 5 second Remotion render.
@@ -34,8 +35,13 @@ W, H = vs["width"], vs["height"]
 card_len = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", CARD],
                                 capture_output=True, text=True).stdout)
 
-# --- 2. Sounds on the end card: a whoosh as it appears, a tap as the page lands, a tick on the name ---
-cues = [(CUT + 0.00, "whoosh-air.wav", 0.30), (CUT + 0.55, "tap-soft.wav", 0.30), (CUT + 1.35, "tick-warm.wav", 0.26)]
+# --- 2. Sounds on the end card (seconds after the cut), matched to what the card does:
+#        0.00 it slides in, 0.07 the play button pops, 0.80 the button is pressed,
+#        1.93 to 3.2 the name is typed (a soft key tap per letter), 3.75 his channel header pops up ---
+cues = [(CUT + 0.00, "whoosh-air.wav", 0.30), (CUT + 0.07, "tap-soft.wav", 0.26),
+        (CUT + 0.80, "mouse-click-cc0.ogg", 0.45)]
+cues += [(CUT + 1.93 + k * 0.09, "tap-soft.wav", 0.10) for k in range(15)]      # 15 letters in "Anthony Nwobosi"
+cues += [(CUT + 3.75, "tick-warm.wav", 0.28)]
 
 inputs = ["-i", SRC, "-i", CARD]
 parts = []

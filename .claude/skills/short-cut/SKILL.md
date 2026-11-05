@@ -20,17 +20,26 @@ hook**, plus a 5 second end card. Nothing is re-rendered except the end card (ab
    pick the quietest moment (video 1: 113.83 s, -58 dB, 70 ms before the next word). Tell him the
    cut point and the words either side. He can move it.
 
-## 2. The end card
-1. Needs his YouTube page screenshot (he uploads it to Drive; it stays out of git) and the handle.
+## 2. The end card (his notes, 2026-11-05)
+The card is **not** a screenshot of his channel. He said: never show the subscriber count, never
+show the whole channel, show only the header (photo, name, handle), use YouTube's red and a big
+play button with a sound, and do not tell people to look for a "link in bio". So the card is:
+a big red YouTube-style play button that pops in and is pressed (click sound), "Watch the full
+video on YouTube", a search bar that types his name, and his channel header as the search result
+(round photo, name, handle, the tagline from his own channel page). No numbers of any kind.
+1. Make the round photo: crop his brand photo square around his face (600 x 600 around the
+   face, resized to 420) and save it as `avatar.jpg` in the Remotion `public/`. Never commit it.
 2. Copy `pipeline/endcard/` into a Remotion project (`Root.tsx`, `Background.tsx`, `theme.ts`,
-   `remotion.config.ts`, the font, `public/youtube_page.jpg`). Size must match the video.
-3. `npx remotion render src/Root.tsx Continue endcard.mp4 --muted` (5 s, about 50 s to render).
-4. Look at 3 stills: headline in, page scrolling, name and handle in.
-5. Only say what the screenshot shows. No "link in bio", no promise, unless he says so.
+   `remotion.config.ts`, the font). The card size must match the video (1088 x 1920 on video 1).
+3. `npx remotion render src/Root.tsx Continue endcard.mp4 --muted` (6 s, about 50 s to render).
+4. Look at 5 stills: the button pressed, the headline, the typing, the header result, the end.
+   Check the layout fills the screen top to bottom and the name sits on one line.
+5. Only say what is true on his own page. Change the handle and tagline in `Root.tsx` per channel.
 
 ## 3. Cut and join
 `python3 ../../pipeline/13_short_cut.py full.mp4 <cut seconds> endcard.mp4 short.mp4`
-It trims at the cut, adds the card with a whoosh, a tap and a tick, sets -14 LUFS with peaks
+It trims at the cut, adds the card with a whoosh, a pop, a click on the press, key taps while
+the name types and a tick when his header appears, sets -14 LUFS with peaks
 below -1.5 dB (measured on the encoded file), and prints the result.
 
 ## 4. Check, then send
