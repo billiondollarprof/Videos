@@ -27,8 +27,10 @@ END_CARD = 4.0                                   # seconds, must match Root.tsx
 cues = [
     (0.00, "camera-shutter.wav", 0.45),          # opening camera snap, with the flash
     (0.15, "tap-soft.wav", 0.35),                # hook card lands
-    (3.25, "whoosh-air-short.wav", 0.25),        # hook card leaves
 ]
+# hook card leaves: a short whoosh, unless a layout change lands at the same moment
+if not any(abs(seg["t"] - 3.4) < 1.0 for seg in M.get("segments", [])):
+    cues.append((3.25, "whoosh-air-short.wav", 0.25))
 # every change of layout: the face moving between full screen and the circle
 for seg in M.get("segments", [{"t": M["screenStart"]}]):
     if seg["t"] > 0.5:

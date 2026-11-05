@@ -35,8 +35,9 @@ export const H = 1920;
 export const FPS = 30;
 
 // --- 3. Layout once the phone screen is showing ---
-// The screen recording is 864 x 1920. Shown 1380 tall, it is 621 wide.
-export const SCREEN = {w: 621, h: 1380, x: (1080 - 621) / 2, y: 230, radius: 40};
+// The screen recording is 864 x 1840 once the phone's status bar is cropped off.
+// Shown 1380 tall, it is 648 wide.
+export const SCREEN = {w: 648, h: 1380, x: (1080 - 648) / 2, y: 230, radius: 40};
 // Your face, in a circle at the top right, overlapping the phone's status bar.
 export const BUBBLE = {size: 300, x: 1080 - 300 - 36, y: 40};
 // Captions sit below the phone screen, so they never cover it.

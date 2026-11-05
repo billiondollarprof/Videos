@@ -3,12 +3,11 @@
 // What : 1. Hook title in the first 3.5 s.
 //        2. Step label at the top left (Step 1 to 4).
 //        3. Tip cards that pop over the screen.
-//        4. "Speeding up" badge while the screen is fast-forwarded.
+//        4. (removed) Nothing about the editing itself is shown on screen.
 //        5. Progress bar at the very top.
 //        6. End card.
 // Why  : the hook stops people scrolling. The steps tell them where they are.
 // Never: never claim anything you did not say in the video.
-// The words come from project.json "text" (via data.json), so this file fits any video.
 // ============================================================
 import React from 'react';
 import {AbsoluteFill, interpolate, spring, useCurrentFrame} from 'remotion';
@@ -29,10 +28,10 @@ export const Hook: React.FC = () => {
       transform: `translateY(${(1 - inn) * -60}px)`}}>
       <div style={{background: `${C.navyDeep}D9`, border: `3px solid ${C.blue}`, borderRadius: 36, padding: '34px 40px',
         boxShadow: '0 20px 60px rgba(0,0,0,0.45)'}}>
-        <div style={{fontFamily, fontWeight: 800, fontSize: 92, lineHeight: 1.02, color: C.white}}>{data.text.hook_line_1}</div>
-        <div style={{fontFamily, fontWeight: 800, fontSize: 92, lineHeight: 1.02, color: C.yellow}}>{data.text.hook_line_2}</div>
+        <div style={{fontFamily, fontWeight: 800, fontSize: 92, lineHeight: 1.02, color: C.white}}>{(data as any).text?.hook_line_1 ?? 'Clean your Gmail'}</div>
+        <div style={{fontFamily, fontWeight: 800, fontSize: 92, lineHeight: 1.02, color: C.yellow}}>{(data as any).text?.hook_line_2 ?? 'with Claude'}</div>
         <div style={{marginTop: 22, display: 'inline-block', fontFamily, fontWeight: 700, fontSize: 38, color: C.white,
-          background: C.blue, borderRadius: 999, padding: '10px 26px'}}>{data.text.hook_pill}</div>
+          background: C.blue, borderRadius: 999, padding: '10px 26px'}}>{(data as any).text?.hook_pill ?? 'Works on the free plan'}</div>
       </div>
     </div>
   );
@@ -42,15 +41,17 @@ export const Hook: React.FC = () => {
 export const Steps: React.FC = () => {
   const f = useCurrentFrame();
   if (f >= TALK_END) return null;
+  // n 0 = "THE PROBLEM" label over the opening B-roll; n -1 = no label (face full screen)
   const steps = data.moments.steps;
   const cur = [...steps].reverse().find((s) => f >= sec(s.t));
+  if (cur && cur.n === -1) return null;
   if (!cur) return null;
   const inn = spring({frame: f - sec(cur.t) - 6, fps: FPS, config: {damping: 15}});
   return (
     <div style={{position: 'absolute', left: 48, top: 62, width: BUBBLE.x - 48 - 30, opacity: inn,
       transform: `translateX(${(1 - inn) * -80}px)`}}>
       <div style={{display: 'inline-block', fontFamily, fontWeight: 800, fontSize: 30, letterSpacing: 2,
-        color: C.navyDeep, background: C.yellow, borderRadius: 999, padding: '8px 22px'}}>STEP {cur.n} OF 4</div>
+        color: C.navyDeep, background: C.yellow, borderRadius: 999, padding: '8px 22px'}}>{cur.n === 0 ? 'THE PROBLEM' : `STEP ${cur.n} OF 4`}</div>
       <div style={{fontFamily, fontWeight: 800, fontSize: 46, lineHeight: 1.1, color: C.white, marginTop: 12}}>{cur.label}</div>
     </div>
   );
@@ -84,18 +85,7 @@ export const Tips: React.FC = () => {
   );
 };
 
-// --- 4. Speeding-up badge ---
-const FAST = data.pieces.filter((p) => p.type === 'fast').map((p) => [sec(p.out), sec(p.out + p.len)]);
-export const FastBadge: React.FC = () => {
-  const f = useCurrentFrame();
-  if (!FAST.some(([a, b]) => f >= a && f < b)) return null;
-  return (
-    <div style={{position: 'absolute', left: 0, width: W, top: SCREEN.y + 120, display: 'flex', justifyContent: 'center'}}>
-      <div style={{fontFamily, fontWeight: 800, fontSize: 34, color: C.navyDeep, background: C.yellow, borderRadius: 999,
-        padding: '10px 26px', boxShadow: '0 10px 30px rgba(0,0,0,0.4)'}}>▶▶ Speeding up</div>
-    </div>
-  );
-};
+// --- 4. (removed 2026-11-05) No label about the editing itself goes on screen. ---
 
 // --- 5. Progress bar ---
 export const Progress: React.FC<{total: number}> = ({total}) => {
@@ -115,10 +105,10 @@ export const EndCard: React.FC = () => {
     <AbsoluteFill style={{opacity: Math.min(1, f / 8), background: `linear-gradient(180deg, ${C.navyDeep}, ${C.navy})`,
       alignItems: 'center', justifyContent: 'center', textAlign: 'center'}}>
       <div style={{transform: `translateY(${(1 - inn) * 60}px)`, padding: '0 70px'}}>
-        <div style={{fontFamily, fontWeight: 800, fontSize: 96, lineHeight: 1.05, color: C.white}}>{data.text.end_line_1}</div>
-        <div style={{fontFamily, fontWeight: 800, fontSize: 96, lineHeight: 1.05, color: C.yellow}}>{data.text.end_line_2}</div>
-        <div style={{marginTop: 60, fontFamily, fontWeight: 700, fontSize: 46, color: C.white}}>{data.text.end_name}</div>
-        <div style={{marginTop: 10, fontFamily, fontWeight: 600, fontSize: 36, color: C.textDim}}>{data.text.end_sub}</div>
+        <div style={{fontFamily, fontWeight: 800, fontSize: 96, lineHeight: 1.05, color: C.white}}>{(data as any).text?.end_line_1 ?? 'Try it on'}</div>
+        <div style={{fontFamily, fontWeight: 800, fontSize: 96, lineHeight: 1.05, color: C.yellow}}>{(data as any).text?.end_line_2 ?? 'your inbox today'}</div>
+        <div style={{marginTop: 60, fontFamily, fontWeight: 700, fontSize: 46, color: C.white}}>{(data as any).text?.end_name ?? 'Anthony Nwobosi'}</div>
+        <div style={{marginTop: 10, fontFamily, fontWeight: 600, fontSize: 36, color: C.textDim}}>{(data as any).text?.end_sub ?? 'Follow for more AI how-tos'}</div>
       </div>
     </AbsoluteFill>
   );

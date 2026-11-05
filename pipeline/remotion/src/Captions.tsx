@@ -18,7 +18,9 @@ export const Captions: React.FC = () => {
   const now = f / FPS;
   const cap = CAPS.find((c) => now >= c.s && now < c.e);
   if (!cap) return null;
-  const onScreen = now >= data.moments.screenStart;
+  // captions sit below the card whenever a card is showing (B-roll in the opening, then the screen)
+  // captions sit below the card whenever a card is showing (cardWindows, from captions.py)
+  const onScreen = (data.moments as any).cardWindows.some(([a, b]: number[]) => now >= a && now < b);
   const pop = spring({frame: f - Math.round(cap.s * FPS), fps: FPS, config: {damping: 14, mass: 0.5}, durationInFrames: 8});
   const size = onScreen ? 66 : 80;
   return (

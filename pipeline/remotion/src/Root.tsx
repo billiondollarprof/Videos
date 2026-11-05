@@ -8,7 +8,7 @@ import {AbsoluteFill, Composition, registerRoot} from 'remotion';
 import {Background} from './Background';
 import {Captions} from './Captions';
 import data from './data.json';
-import {EndCard, FastBadge, Hook, Progress, Steps, Tips} from './Overlays';
+import {EndCard, Hook, Progress, Steps, Tips} from './Overlays';
 import {People} from './People';
 import {FPS, H, W} from './theme';
 
@@ -19,7 +19,6 @@ const Video: React.FC = () => (
   <AbsoluteFill>
     <Background />
     <People />
-    <FastBadge />
     <Steps />
     <Tips />
     <Captions />
