@@ -58,6 +58,8 @@ Vertical first: **1080 x 1920, 30 fps**, for TikTok, Shorts and Reels.
 2a. **No silence anywhere.** Every phrase runs straight into the next (0.03 s of air before,
    0.06 s after). Silent screen action is cut, not fast-forwarded.
 3. Keep the last clean take of a repeated line, unless Anthony picks the other.
+3a. **Cut fillers by exact time**, not only by word number: his voice runs on from one word
+   into the next, and a word cut can leave the tic's sound in (video 1, version 3).
 3a. **Cut his fillers everywhere**: "uh", "um", "eh", "so now", "alright", "so so", repeated
    starts. Transcribe with a filler-friendly prompt so Whisper writes them down.
 3b. The opening is where viewers leave. Give the first 15 seconds its own careful pass.
@@ -110,7 +112,9 @@ Vertical first: **1080 x 1920, 30 fps**, for TikTok, Shorts and Reels.
 Before he sees a draft:
 1. **Stills** at every key moment, looked at, not just rendered.
 2. **Sync**: the screen and the face match the voice from start to end.
-3. **Every word whole**: transcribe the final sound and compare it with the kept words.
+3. **Every word whole, and no fillers left**: `12_check_final.py` listens to the final video
+   with the bigger Whisper model. It lists tics still in it, silences inside the talk, and the
+   match with the kept words. Never say "no fillers" without running it.
 4. **Privacy**: the text scan finds no unblurred email or name.
 5. **Loudness and peaks** measured on the delivered file.
 6. Say exactly what was checked, and what was not.

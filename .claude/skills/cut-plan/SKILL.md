@@ -39,7 +39,10 @@ Viewers leave in the first seconds, and he often restarts there.
 - **Cut:** "uh", "um", "eh"; "okay?" / "Okay," / "Yeah," / "right?" at a sentence edge;
   "So now" and "All right" opening a sentence; stray short sounds with no word.
 - **Keep:** real speech that only looks like a stutter ("out of it, it will notify you").
-- Word-number cuts go in `project.json` `cuts`; time cuts go in `cut_times`.
+- **Prefer time cuts** (`cut_times`, exact seconds from `face_words_fillers.json`) for tics and
+  fillers. A word-number cut only removes the caption and the words' own span: when his voice
+  runs on from the tic into the next word, the sound stays in (video 1 version 3: "Yeah,",
+  "Okay," and two "right?" survived a word cut). Word-number cuts (`cuts`) are for whole sentences.
 - Cut whole phrases or fillers with silence around them. Never a single word from the
   middle of a phrase: it clips the words next to it.
 
@@ -56,5 +59,7 @@ Give the length it comes to at his speed (`project.json` `speed`, 1.1 now). He c
    the 4 times fast-forward back, with no label on screen).
 2. Read `kept_text.txt` top to bottom. A sentence that no longer makes sense means a cut
    landed a few words off. A leftover "okay?" means a tic was missed.
-3. After the tracks are built, transcribe the cut voice again and compare with the kept
-   words: a missing word means a cut clipped speech.
+3. After the final render run `python3 ../../pipeline/12_check_final.py final.mp4 kept_text.txt`.
+   It transcribes the finished video with the medium model and lists every tic still in it,
+   silences inside the talk, and the word match. Anything listed becomes a time cut; rebuild.
+   A small-model transcript is not enough: it hears "cool" for "full" and hides real faults.

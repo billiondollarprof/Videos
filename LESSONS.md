@@ -65,3 +65,11 @@ Newest at the bottom. Read this before every edit.
 | Less blur on the background. The light did not show: darken the background a bit and use a coloured light, blue to red. (Tried, then reversed: see the next row.) | `09c_soft_background.py` |
 | The coloured light looks fake because the room is not dark. Remove it. Tone the blur down and brighten the background a tiny bit. | `09c_soft_background.py`, CLAUDE.md 5 (Look 6) |
 | "filling in, filling up" said twice. Cut the repeat. | `cut-plan` step 3 |
+
+## Found while checking version 3 of video 1 (2026-11-05)
+
+- The word-number cuts missed 4 tics ("Yeah,", "Okay," and two "right?"): his voice runs on from the
+  tic into the next word, so the sound stayed in while the caption went. Cut tics by exact time.
+- The small Whisper model heard "cool" for "full" and "jobs" for "junk". Check the final video with the
+  medium model (`12_check_final.py`), and look at the sound level before blaming a cut.
+- The only silence left in version 3 was the end card. A silence check must ignore it.
