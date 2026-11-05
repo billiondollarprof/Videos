@@ -21,3 +21,10 @@ First edit. The starting point:
 ### Version 2 (in progress)
 - B-roll in the opening 30 seconds: his real inbox recording, and animations.
 - Phone status bar cropped out of every screen recording.
+- Opening re-cut to the last clean start, found with the medium model's exact timings.
+- Fillers and his own tics cut all through (`05b_find_fillers.py` finds them).
+- His speech at 1.1 times, applied in the same pass as the cuts.
+- Nothing about the editing on screen (the "Speeding up" badge is gone).
+- Face tracked and centred in the circle.
+- Background softly blurred with a warm glow behind him.
+- Skills `cut-plan` (rewritten) and `speed-change` (new) hold all of this for the next video.

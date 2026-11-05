@@ -65,10 +65,38 @@ def at(i):
     return next(w["s"] for w in words if w["i"] >= i)
 
 
-steps = [{"t": T["screenStart"], "n": 1, "label": P["first_step_label"]}]
+# --- 4a. Layout segments, tied to words (project.json "layout"), so they follow any re-cut
+# or speed change. Each: {"word": n, "face": "full" or "bubble", "card": "broll"/"mock"/"screen"}.
+HOOK_END = 3.6                                     # the hook title needs the face full until here
+segments = [{"t": 0, "face": "full"}]
+for s in P.get("layout", []):
+    t = max(at(s["word"]), HOOK_END) if s["word"] > 0 else 0
+    segments.append({"t": t, "face": s["face"], **({"card": s["card"]} if "card" in s else {})})
+segments.append({"t": T["screenStart"], "face": "bubble", "card": "screen"})
+card_windows, open_at = [], None
+for s in segments:
+    if s.get("card") and open_at is None:
+        open_at = s["t"]
+    if not s.get("card") and open_at is not None:
+        card_windows.append([open_at, s["t"]]); open_at = None
+if open_at is not None:
+    card_windows.append([open_at, T["frames"] / T["fps"]])
+# named moments for B-roll animations: project.json "moments": {"name": [word, seconds offset]}
+named = {k: at(w) + off for k, (w, off) in P.get("moments", {}).items()}
+
+steps = []
+if len(segments) > 2:                              # an opening with B-roll gets "THE PROBLEM"
+    steps.append({"t": segments[1]["t"], "n": 0, "label": P.get("problem_label", "The problem")})
+    full_again = next((s["t"] for s in segments[2:] if s["face"] == "full"), None)
+    if full_again is not None:
+        steps.append({"t": full_again, "n": -1, "label": ""})
+steps.append({"t": T["screenStart"], "n": 1, "label": P["first_step_label"]})
 for n, (word, label) in enumerate(P["steps"], start=2):
     steps.append({"t": at(word), "n": n, "label": label})
 moments = {
+    **named,
+    "segments": segments,
+    "cardWindows": card_windows,
     "screenStart": T["screenStart"],
     "steps": steps,
     "tips": [{"t": at(w), "d": d, "title": title, "text": text} for w, d, title, text in P["tips"]],

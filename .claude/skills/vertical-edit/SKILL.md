@@ -18,10 +18,14 @@ Runs every step in order. Each step names the skill or script that does it. Work
 ## Steps
 1. **Footage**: skill `drive-footage`. Check both files with ffprobe: length, size, rotation.
 2. **Sync** (only when there is a separate screen recording): skill `sync-recordings`.
-3. **Timing of every word**: skill `transcript-captions`, steps 1 and 2.
+3. **Timing of every word**: `01b_transcribe_fillers.py` (medium model, writes fillers down),
+   then `02_align.py` on it. Skill `transcript-captions` has the details.
 4. **Cuts**: skill `cut-plan`. **Wait for Anthony's yes** on the list before going on.
 5. **Privacy**: skill `privacy-blur`. Agree the rules with Anthony if new names appear.
-6. **Build the cut tracks**: `python3 ../../pipeline/09_build_tracks.py`. All three
+6. **Build the cut tracks**: `python3 ../../pipeline/09_build_tracks.py` (cuts, his speed
+   from `project.json`, and the status bar crop, in one pass). Then
+   `09b_face_track.py` (keeps his face centred in the circle) and
+   `09c_soft_background.py` (light background blur and a soft glow). All three
    outputs must be exactly the same length. Re-transcribe the cut voice and compare
    with the kept words (every word whole).
 7. **Captions and moments**: `python3 ../../pipeline/10_captions.py`. Pick the hook text,

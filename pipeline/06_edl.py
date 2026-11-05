@@ -10,8 +10,13 @@ W=json.load(open("aligned_words.json")); V=json.load(open("vad.json"))["regions"
 P=json.load(open("project.json"))
 SCREEN_START=P["screen_offset"] or 0
 CUT_WORDS=[(c[0],c[1]) for c in P["cuts"]]
+# --- 1b. Fillers cut by time (seconds of the face video), from 05b_find_fillers.py ---
+CUT_TIMES=[tuple(c[:2]) for c in P.get("cut_times",[])]
 cut=set()
 for a,b in CUT_WORDS: cut.update(range(a,b+1))
+for i,w in enumerate(W):     # a transcript word inside a cut time is cut too, so captions match
+    mid=(w["s"]+w["e"])/2
+    if any(a<=mid<=b for a,b in CUT_TIMES): cut.add(i)
 # --- 2. Kept word runs -> time ranges ---
 runs=[];cur=None
 for i,w in enumerate(W):
@@ -22,6 +27,22 @@ for i,w in enumerate(W):
 if cur: runs.append(cur)
 # --- 3. Inside each kept run, keep only where the voice is (with a little air) ---
 PAD=0.10
+def minus(regs, cuts):
+    """Voice regions with the cut times taken out."""
+    out=[]
+    for s0,e0 in regs:
+        segs=[(s0,e0)]
+        for a,b in cuts:
+            nxt=[]
+            for x,y in segs:
+                if b<=x or a>=y: nxt.append((x,y))
+                else:
+                    if a>x: nxt.append((x,a))
+                    if b<y: nxt.append((b,y))
+            segs=nxt
+        out+=segs
+    return out
+V=minus(V,CUT_TIMES)
 pieces=[]
 for a,b in runs:
     for s,e in V:

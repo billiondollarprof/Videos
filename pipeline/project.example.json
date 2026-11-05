@@ -13,6 +13,10 @@
 
   "_cuts": "Word ranges to cut, from 05_sentences.py. Each is [first word, last word, why]. Approved by Anthony before 06_edl.py runs.",
   "cuts": [[0, 9, "false start"]],
+  "_cut_times": "Fillers cut by time, in seconds of the face video: [start, end, why]. From 05b_find_fillers.py.",
+  "cut_times": [[16.55, 16.80, "uh"]],
+  "_speed": "His speech speed. 1.1 since 2026-11-05 (his choice). Skill speed-change.",
+  "speed": 1.1,
 
   "_privacy": "Lower case. surnames: blurred. always_blur: blurred fully. keep: left readable (a public business account).",
   "privacy": {
@@ -34,5 +38,15 @@
   },
   "steps": [[220, "Tell Claude what you want"]],
   "first_step_label": "Connect Gmail",
-  "tips": [[372, 5.0, "Tip", "Ask Claude to interview you first"]]
+  "tips": [[372, 5.0, "Tip", "Ask Claude to interview you first"]],
+
+  "_layout": "The opening, tied to word numbers: where the face is and what the card shows. The screen recording segment is added on its own.",
+  "layout": [
+    {"word": 15, "face": "bubble", "card": "broll"},
+    {"word": 60, "face": "bubble", "card": "mock"},
+    {"word": 85, "face": "full"}
+  ],
+  "problem_label": "A full inbox",
+  "_moments": "Named moments the B-roll animations use: [word number, seconds offset].",
+  "moments": {"junkAt": [22, 0], "connectAt": [93, 0.3], "cleanAt": [105, 0.6], "notifyAt": [1003, -0.2]}
 }

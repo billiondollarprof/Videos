@@ -140,7 +140,8 @@ the skill in the same change and say so. Never skip a step.
 | Get footage from Google Drive | `drive-footage` |
 | Line up two recordings, find the drift | `sync-recordings` |
 | Captions from his transcript | `transcript-captions` |
-| Plan the cuts and get his yes | `cut-plan` |
+| Cut it tight: opening, repeats, fillers, tics, silences | `cut-plan` |
+| Speed his speech up or down ("speed it up a bit" = 1.1) | `speed-change` |
 | Blur names and emails | `privacy-blur` |
 | Sound effects and the final mix | `sound-mix` |
 | Learn from somebody else's video | `study-reference` |
