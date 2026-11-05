@@ -36,7 +36,7 @@ PAD_T = 0.4 if OCR_FPS <= 2 else STEP            # hold a box this long either s
 
 def close_to(word, targets):
     """True when the word is one of the targets, a cut-off start of one ("OKECHUK..."),
-    or a near misreading of one ("hugosiithx" for "hugocliffx")."""
+    or a near misreading of one (a mangled spelling of a real name)."""
     letters = re.sub(r"[^a-z]", "", word)
     if len(letters) < 4:
         return False
