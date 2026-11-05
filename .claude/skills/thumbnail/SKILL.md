@@ -15,6 +15,12 @@ description: Make a YouTube thumbnail (1280 x 720) from Anthony's real photo - b
 - Match his channel: bold words on the left (white and yellow, thick dark outline), his face large
   on the right, a bright blue background, a pill with the benefit ("100% FREE" style). His existing
   thumbnails: "STOP UPLOADING FILES TO CHATGPT!", "MORE CHATGPT 100% FREE".
+- **The hook copies the shape of his own thumbnails**: "STOP X! USE THIS INSTEAD". It makes people
+  curious about what "this" is, and the video title says what it is. Do not give the answer away
+  on the thumbnail ("Claude does it for you" is not a hook). He chose this for video 1, 2026-11-05.
+- Be exact about verbs. In video 1 Claude moves emails to **Trash** (it does not delete for good)
+  and trashes one conversation per call; the big batch uses Gmail's select-all steps. So "STOP
+  DELETING EMAILS" (what the viewer does) is safe; "Claude deletes everything" is not.
 - Only claim what the video shows. A number on the thumbnail must be a number from the video
   (video 1: "9,700", the count Claude gave on screen).
 - Crop so no shirt logo shows.
@@ -32,6 +38,7 @@ description: Make a YouTube thumbnail (1280 x 720) from Anthony's real photo - b
 6. Send it with 2 or 3 title options for the video (different from the thumbnail words).
 
 ## Video 1 example
-Thumbnail: "STOP DELETING EMAILS!" + envelope with a red "9,700" badge + "CLAUDE DOES IT FREE".
-Video title options: "How to Clean Your Gmail with Claude (Free)"; "Clear 9,700 Emails Without
-Deleting One by One"; "Let Claude Clean Your Gmail Inbox for You (Free Plan)".
+Thumbnail: "STOP DELETING EMAILS!" + envelope with a red "9,700" badge + "DO THIS INSTEAD" (an
+earlier version said "CLAUDE DOES IT FREE"). Video title options (the title carries the answer):
+"Stop Deleting Emails by Hand: Use Claude Instead (Free)"; "How to Clean Your Gmail with Claude";
+"Let Claude Clean Your Gmail Inbox for You (Free Plan)".

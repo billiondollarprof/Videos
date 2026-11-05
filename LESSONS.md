@@ -86,3 +86,4 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | He left an "uh" and an "um" in his own cut, and kept "filling in, filling up". Tics are his call: list them, do not hide them. | `cut-plan` step 4 |
 | He wants a short version (about the first half) for Instagram, Shorts and TikTok that stops at a hook and sends people to his YouTube, and a long version for YouTube. No 35 minute re-render for that. | skill `short-cut` |
 | End card: never show the subscriber count, never the whole channel. Only the header (photo, name, handle), in YouTube's red with a big play button and a sound. Do not tell people to find a "link in bio". | `short-cut` step 2, `pipeline/endcard/Root.tsx` |
+| Thumbnail hook: "Stop deleting emails. Do this instead." beats "Claude does it for you" (that gives the answer away). Keep the verbs exact: Claude trashes, one conversation per call. | `thumbnail` |

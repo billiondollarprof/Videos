@@ -87,7 +87,9 @@ const Card: React.FC = () => {
 // YOUTUBE THUMBNAIL (1280 x 720)
 // Anthony's real photo, cut out (background removed only, never redrawn), on a brand blue
 // background. Bold words on the left in his channel's style, a notification badge with the
-// real number from the video (Claude said about 9,700), and a "free" pill.
+// real number from the video (Claude said about 9,700), and a "DO THIS INSTEAD" pill. The hook
+// copies the shape of his own thumbnails ("STOP X! USE THIS INSTEAD"): it makes people curious
+// about what "this" is, and the video title says it is Claude.
 // Never: never change his face or body. Only crop, scale and place the cut-out.
 // ============================================================
 const Thumb: React.FC = () => (
@@ -107,8 +109,11 @@ const Thumb: React.FC = () => (
     </svg>
     <div style={{position: 'absolute', left: 560, top: 20, background: '#E62117', color: C.white, fontWeight: 800, fontSize: 40,
       borderRadius: 999, padding: '4px 20px', border: `5px solid ${C.white}`, transform: 'rotate(-6deg)', boxShadow: '0 8px 20px rgba(0,0,0,0.45)'}}>9,700</div>
-    <div style={{position: 'absolute', left: 58, top: 566, background: C.yellow, color: C.navyDeep, fontWeight: 800, fontSize: 46,
-      borderRadius: 999, padding: '12px 36px', boxShadow: '0 12px 30px rgba(0,0,0,0.45)'}}>CLAUDE DOES IT FREE</div>
+    <div style={{position: 'absolute', left: 58, top: 566, background: C.yellow, color: C.navyDeep, fontWeight: 800, fontSize: 48,
+      borderRadius: 999, padding: '12px 40px 12px 40px', boxShadow: '0 12px 30px rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', gap: 16}}>
+      DO THIS INSTEAD
+      <svg width="52" height="40" viewBox="0 0 52 40" fill="none"><path d="M4 20 H42 M28 6 L44 20 L28 34" stroke={C.navyDeep} strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+    </div>
   </AbsoluteFill>
 );
 
