@@ -11,12 +11,13 @@ which git ignores. Finished videos go to Google Drive, never here.
 
 ## 1. Start and end of every video job
 
-1. Read this file, then `LESSONS.md`. Every note Anthony has ever given is there.
+1. Read this file, then `LESSONS.md` (every note Anthony has given) and `IMPROVEMENTS.md`
+   (what made each video better than the last). Start from the best so far.
 2. Pick the skill for the job (section 8). Run it. Do not work it out again.
 3. **Write every note Anthony gives into `LESSONS.md`** the moment he gives it, with
    the date, then into the skill or script it belongs to. He never gives the same
    note twice. This is how the skills get better with every video.
-4. At the end, say which skills changed and why.
+4. At the end, add the video's wins to `IMPROVEMENTS.md`, and say which skills changed and why.
 
 ## 2. Anthony is in charge
 
@@ -73,7 +74,8 @@ Vertical first: **1080 x 1920, 30 fps**, for TikTok, Shorts and Reels.
 2. Other people's names: blur the second half (the surname).
 3. A name in a greeting that is not his: blur it fully.
 4. A business account he names as public may stay readable.
-5. Scan **every frame** with text reading (skill `privacy-blur`). Never trust a few stills.
+5. Security codes, bank names and statements, and account numbers: always blurred, even his own.
+6. Scan **every frame** with text reading (skill `privacy-blur`). Never trust a few stills.
 
 **Sound**
 1. His voice is always the loudest thing.
@@ -86,6 +88,7 @@ Vertical first: **1080 x 1920, 30 fps**, for TikTok, Shorts and Reels.
    he asks for it in the file. YouTube Studio has a free Audio Library for long form.
 
 **Look**
+0. Crop the phone's status bar (time, signal, battery) off every screen recording.
 1. Brand colours from anthony.stellaxafe.com: navy, bright blue, yellow, white.
    Font: Plus Jakarta Sans.
 2. Every shot moves a little (a slow push-in, a zoom at a cut). No frozen frames.
@@ -110,6 +113,7 @@ His watch on his phone is the final check. Nothing is "done" before he says so.
   from code).
 - `sfx/`: the sound palette. `make_sfx.py` builds our own sounds.
 - `LESSONS.md`: every note, newest at the bottom.
+- `IMPROVEMENTS.md`: what made each video better than the last.
 - `THIRD_PARTY.md`: where anything borrowed came from, and its licence.
 - `projects/<name>/`: raw footage and working files for one video. Git ignores it.
 

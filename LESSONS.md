@@ -30,3 +30,11 @@ Newest at the bottom. Read this before every edit.
 - A mono file measures 3 dB quieter than stereo. Measure loudness on the stereo delivery.
 - The raw voice sits near -27 LUFS. Boosting it 13 dB into a plain limiter left peaks at +4 dB
   after AAC encoding. `11_finish.py` now uses two-pass loudnorm and measures the encoded sound.
+
+## Video 1, round 2 (2026-11-05)
+
+| Note | Now lives in |
+|---|---|
+| Keep a record of every improvement, so the next video is better than the last. | `IMPROVEMENTS.md`, CLAUDE.md 1 |
+| The phone's status bar (time, network, battery) must not show. Crop it out. | CLAUDE.md 5 (Look) |
+| The video needs B-roll. Plan it yourself; ask me for a ChatGPT image only if one is needed. | `vertical-edit`, `IMPROVEMENTS.md` |
