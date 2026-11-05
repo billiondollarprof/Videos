@@ -52,11 +52,22 @@ Give the length it comes to at his speed (`project.json` `speed`, 1.1 now). He c
 "just do it" for fillers; sentence cuts still go to him first.
 
 ## 6. Build and read back
-1. `python3 ../../pipeline/06_edl.py`. **No silence anywhere** (his note on video 1, version 2):
-   it keeps only his voice, with 0.03 s of air before a phrase and 0.06 s after it (so word
-   endings are not clipped), and joins every phrase straight onto the next. Silent screen
-   stretches are cut out, not fast-forwarded (`"fast_forward": true` in project.json brings
-   the 4 times fast-forward back, with no label on screen).
+1. `python3 ../../pipeline/06_edl.py`. **Tight, with a few real breaths** (learned by comparing
+   his own hand-made cut of video 1 with my version 2 and my fully tight version 3):
+   - Version 3 had no pauses at all and felt rushed: "I think I actually needed that little
+     silence... it gives room for breathing". Version 2 had 82 pauses (22 s) and was too slow.
+   - His cut: 60 pauses, 17 s in 3:27. Most joints tight, a breath of about 0.15 s between
+     phrases, 0.25 to 0.5 s now and then, and longer ones **only where the screen is doing
+     something worth watching**: while he types (0.5 s) and when Claude starts working (2 s and
+     0.8 s, shortened from 10 s and 9 s, at normal speed, no fast-forward, no label).
+   - So the script keeps a small share of each natural pause (`pauses.scale`, 5 percent),
+     capped at 0.06 s inside a sentence, 0.18 s between sentences, 0.30 s while he types, and
+     0.8 s for a very long wait (5 s or more) while the screen is busy. The pause is real room
+     tone from beside the phrase (his face keeps its natural still moment), never a blank.
+   - Result on video 1: 3:33 against his 3:27. Tune in `project.json` `"pauses"`:
+     "a bit more room" = scale 0.08 and within 0.10; "too slow" = scale 0.03.
+   - A silent stretch with the screen NOT changing never gets a long pause. Cut it.
+   - `"fast_forward": true` brings the old 4 times fast-forward back (never labelled on screen).
 2. Read `kept_text.txt` top to bottom. A sentence that no longer makes sense means a cut
    landed a few words off. A leftover "okay?" means a tic was missed.
 3. After the final render run `python3 ../../pipeline/12_check_final.py final.mp4 kept_text.txt`.

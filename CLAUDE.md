@@ -55,10 +55,12 @@ Vertical first: **1080 x 1920, 30 fps**, for TikTok, Shorts and Reels.
 **Cutting**
 1. Cut **between phrases, never inside one**. A phrase is what is said in one breath.
 2. **His speech plays at 1.1 times speed** (his choice, 2026-11-05), with the pitch kept.
-2a. **No silence anywhere.** Every phrase runs straight into the next (0.03 s of air before,
-   0.06 s after). Silent screen action is cut, not fast-forwarded.
+2a. **Tight, with real breaths** (his own cut taught this, 2026-11-05; fully tight felt rushed).
+   Keep a small share of each natural pause: at most 0.06 s inside a sentence, 0.18 s between
+   sentences, 0.30 s while he types, 0.8 s for a long wait while the screen is busy. A still
+   screen never gets a long pause. Never fast-forward with a label on screen.
 3. Keep the last clean take of a repeated line, unless Anthony picks the other.
-3a. **Cut fillers by exact time**, not only by word number: his voice runs on from one word
+3a. **Cut tics by exact time**, not only by word number: his voice runs on from one word
    into the next, and a word cut can leave the tic's sound in (video 1, version 3).
 3a. **Cut his fillers everywhere**: "uh", "um", "eh", "so now", "alright", "so so", repeated
    starts. Transcribe with a filler-friendly prompt so Whisper writes them down.

@@ -73,3 +73,15 @@ Newest at the bottom. Read this before every edit.
 - The small Whisper model heard "cool" for "full" and "jobs" for "junk". Check the final video with the
   medium model (`12_check_final.py`), and look at the sound level before blaming a cut.
 - The only silence left in version 3 was the end card. A silence check must ignore it.
+
+## Anthony's own cut of video 1 (2026-11-05)
+
+He did not use version 3. He cut version 2 by hand, because version 3 "was too much... I actually needed that little silence".
+
+| What his cut shows | Now lives in |
+|---|---|
+| Keep small pauses: "it gives room for breathing, even if less than 1 second". His cut: 60 pauses, 17 s in 3:27 (median 0.15 s). Fully tight (v3) felt rushed; v2's 82 pauses felt slow. | CLAUDE.md 5 (2a), `06_edl.py` pause rule, `cut-plan` |
+| Longer pauses only where the screen is doing something: while he types, and when Claude starts working (long waits shortened from 10 s to 2 s and 0.8 s, normal speed). | `06_edl.py` (screen activity), `cut-plan` |
+| He stammers a lot at the start: the opening needs a careful pass. He found it manageable. | `cut-plan` step 2 |
+| He left an "uh" and an "um" in his own cut, and kept "filling in, filling up". Tics are his call: list them, do not hide them. | `cut-plan` step 4 |
+| He wants a short version (about the first half) for Instagram, Shorts and TikTok that stops at a hook and sends people to his YouTube, and a long version for YouTube. No 35 minute re-render for that. | skill `short-cut` |
