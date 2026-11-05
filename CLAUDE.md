@@ -55,7 +55,8 @@ Vertical first: **1080 x 1920, 30 fps**, for TikTok, Shorts and Reels.
 **Cutting**
 1. Cut **between phrases, never inside one**. A phrase is what is said in one breath.
 2. **His speech plays at 1.1 times speed** (his choice, 2026-11-05), with the pitch kept.
-   Silent screen action may be fast-forwarded further, with no label on screen.
+2a. **No silence anywhere.** Every phrase runs straight into the next (0.03 s of air before,
+   0.06 s after). Silent screen action is cut, not fast-forwarded.
 3. Keep the last clean take of a repeated line, unless Anthony picks the other.
 3a. **Cut his fillers everywhere**: "uh", "um", "eh", "so now", "alright", "so so", repeated
    starts. Transcribe with a filler-friendly prompt so Whisper writes them down.
@@ -99,8 +100,9 @@ Vertical first: **1080 x 1920, 30 fps**, for TikTok, Shorts and Reels.
 4. **Never put the editing itself on screen** ("Speeding up", "Cut here", "Zooming"). On screen
    is only his message, the B-roll, and what concerns the video.
 5. Track his face. In the circle it stays centred, however he moves.
-6. His background gets a light blur, a soft warm glow behind his head and slightly darker
-   edges (`09c_soft_background.py`). He is never changed, only the background.
+6. His background gets a light blur, is dimmed a little, and gets two coloured lights, blue
+   from the left and red from the right (`09c_soft_background.py`). He is never changed.
+7. Nothing white or washed out on the first frame: it is what people see before pressing play.
 
 ## 6. Nothing is done until it has been checked
 

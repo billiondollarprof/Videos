@@ -4,7 +4,7 @@
 #        2. mixes them under the cleaned voice, in stereo
 #        3. sets loudness to -14 LUFS with peaks at or below -1.5 dB, measured on the
 #           stereo file the platforms will play
-#        4. adds a white camera flash at the start and on the end card
+#        4. adds a white camera flash on the end card (never on the first frame)
 #        5. joins picture and sound into the final MP4
 # Use  : python3 11_finish.py video_silent.mp4 voice_cut_raw.wav final.mp4 [path to data.json]
 # Never: never let a sound effect cover a word. Voice stays the loudest thing.
@@ -25,7 +25,6 @@ END_CARD = 4.0                                   # seconds, must match Root.tsx
 # --- 1. The cue list: (time in seconds, sound file, gain) ---
 # Gains keep every effect well under the voice. Sounds follow something you can SEE.
 cues = [
-    (0.00, "camera-shutter.wav", 0.45),          # opening camera snap, with the flash
     (0.15, "tap-soft.wav", 0.35),                # hook card lands
 ]
 # hook card leaves: a short whoosh, unless a layout change lands at the same moment
@@ -106,7 +105,9 @@ def flash(t0):
                     f"enable='between(n,{n0 + f0},{n0 + f1})'" for a, f0, f1 in steps)
 
 
-vf = flash(0.0) + "," + flash(M["end"] + 0.30)
+# Only on the end card. A flash on frame 0 made the first frame (what people see before
+# they press play) washed out white (his note on version 2, 2026-11-05).
+vf = flash(M["end"] + 0.30)
 
 # --- 5. The final file: H.264 picture, AAC stereo sound, ready for TikTok / Shorts / Reels ---
 subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", SILENT, "-i", "_final.m4a", "-vf", vf,

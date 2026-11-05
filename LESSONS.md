@@ -54,3 +54,13 @@ Newest at the bottom. Read this before every edit.
 | Cut fillers all through: "uh", "um", "eh", "so now", "alright", "so so", repeated starts. They are his own kind of fillers, not only the usual ones. | `cut-plan`, `filler` step |
 | The face drifts right inside the circle when he moves. Track the face and keep it centred. | `People.tsx` face tracking |
 | A little blur on my background before the screen share, and a soft light behind me, so the focus is on me. Keep it subtle. | `09c_soft_background.py`, CLAUDE.md 5 (Look) |
+
+## Video 1, notes on version 2 (2026-11-05)
+
+| Note | Now lives in |
+|---|---|
+| Remove every silence, completely. No gaps between phrases. Aim for about 3 minutes. | CLAUDE.md 5 (2a), `06_edl.py`, `cut-plan` |
+| Do not speed up again once the silences are gone. | `speed-change` (1.1 stays) |
+| The first frames are washed white (it was the camera flash on frame 0). | `11_finish.py`, CLAUDE.md 5 (Look 7) |
+| Less blur on the background. The light did not show: darken the background a bit and use a coloured light, blue to red. | `09c_soft_background.py`, CLAUDE.md 5 (Look 6) |
+| "filling in, filling up" said twice. Cut the repeat. | `cut-plan` step 3 |

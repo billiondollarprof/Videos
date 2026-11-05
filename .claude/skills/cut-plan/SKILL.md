@@ -49,8 +49,11 @@ Give the length it comes to at his speed (`project.json` `speed`, 1.1 now). He c
 "just do it" for fillers; sentence cuts still go to him first.
 
 ## 6. Build and read back
-1. `python3 ../../pipeline/06_edl.py`. It keeps only his voice, 0.1 s of air at each edge,
-   closes gaps under 0.25 s, and fast-forwards silent screen stretches of 1.5 s or more.
+1. `python3 ../../pipeline/06_edl.py`. **No silence anywhere** (his note on video 1, version 2):
+   it keeps only his voice, with 0.03 s of air before a phrase and 0.06 s after it (so word
+   endings are not clipped), and joins every phrase straight onto the next. Silent screen
+   stretches are cut out, not fast-forwarded (`"fast_forward": true` in project.json brings
+   the 4 times fast-forward back, with no label on screen).
 2. Read `kept_text.txt` top to bottom. A sentence that no longer makes sense means a cut
    landed a few words off. A leftover "okay?" means a tic was missed.
 3. After the tracks are built, transcribe the cut voice again and compare with the kept

@@ -26,7 +26,8 @@ for i,w in enumerate(W):
         cur=[w["s"],w["e"]] if cur is None else [cur[0],w["e"]]
 if cur: runs.append(cur)
 # --- 3. Inside each kept run, keep only where the voice is (with a little air) ---
-PAD=0.10
+PAD_START=0.03   # no silence at all (his note, 2026-11-05): a hair of air before a phrase
+PAD_END=0.06     # and a little more after it, so soft word endings are not clipped
 def minus(regs, cuts):
     """Voice regions with the cut times taken out."""
     out=[]
@@ -46,13 +47,13 @@ V=minus(V,CUT_TIMES)
 pieces=[]
 for a,b in runs:
     for s,e in V:
-        s2,e2=max(a-0.15,s-PAD),min(b+0.15,e+PAD)
+        s2,e2=max(a-0.15,s-PAD_START),min(b+0.15,e+PAD_END)
         if e2-s2>0.12: pieces.append([s2,e2])
 pieces.sort()
-# merge pieces closer than 0.25 s
+# merge pieces closer than 0.06 s (no gaps are kept)
 m=[]
 for p in pieces:
-    if m and p[0]-m[-1][1]<0.25: m[-1][1]=max(m[-1][1],p[1])
+    if m and p[0]-m[-1][1]<0.06: m[-1][1]=max(m[-1][1],p[1])
     else: m.append(p)
 # --- 4. Long silent stretches inside kept talk, while the screen is showing: fast-forward ---
 edl=[]
@@ -61,7 +62,7 @@ for k,p in enumerate(m):
     if k+1<len(m):
         gap_a,gap_b=p[1],m[k+1][0]
         same_run=any(a-0.2<=gap_a and gap_b<=b+0.2 for a,b in runs)
-        if same_run and gap_a>SCREEN_START and gap_b-gap_a>=1.5:
+        if P.get("fast_forward", False) and same_run and gap_a>SCREEN_START and gap_b-gap_a>=1.5:   # off by default: no silences (his note)
             edl.append({"type":"fast","a":round(gap_a,3),"b":round(gap_b,3),"speed":4})
 tot=sum((e["b"]-e["a"])/(e.get("speed",1)) for e in edl)
 json.dump(edl,open("edl.json","w"),indent=0)

@@ -2,8 +2,8 @@
 # 09c SOFT BACKGROUND: a little blur and a soft light behind him
 # What : separates Anthony from his background in every frame of the face video, then
 #        1. blurs the background a little (not a heavy "portrait mode" blur),
-#        2. adds a soft warm light behind his head, like a lamp glow,
-#        3. darkens the edges of the background slightly,
+#        2. dims it a little and adds two coloured lights (blue left, red right),
+#        3. darkens the edges of the background a little more,
 #        and puts him back on top, untouched.
 # Why  : his note (2026-11-05): "a little blurring of my background... more focus on my own
 #        body... a very little soft lighting... while still keeping everything okay".
@@ -27,18 +27,23 @@ STILL = float(sys.argv[4]) if len(sys.argv) > 4 and sys.argv[3] == "--still" els
 W, H, FPS = 720, 1280, 30
 
 # --- 1. The look (change these to taste) ---
-BLUR_SIGMA = 5.0            # background blur: small = "a little"
-GLOW_CENTRE = (0.50, 0.30)  # where the light sits: across, down (behind his head)
-GLOW_SIZE = 0.55            # how far the light spreads, as a share of the frame height
-GLOW_STRENGTH = 0.22        # how bright the light is
-GLOW_COLOUR = np.array([255, 214, 160], np.float32)   # warm, like a lamp (R, G, B)
-EDGE_DARKEN = 0.22          # how much the background edges darken
+# v3 (his note on version 2): less blur, a darker background so the light shows, and a
+# coloured light: blue from one side, red from the other.
+BLUR_SIGMA = 2.5            # background blur: small = "a little"
+DARKEN = 0.62               # the whole background is dimmed to this, so the lights show
+LIGHTS = [                  # (across, down, size, strength, colour R G B)
+    (0.00, 0.28, 0.36, 0.30, (60, 110, 255)),    # blue, from the left
+    (1.00, 0.36, 0.36, 0.26, (255, 60, 90)),     # red, from the right
+]
+EDGE_DARKEN = 0.25          # how much the background edges darken further
 MASK_SMOOTH = 0.55          # 0 = no smoothing over time, closer to 1 = smoother
 
 # --- 2. The light and edge-darkening maps, made once ---
 yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
-d = np.sqrt(((xx / W - GLOW_CENTRE[0]) * W / H) ** 2 + (yy / H - GLOW_CENTRE[1]) ** 2)
-glow = np.exp(-(d / GLOW_SIZE) ** 2)[..., None] * GLOW_STRENGTH
+light_maps = []
+for lx, ly, size, strength, colour in LIGHTS:
+    d = np.sqrt(((xx / W - lx) * W / H) ** 2 + (yy / H - ly) ** 2)
+    light_maps.append((np.exp(-(d / size) ** 2)[..., None] * strength, np.array(colour, np.float32)))
 dv = np.sqrt(((xx / W - 0.5) * 1.2) ** 2 + ((yy / H - 0.45) * 1.0) ** 2)
 vignette = (1 - EDGE_DARKEN * np.clip((dv - 0.25) / 0.45, 0, 1) ** 1.5)[..., None]
 
@@ -56,8 +61,9 @@ def process(rgb, prev_mask):
     # 3b. the background: a little blur, the warm light, the darker edges
     f = rgb.astype(np.float32)
     bg = cv2.GaussianBlur(f, (0, 0), BLUR_SIGMA)
-    bg = bg * vignette
-    bg = bg + (GLOW_COLOUR - bg) * glow          # light blends towards the warm colour
+    bg = bg * DARKEN * vignette
+    for amount, colour in light_maps:             # each light adds its colour, like a gel
+        bg = bg + colour * amount * (1 - bg / 255) # "screen" blend: brightens, never clips hard
     # 3c. him on top, untouched
     out = soft * f + (1 - soft) * bg
     return np.clip(out, 0, 255).astype(np.uint8), m
