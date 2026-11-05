@@ -53,3 +53,4 @@ Newest at the bottom. Read this before every edit.
 | His speech at 1.1 times speed. | CLAUDE.md 5 (Cutting), `09_build_tracks.py` |
 | Cut fillers all through: "uh", "um", "eh", "so now", "alright", "so so", repeated starts. They are his own kind of fillers, not only the usual ones. | `cut-plan`, `filler` step |
 | The face drifts right inside the circle when he moves. Track the face and keep it centred. | `People.tsx` face tracking |
+| A little blur on my background before the screen share, and a soft light behind me, so the focus is on me. Keep it subtle. | `09c_soft_background.py`, CLAUDE.md 5 (Look) |

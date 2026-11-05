@@ -99,6 +99,8 @@ Vertical first: **1080 x 1920, 30 fps**, for TikTok, Shorts and Reels.
 4. **Never put the editing itself on screen** ("Speeding up", "Cut here", "Zooming"). On screen
    is only his message, the B-roll, and what concerns the video.
 5. Track his face. In the circle it stays centred, however he moves.
+6. His background gets a light blur, a soft warm glow behind his head and slightly darker
+   edges (`09c_soft_background.py`). He is never changed, only the background.
 
 ## 6. Nothing is done until it has been checked
 
