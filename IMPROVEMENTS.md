@@ -47,3 +47,12 @@ First edit. The starting point:
   alone; `04b` ran on his real recording; `10b` reproduced the B-roll slot and 12 sound cues; the
   thumbnail renders from the repo folder identical to the one sent. Not yet run end to end on a new video:
   `build_all.sh` and `finish_all.sh` (syntax checked; each step they call was run on video 1).
+
+### To try on the next video (Anthony, 2026-11-06)
+- **Studio background instead of his room.** A first test frame worked but was rough: a faint curtain
+  fringe round his hair, a flat backdrop, and a light that did not match his face. For a good result:
+  a better video cut-out (hair edges), a proper studio picture he makes in ChatGPT (write him the
+  prompt), the backdrop's colour and light matched to his face, a 10 second test clip for him to
+  judge before any full video. Build it as a style option next to `09c_soft_background.py`.
+- **Shirt colour change** is possible (the model can find the shirt). A different garment is not,
+  and it touches his body: ask first.
