@@ -87,3 +87,12 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | He wants a short version (about the first half) for Instagram, Shorts and TikTok that stops at a hook and sends people to his YouTube, and a long version for YouTube. No 35 minute re-render for that. | skill `short-cut` |
 | End card: never show the subscriber count, never the whole channel. Only the header (photo, name, handle), in YouTube's red with a big play button and a sound. Do not tell people to find a "link in bio". | `short-cut` step 2, `pipeline/endcard/Root.tsx` |
 | Thumbnail hook: "Stop deleting emails. Do this instead." beats "Claude does it for you" (that gives the answer away). Keep the verbs exact: Claude trashes, one conversation per call. | `thumbnail` |
+
+## Notes for later, from Anthony (2026-11-06)
+
+| Note | Now lives in |
+|---|---|
+| His voice must never be changed: it is unique. Only clean, balance and even it out. A little low warmth only if he has heard it A/B and approved. | CLAUDE.md 5 (Sound 0), `IMPROVEMENTS.md` plan 3 |
+| He is getting a mic: make the sound feel like a strong mic, still his own voice. A voice profile he picks by ear. | `IMPROVEMENTS.md` plan 3 |
+| He is getting a light: a darker room, white light on his face. | `IMPROVEMENTS.md` plan 2 |
+| Prefer his own room, improved (cut him out, clean the empty background, sharpen, brighten, remove stains, put him back), over a replacement. One or several backgrounds depending on whether he moved. | CLAUDE.md 5 (Look 5a), `IMPROVEMENTS.md` plan 1 |

@@ -86,6 +86,10 @@ Vertical first: **1080 x 1920, 30 fps**, for TikTok, Shorts and Reels.
 6. Scan **every frame** with text reading (skill `privacy-blur`). Never trust a few stills.
 
 **Sound**
+0. **His voice is his own and is never changed.** No pitch shift, no formant shift, no voice
+   effects (his words, 2026-11-06: "I can never change my voice. My voice is very unique"). Only
+   clean it, balance it (EQ) and even it out (compression). A small added warmth in the low
+   voice is allowed, but only after he has heard it A/B against the natural one and said yes.
 1. His voice is always the loudest thing.
 2. Clean the room noise. Master near **-14 LUFS**, peaks at or below **-1.5 dB**.
    Measure the final file, not the parts.
@@ -104,6 +108,8 @@ Vertical first: **1080 x 1920, 30 fps**, for TikTok, Shorts and Reels.
 4. **Never put the editing itself on screen** ("Speeding up", "Cut here", "Zooming"). On screen
    is only his message, the B-roll, and what concerns the video.
 5. Track his face. In the circle it stays centred, however he moves.
+5a. Prefer **his own room, improved**, over a replacement (his notes, 2026-11-06): see the
+   clean-plate plan in `IMPROVEMENTS.md`.
 6. His background gets a light blur and is made a tiny bit brighter (`09c_soft_background.py`).
    **No coloured lights**: they looked fake in a lit room (his note, 2026-11-05). Coloured light
    only suits a really dark room. He is never changed, only the background.

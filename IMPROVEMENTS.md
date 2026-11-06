@@ -56,3 +56,32 @@ First edit. The starting point:
   judge before any full video. Build it as a style option next to `09c_soft_background.py`.
 - **Shirt colour change** is possible (the model can find the shirt). A different garment is not,
   and it touches his body: ask first.
+
+### Plans from Anthony (2026-11-06): keep making the content better
+**1. His own background, improved (the "clean plate").** What he used to do by hand: take himself out of
+his own background, improve that background, put himself back. The plan:
+- Build a **clean plate**: the empty background, with him removed. While the camera is still, the
+  parts of the wall he covers in some frames are visible in others: a per-pixel median over the
+  frames where the person mask says "background" gives the empty wall. Areas he always covers get
+  filled in (inpainting).
+- **Several backgrounds in one video:** if he moves or the phone moves, build one plate per camera
+  position (up to 4 or 5), and switch at the cuts. A video where he does not move needs one.
+- **Improve the plate once, not frame by frame:** remove stains and marks, denoise, sharpen, brighten
+  and lift the colour (an upscaling model such as Real-ESRGAN for real extra sharpness). Then put
+  him back on top of the improved plate, every frame, with the person mask.
+- Honest limits: a phone's soft background gets sharper and cleaner, but not studio-grade. A
+  handheld phone drifts, so the plate must be aligned first. His edge (hair) needs a good mask.
+- Build it as a style option next to `09c_soft_background.py`: test on a 10 second clip first.
+
+**2. Better light at the source.** He is getting a light: a darker room, white light on his face.
+That makes everything easier: a cleaner face, less fixing. A darker room is also what makes
+coloured background light believable (it looked fake in a lit room).
+
+**3. Voice: a mic, and the sound made to feel like a strong mic, still his voice.**
+- He is getting a microphone. Whatever the mic, the chain makes it feel solid: noise removal (done in
+  `04b_clean_voice.py`), a little low warmth for body, presence around 3 to 5 kHz, a gentle
+  de-esser, compression, loudness. **No pitch or formant shift, ever.**
+- Make a **voice profile** he approves: three versions of the same 15 seconds (natural, warm,
+  broadcast). He picks one by ear. The choice goes in the repo and becomes the default.
+- Honest limit: EQ and compression get a cheap mic much closer to a good one, but not equal. Mic
+  distance (a hand's width from his mouth, slightly off to the side) matters more than any filter.
