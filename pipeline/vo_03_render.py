@@ -27,7 +27,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageOps, ImageEnhance
 W_, H_, FPS = 1080, 1920, 30
 NAVY = (11, 27, 58); YEL = (255, 204, 0); BLUE = (30, 136, 255); WHITE = (255, 255, 255)
 C = json.load(open("caps.json")); P = json.load(open("vo_config.json")); SOURCE = P.get("source", "")
-TOTAL = json.load(open("vo_timeline.json"))["total"]; END = 3.2; DUR = TOTAL + END
+TOTAL = json.load(open("vo_timeline.json"))["total"]; END = 3.2; DUR = TOTAL + 0.3 + END
 F8 = lambda s: ImageFont.truetype("pjs800.ttf", s); F6 = lambda s: ImageFont.truetype("pjs600.ttf", s)
 DJ = lambda s: ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", s)  # for ₦
 n = lambda t: re.sub(r"[^a-z0-9]", "", t.lower())
@@ -39,12 +39,23 @@ def at(phrase, after=0.0):
     for i in range(len(ws)):
         if C[i]["s"] >= after and ws[i:i + len(p)] == p: return max(0.0, C[i]["s"] - 0.15)
     raise SystemExit("not found: " + phrase)
+# add(phrase, kind, src, dur=2.6, back=True): the picture arrives on the phrase, stays dur seconds,
+# then the video goes BACK to the post, on the line he is reading (his note, 2026-11-07).
+# Without back=True the picture stays until the next shot (used while he comments).
 SH = []; _t = 0.0
 def add(ph, kind, src, **k):
     global _t
     s = 0.0 if ph is None else at(ph, _t); _t = s; SH.append(dict(s=s, kind=kind, src=src, **k))
 exec(open("vo_shots.py").read())                           # the shot list lives in the project
-SH.append(dict(s=TOTAL + 0.05, kind="end", src=None))
+HOLD = 0.3                                                 # a breath after his last word, before the end card
+SH.append(dict(s=TOTAL + HOLD, kind="end", src=None))
+final = []
+for i, s in enumerate(SH):
+    final.append(s)
+    if s.get("back") and i + 1 < len(SH):
+        e = s["s"] + s.get("dur", 2.6)
+        if SH[i + 1]["s"] - e > 0.45: final.append(dict(s=e, kind="post", src="post", ret=True))   # back to the post
+SH = final
 for i, s in enumerate(SH): s["e"] = SH[i + 1]["s"] if i + 1 < len(SH) else DUR; s["i"] = i
 json.dump(SH, open("shots.json", "w"), indent=0)
 

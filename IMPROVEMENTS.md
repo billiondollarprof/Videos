@@ -107,3 +107,6 @@ recorded posts are blurred. Make it a skill (`voiceover-edit`) once it works.
 - Frames drawn in Python straight into x264: no Remotion needed for this kind of video.
 - Version 2: our own music bed, ducked under the voice. Room tone fixed (no more voice at the joints).
   Pictures rise and leave with easing, cards float, the post floats while it scrolls with his reading.
+- Version 3: pictures are short inserts on the exact words, then back to the post line being read.
+  Pops (and a tiny swipe) instead of whooshes for graphics; shutter only on hook and end card.
+  AI pictures for the commentary, prompts kept in `voiceover-edit/prompts.md`.

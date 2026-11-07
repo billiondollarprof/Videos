@@ -132,3 +132,13 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | Motion was not top notch. Pictures rise from the bottom with a soft bounce while the old one leaves upward. Cards float and tilt. The post is a floating sheet that moves while he reads. Labels and caption words pop. | `vo_03_render.py` |
 | A picture must arrive with the words it shows: the candle came in on the power line, before kidnapping was mentioned. Anchor each picture to the exact phrase it illustrates, not to the start of the sentence before. | `voiceover-edit` step 7 |
 | "M" sounds and a repeat at the end. A cut had left half of "making" and an "um". Cuts are now set on the loudness plot, at the silence between words, never inside a word. | `voiceover-edit` step 5 |
+
+## Voiceover video 1, notes on version 2 (2026-11-07)
+
+| Note | Now lives in |
+|---|---|
+| While he reads the post, a picture is a short insert (2 to 3 s) on the exact words it shows, then the video goes back to the post, on the line he is reading, before the next picture. Pictures only stay long while he comments. | `vo_03_render.py` (`add(..., dur=, back=True)`), `voiceover-edit` step 7 |
+| Pictures stayed too long. Make 2 to 4 AI pictures for his commentary (prompts in the skill). | `voiceover-edit` step 7 |
+| Pops, not whooshes, for pictures in a voiceover (no camera, the pictures are graphics): a soft pop with a tiny air swipe when a picture arrives, a lower pop when it goes back to the post. One camera shutter on the hook and one on the end card. | `sfx/make_sfx.py`, `vo_04_mix.py` |
+| The food came too early. Food on "delicious cuisine", the map on "Akwa Ibom", each short, with the post between. | `voiceover-edit` step 7 |
+| The last word ("accountable") was cut off. The end mark was set on the loudness plot at the end of the last word, not after it. Keep 0.4 s after his last word, then a 0.3 s breath before the end card. | `voiceover-edit` step 4 |

@@ -17,6 +17,7 @@ Work in `projects/<name>/`. Never commit his voice, the script or the shot list.
    - **Check every claim** in his commentary against what he gave you. Video 1: he said Benue,
      his own research said Plateau. Cut it and tell him plainly.
 4. **Cut**: `vo_config.json` (copy `vo_config.example.json`), then `python3 vo_01_cut.py`.
+   Set `end` 0.4 s after the end of his last word on the loudness plot. Check the last word is whole.
 5. **Listen for restarts after the cut, at the end too** (video 1 had one in the last line).
    List every raw word longer than 0.9 s inside the kept part. Transcribe each of those spots
    on its own (`condition_on_previous_text=False`) and plot its loudness every 100 ms. Video 1
@@ -43,6 +44,11 @@ Work in `projects/<name>/`. Never commit his voice, the script or the shot list.
      that line sits a third of the way down, never under the captions.
    - Photos: no faces of private people, no watermarks, no graphics with claims he did not make.
      A map is drawn from Natural Earth (public domain).
+   - **Short inserts while he reads the post.** `add('<phrase>', kind, file, dur=2.6, back=True)`:
+     the picture arrives on the phrase, stays about 2 to 3 s, then the video goes back to the post
+     on the line he is reading. While he comments (not reading), pictures run until the next one.
+   - **Commentary needs its own pictures.** Offer him 2 to 4 AI image prompts, portrait 9:16, no
+     face, no text, no real person (see the prompts in `voiceover-edit/prompts.md`).
    - Shot list in `vo_shots.py`: one `add('<spoken phrase>', kind, file, kick=..., y=..., hl=...)`
      per shot. A shot starts when the phrase it illustrates is said: the candle on "kidnapped", never a sentence early.
      A kicker says only what is said in the kept voice. A kicker is a few words in capitals.
@@ -50,6 +56,6 @@ Work in `projects/<name>/`. Never commit his voice, the script or the shot list.
    the highlight is on the line he is reading, text is not cut at the sides, captions are readable.
 8a. **Music**: `python3 ../../music/make_music.py <seconds> music.wav` (our own, no licence).
 9. **Render**: `python3 vo_03_render.py` (about 10 minutes for 3 minutes).
-10. **Mix**: `python3 vo_04_mix.py`. Report the loudness (-14 LUFS) and true peak (under -1.5 dB).
+10. **Mix**: `python3 vo_04_mix.py` (pops for pictures, one shutter on the hook, whoosh and tick on the end card). Report the loudness (-14 LUFS) and true peak (under -1.5 dB).
 11. **Check**: transcribe the final with the medium model; no missing words, no repeats. Stills at
     every shot. Send it with the caption, titles and photo credits (say which licences are unknown).

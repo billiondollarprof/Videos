@@ -1,9 +1,9 @@
 # ============================================================
-# VO 04 MIX: voice + music + sound effects, then loudness for the platforms
+# VO 04 MIX: voice + music + sound effects (pops for pictures), then loudness for the platforms
 # What : - music (music/make_music.py) about 20 dB under the voice, and ducked a further few dB
 #          while he speaks (sidechain: the voice pushes the music down)
-#        - at each shot change: a soft air whoosh as the new picture rises, and a quiet camera shutter
-#        - on the end card: a whoosh and a warm tick
+#        - a picture arrives: soft pop + tiny air swipe. Back to the post: a lower pop.
+#        - hook: one camera shutter. End card: whoosh, shutter and a warm tick
 #        - two-pass loudnorm to -14 LUFS, true peak under -1.5 dB, measured on the AAC file
 # In   : voice_cut.wav, video_silent.mp4, shots.json, music.wav   Out: vo_final.mp4
 # Never: never change the voice itself. His voice is always the loudest thing.
@@ -12,12 +12,17 @@ import json, subprocess
 
 SH = json.load(open("shots.json")); S = "/home/user/videos/sfx/"
 # --- 1. Cues: (time, file, gain in dB) ---
-cues = []
+# Voiceover sounds are pops, not whooshes (his note, 2026-11-07: there is no camera, the pictures
+# are graphics). A picture arrives: soft pop with a tiny air swipe. It goes back to the post: a
+# lower, quieter pop. One camera shutter on the hook, and the whoosh and tick on the end card.
+cues = [(0.08, S + "camera-shutter.wav", -20)]
 for s in SH[1:]:
     if s["kind"] == "end":
-        cues += [(s["s"], S + "whoosh-air.wav", -14), (s["s"] + 0.9, S + "tick-warm.wav", -16)]
+        cues += [(s["s"], S + "whoosh-air.wav", -16), (s["s"] + 0.8, S + "tick-warm.wav", -17), (s["s"] + 0.1, S + "camera-shutter.wav", -20)]
+    elif s.get("ret"):
+        cues += [(s["s"] + 0.05, S + "pop-low.wav", -21)]
     else:
-        cues += [(max(0, s["s"] - 0.05), S + "whoosh-air-short.wav", -15), (s["s"] + 0.12, S + "camera-shutter.wav", -22)]
+        cues += [(max(0, s["s"] - 0.02), S + "swipe-soft.wav", -26), (s["s"] + 0.18, S + "pop-soft.wav", -18)]
 
 # --- 2. Mix: voice, ducked music, effects ---
 inp = ["-i", "voice_cut.wav", "-i", "music.wav"]; f = []
