@@ -24,7 +24,7 @@ TOP, BOT = P.get("post_top_px", 280), P.get("post_bottom_px", 1790)
 a = np.asarray(Image.open(sys.argv[1]).convert("RGB")); b = np.asarray(Image.open(sys.argv[2]).convert("RGB"))
 ga, gb = a.mean(2), b.mean(2)
 cut = 2100                                                  # rows of the top still we keep
-off = min(range(300, cut - 100), key=lambda o: np.abs(ga[cut - 400:cut - 200] - gb[cut - 400 - o:cut - 200 - o]).mean())
+off = min(range(300, cut - 400), key=lambda o: np.abs(ga[cut - 400:cut - 200] - gb[cut - 400 - o:cut - 200 - o]).mean())
 tall = Image.fromarray(np.vstack([a[TOP:cut], b[cut - off:BOT]]))
 for box in P.get("post_blank", []): ImageDraw.Draw(tall).rectangle(box, fill=(0, 0, 0))
 tall.save("post/tall.png"); print("scroll offset", off, "tall", tall.size)

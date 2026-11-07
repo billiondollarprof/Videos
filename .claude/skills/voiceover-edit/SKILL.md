@@ -17,7 +17,7 @@ Work in `projects/<name>/`. Never commit his voice, the script or the shot list.
    - **Check every claim** in his commentary against what he gave you. Video 1: he said Benue,
      his own research said Plateau. Cut it and tell him plainly.
 4. **Cut**: `vo_config.json` (copy `vo_config.example.json`), then `python3 vo_01_cut.py`.
-5. **Listen for restarts after the cut.** Transcribe the cut voice with the medium model and
+5. **Listen for restarts after the cut, at the end too** (video 1 had one in the last line). Transcribe the cut voice with the medium model and
    **no** filler prompt (with it, Whisper invented "Obi," tokens). A gap in the raw word times
    (a word lasting 2 s) hides a false start: plot the loudness every 50 ms, find the restart,
    cut the first take, keep the second. Then cut again.
