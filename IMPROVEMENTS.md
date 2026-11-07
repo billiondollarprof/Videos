@@ -85,3 +85,14 @@ coloured background light believable (it looked fake in a lit room).
   broadcast). He picks one by ear. The choice goes in the repo and becomes the default.
 - Honest limit: EQ and compression get a cheap mic much closer to a good one, but not equal. Mic
   distance (a hand's width from his mouth, slightly off to the side) matters more than any filter.
+
+### Next job (Anthony, 2026-11-07): a voiceover video, no face
+A test post about an election in Nigeria: an opposition party's questions to the president about how
+funds were mismanaged. His voice read over screen recordings of the party's posts and 5 to 7 free
+photos, with camera-shutter sounds, a film-style colour grade and his voice enhanced (still his own).
+Order: he records the voice and uploads it, pastes the word-for-word transcript, screen-records the
+posts and uploads them. I pick the pictures from the script, he approves, I build, he posts.
+Ground rules proposed (to confirm with him before they become rules): questions stay questions and are
+attributed on screen; photos are free-licence only, each licence checked and credited; no AI images of
+real people or real events (AI only for generic, labelled illustration); private people's names in the
+recorded posts are blurred. Make it a skill (`voiceover-edit`) once it works.
