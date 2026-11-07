@@ -17,7 +17,13 @@ Work in `projects/<name>/`. Never commit his voice, the script or the shot list.
    - **Check every claim** in his commentary against what he gave you. Video 1: he said Benue,
      his own research said Plateau. Cut it and tell him plainly.
 4. **Cut**: `vo_config.json` (copy `vo_config.example.json`), then `python3 vo_01_cut.py`.
-5. **Listen for restarts after the cut, at the end too** (video 1 had one in the last line). Transcribe the cut voice with the medium model and
+5. **Listen for restarts after the cut, at the end too** (video 1 had one in the last line).
+   List every raw word longer than 0.9 s inside the kept part. Transcribe each of those spots
+   on its own (`condition_on_previous_text=False`) and plot its loudness every 100 ms. Video 1
+   hid two repeats this way ("deserve to know how many" said twice, a restart before "if you do
+   not fix power").
+   - The gaps after the cut: `silencedetect=n=-40dB:d=0.25` must find nothing.
+   - Listen for a sound at the joints: the breaths must be room tone, never his voice. Transcribe the cut voice with the medium model and
    **no** filler prompt (with it, Whisper invented "Obi," tokens). A gap in the raw word times
    (a word lasting 2 s) hides a false start: plot the loudness every 50 ms, find the restart,
    cut the first take, keep the second. Then cut again.
@@ -25,7 +31,7 @@ Work in `projects/<name>/`. Never commit his voice, the script or the shot list.
    quotes where he means someone, numbers as he said them). Transcribe the cut voice with word
    times (`cut_words.json`). If Whisper calls the opening laughter, time the first words by hand
    in `vo_opening.json`. `python3 vo_02_captions.py`. Expect 90% matched or more.
-7. **Pictures**:
+7. **Pictures** (open on a moving picture with the hook, never on the post):
    - Post: grab a still at the top and one at the bottom of the screen recording
      (`ffmpeg -ss <t> -i post.mp4 -frames:v 1 post/top.png`). `python3 vo_02b_post_lines.py
      post/top.png post/bottom.png` stitches one tall page with the phone's top bar cut off,
@@ -39,6 +45,7 @@ Work in `projects/<name>/`. Never commit his voice, the script or the shot list.
      per shot. A shot starts when the phrase is said. A kicker is a few words in capitals.
 8. **Look before rendering**: `python3 vo_03_render.py 0 <frame> <frame>` writes stills. Check
    the highlight is on the line he is reading, text is not cut at the sides, captions are readable.
+8a. **Music**: `python3 ../../music/make_music.py <seconds> music.wav` (our own, no licence).
 9. **Render**: `python3 vo_03_render.py` (about 10 minutes for 3 minutes).
 10. **Mix**: `python3 vo_04_mix.py`. Report the loudness (-14 LUFS) and true peak (under -1.5 dB).
 11. **Check**: transcribe the final with the medium model; no missing words, no repeats. Stills at

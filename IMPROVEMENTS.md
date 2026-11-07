@@ -105,3 +105,5 @@ recorded posts are blurred. Make it a skill (`voiceover-edit`) once it works.
   light across each picture and each highlighted line, kickers that slide in.
 - Shot changes: a soft 5-frame flash with a camera shutter. End card with a whoosh and a tick.
 - Frames drawn in Python straight into x264: no Remotion needed for this kind of video.
+- Version 2: our own music bed, ducked under the voice. Room tone fixed (no more voice at the joints).
+  Pictures rise and leave with easing, cards float, the post floats while it scrolls with his reading.

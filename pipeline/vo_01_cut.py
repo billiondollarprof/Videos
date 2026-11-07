@@ -22,7 +22,7 @@ import numpy as np
 C = json.load(open("vo_config.json"))
 W = json.load(open("words.json"))["words"]
 SPEED = C.get("speed", 1.1)
-PZ = C.get("pauses", {"within": 0.10, "between": 0.28, "after_cut": 0.32})
+PZ = C.get("pauses", {"within": 0.06, "between": 0.16, "after_cut": 0.22})
 
 # --- 1. The cleaned voice, and where the voice is (loudness above the room) ---
 w = wave.open("face48k_clean.wav"); SR = w.getframerate()
@@ -66,9 +66,13 @@ def ends_sentence(t):
     last = [w_ for w_ in W if w_["e"] <= t + 0.25]
     return bool(last) and last[-1]["w"].rstrip()[-1:] in ".?!"
 cut_edges = [b for _, b, *_ in C["cuts"]]
-quiet = np.argsort(db)[: max(50, n // 20)]              # the quietest 10 ms slices: room tone
-tone_start = int(sorted(quiet)[len(quiet) // 2]) * hop
-room = x[tone_start:tone_start + SR]                    # one second of room tone to borrow from
+# Room tone = the quietest 10 ms slices joined together. NEVER one second taken from a single
+# spot: that spot was his voice in voiceover 1, and every joint said "Obi" (his note, 2026-11-07).
+quiet = np.sort(np.argsort(db)[:200])                   # the 200 quietest slices, in time order
+room = np.concatenate([x[q * hop:(q + 1) * hop] for q in quiet])
+assert 20 * np.log10(np.sqrt((room ** 2).mean()) / 32768 + 1e-9) < floor + 3, "room tone is not quiet"
+sm = int(0.002 * SR)                                    # tiny fades so the joins in the tone do not click
+for k in range(1, len(quiet)): room[k * hop - sm:k * hop + sm] *= 0.6
 out, timeline, t_out = [], [], 0.0
 FADE = int(0.008 * SR)
 for k, (a, b) in enumerate(pieces):

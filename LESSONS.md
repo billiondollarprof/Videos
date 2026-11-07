@@ -119,3 +119,14 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 - The filler prompt made Whisper invent "Obi," before each sentence of the cut voice, and call
   the first 28 s laughter. Check the cut voice without the prompt.
 - Zooming a phone post cuts text at the sides. Posts get only a 4% zoom; the highlight carries the eye.
+
+## Voiceover video 1, notes on version 1 (2026-11-07)
+
+| Note | Now lives in |
+|---|---|
+| The opening showed the post. Open on a moving picture instead. | `vo_03_render.py` header, `voiceover-edit` step 7 |
+| "Obi, Obi" at every joint. Cause: the room tone was one second taken from one spot, and that spot was his voice. Room tone is now built from the 200 quietest slices, and checked. | `vo_01_cut.py` section 3 |
+| Gaps still a little too long. Pauses now 0.06 s inside a sentence, 0.16 s between, 0.22 s at a cut. | `vo_config.example.json`, `voiceover-edit` |
+| Repeats were still in. Two were hidden inside words Whisper stretched over 2 to 4 s. Every raw word longer than 0.9 s is now re-listened to on its own. | `voiceover-edit` step 5 |
+| Add music: without it the video does not flow. Our own music, made in code. | `music/make_music.py`, `vo_04_mix.py` |
+| Motion was not top notch. Pictures rise from the bottom with a soft bounce while the old one leaves upward. Cards float and tilt. The post is a floating sheet that moves while he reads. Labels and caption words pop. | `vo_03_render.py` |

@@ -12,8 +12,8 @@
   ]
  ],
  "pauses": {
-  "within": 0.1,
-  "between": 0.28,
-  "after_cut": 0.32
+  "within": 0.06,
+  "between": 0.16,
+  "after_cut": 0.22
  }
 }
