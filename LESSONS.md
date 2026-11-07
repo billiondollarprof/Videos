@@ -130,3 +130,5 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | Repeats were still in. Two were hidden inside words Whisper stretched over 2 to 4 s. Every raw word longer than 0.9 s is now re-listened to on its own. | `voiceover-edit` step 5 |
 | Add music: without it the video does not flow. Our own music, made in code. | `music/make_music.py`, `vo_04_mix.py` |
 | Motion was not top notch. Pictures rise from the bottom with a soft bounce while the old one leaves upward. Cards float and tilt. The post is a floating sheet that moves while he reads. Labels and caption words pop. | `vo_03_render.py` |
+| A picture must arrive with the words it shows: the candle came in on the power line, before kidnapping was mentioned. Anchor each picture to the exact phrase it illustrates, not to the start of the sentence before. | `voiceover-edit` step 7 |
+| "M" sounds and a repeat at the end. A cut had left half of "making" and an "um". Cuts are now set on the loudness plot, at the silence between words, never inside a word. | `voiceover-edit` step 5 |

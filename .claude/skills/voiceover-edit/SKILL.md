@@ -23,6 +23,8 @@ Work in `projects/<name>/`. Never commit his voice, the script or the shot list.
    hid two repeats this way ("deserve to know how many" said twice, a restart before "if you do
    not fix power").
    - The gaps after the cut: `silencedetect=n=-40dB:d=0.25` must find nothing.
+   - Set every cut edge in a silence on the 20 ms loudness plot, never inside a word (a cut
+     inside "making" left an "m" sound).
    - Listen for a sound at the joints: the breaths must be room tone, never his voice. Transcribe the cut voice with the medium model and
    **no** filler prompt (with it, Whisper invented "Obi," tokens). A gap in the raw word times
    (a word lasting 2 s) hides a false start: plot the loudness every 50 ms, find the restart,
@@ -42,7 +44,8 @@ Work in `projects/<name>/`. Never commit his voice, the script or the shot list.
    - Photos: no faces of private people, no watermarks, no graphics with claims he did not make.
      A map is drawn from Natural Earth (public domain).
    - Shot list in `vo_shots.py`: one `add('<spoken phrase>', kind, file, kick=..., y=..., hl=...)`
-     per shot. A shot starts when the phrase is said. A kicker is a few words in capitals.
+     per shot. A shot starts when the phrase it illustrates is said: the candle on "kidnapped", never a sentence early.
+     A kicker says only what is said in the kept voice. A kicker is a few words in capitals.
 8. **Look before rendering**: `python3 vo_03_render.py 0 <frame> <frame>` writes stills. Check
    the highlight is on the line he is reading, text is not cut at the sides, captions are readable.
 8a. **Music**: `python3 ../../music/make_music.py <seconds> music.wav` (our own, no licence).
