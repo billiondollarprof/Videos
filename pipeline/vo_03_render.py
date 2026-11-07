@@ -81,7 +81,10 @@ def caption(d,tt):
         s,e=C[g[0]]['s'],C[g[-1]]['e']
         if s<=tt<e+0.15 or (s<=tt and groups.index(g)+1<len(groups) and tt<C[groups[groups.index(g)+1][0]]['s'] and tt-e<0.4):
             f,a=F8(84),DJ(84); words=[C[i]['w'] for i in g]; sp=d.textlength(' ',font=f)
-            tw=sum(text_w(d,w,f,a) for w in words)+sp*(len(words)-1); x=(W_-tw)/2; y=1530
+            tw=sum(text_w(d,w,f,a) for w in words)+sp*(len(words)-1)
+            if tw>980:   # a long group shrinks to fit inside the screen
+                z=int(84*980/tw); f,a=F8(z),DJ(z); sp=d.textlength(' ',font=f); tw=sum(text_w(d,w,f,a) for w in words)+sp*(len(words)-1)
+            x=(W_-tw)/2; y=1530
             for i,w in zip(g,words):
                 col=YEL if C[i]['s']<=tt<C[i]['e']+0.05 or (C[i]['s']<=tt and i==g[-1]) else WHITE
                 draw_text(d,(x,y),w,f,a,col,stroke=7); x+=text_w(d,w,f,a)+sp
