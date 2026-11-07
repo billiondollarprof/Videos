@@ -1,24 +1,24 @@
 # ============================================================
 # VO 03 RENDER: the picture for a voiceover video, drawn frame by frame (PIL) into x264
-# What : shots anchored to spoken phrases (vo_shots.py in the project): post stills with a
-#        yellow highlight on the line being read, photos as rounded cards over a blurred copy
+# What : shots anchored to spoken phrases (vo_shots.py in the project): the post (post/tall.png) with the line
+#        being read highlighted and the page scrolling with him (readlines.json), photos as rounded cards over a blurred copy
 #        of themselves, a map. Every shot moves: cards zoom in or out (alternating) and pan,
 #        the backdrop drifts, a soft band of light crosses each card and each highlighted line,
 #        kickers slide up. Grade: vignette and fine grain. A soft white flash (5 frames) at
 #        each shot change, never on frame 0. Captions 1 to 3 words, spoken word yellow.
 # Why  : no face video to cut around, so the pictures carry the eye. Remotion is not needed.
-# In   : caps.json, vo_timeline.json, vo_config.json (source line), vo_shots.py, pjs800/600.ttf
+# In   : caps.json, readlines.json, post/tall.png, vo_timeline.json, vo_config.json (source line), vo_shots.py, pjs800/600.ttf
 # Out  : video_silent.mp4, shots.json (for the sound cues)
 # Use  : python3 vo_03_render.py           whole video
 #        python3 vo_03_render.py 0 300 900  stills of frames 300 and 900 (look before rendering)
-# Never: never put the editing on screen. Crop the phone status bar (top 100 px of a post).
+# Never: never put the editing on screen. A post shot marked top=True opens at the top and highlights nothing.
 # ============================================================
 # Voiceover video 1: frame renderer (PIL) -> silent video + cue list
 import json,re,subprocess,numpy as np
 from PIL import Image,ImageDraw,ImageFont,ImageFilter,ImageOps,ImageEnhance
 W_,H_,FPS=1080,1920,30
 NAVY=(11,27,58);YEL=(255,204,0);BLUE=(30,136,255);WHITE=(255,255,255)
-C=json.load(open('caps.json')); P=json.load(open('vo_config.json')); SOURCE=P.get('source',''); TOTAL=json.load(open('vo_timeline.json'))['total']; END=3.2; DUR=TOTAL+END
+C=json.load(open('caps.json')); SOURCE=json.load(open('vo_config.json'))['source']; TOTAL=json.load(open('vo_timeline.json'))['total']; END=3.2; DUR=TOTAL+END
 F8=lambda s:ImageFont.truetype('pjs800.ttf',s); F6=lambda s:ImageFont.truetype('pjs600.ttf',s)
 DJ=lambda s:ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',s)
 n=lambda t:re.sub(r'[^a-z0-9]','',t.lower())
@@ -32,7 +32,7 @@ SH=[]; t=0.0
 def add(ph,kind,src,**k):
     global t
     s=0.0 if ph is None else at(ph,t); t=s; SH.append(dict(s=s,kind=kind,src=src,**k))
-exec(open('vo_shots.py').read())   # the shot list for this video lives in the project folder
+exec(open('vo_shots.py').read())
 SH.append(dict(s=TOTAL+0.05,kind='end',src=None))
 for i,s in enumerate(SH): s['e']=SH[i+1]['s'] if i+1<len(SH) else DUR
 json.dump([{k:v for k,v in s.items()} for s in SH],open('shots.json','w'),indent=0)
@@ -94,6 +94,24 @@ def sweep(im,x0,y0,w,h,p):
     band=Image.new('L',im.size,0); band.paste(SW,(int(x0-500+(w+700)*p),y0-600))
     m=Image.new('L',im.size,0); m.paste(255,(x0,y0,x0+w,y0+h)); from PIL import ImageChops
     im.paste((255,250,235),(0,0),ImageChops.multiply(band,m))
+_t=Image.open('post/tall.png').convert('RGB'); TALL=Image.new('RGB',(_t.width,_t.height+700),(0,0,0)); TALL.paste(_t,(0,0)); PTOP=170; VIEW=H_-PTOP
+RL=json.load(open('readlines.json'))
+NF_=round(DUR*FPS); READ=[None]*NF_; SCROLL=[0.0]*NF_
+cur=None; ci=0; tgt=0.0; pos=0.0; prev_shot=None
+for fi in range(NF_):
+    tt=fi/FPS
+    while ci<len(C) and C[ci]['s']<=tt:
+        if RL[ci]: cur=(ci,RL[ci])
+        ci+=1
+    sh=next((x for x in SH if x['s']<=tt<x['e']),None)
+    reading=cur is not None and tt<=C[cur[0]]['e']+1.2 and not (sh and sh.get('top'))
+    if reading: tgt=max(0,(cur[1][0]+cur[1][1])/2-0.33*VIEW)
+    if sh and sh.get('top'): tgt=0.0
+    if sh is not prev_shot:
+        if not reading: tgt=0.0
+        pos=tgt; prev_shot=sh
+    pos+= (tgt-pos)*0.10
+    SCROLL[fi]=pos; READ[fi]=cur[1] if reading else None
 def ease(u): return u*u*(3-2*u)
 def frame(fi):
     tt=fi/FPS; s=next(x for x in SH if x['s']<=tt<x['e']) if tt<SH[-1]['e'] else SH[-1]
@@ -104,18 +122,15 @@ def frame(fi):
         f=F6(56); t1='Tell me in the comments.'; d.text(((W_-d.textlength(t1,font=f))/2,860),t1,font=f,fill=WHITE)
         pill(d,1060,'FOLLOW FOR MORE',64,BLUE,WHITE)
     elif s['kind']=='post':
-        src=layer(s); z=1.0+0.04*ease(u); vw,vh=W_/z,H_/z
-        cy=s["y"]-100; top=min(max(0,cy-vh*0.40),src.height-vh); left=(W_-vw)/2
-        im=src.crop((round(left),round(top),round(left+vw),round(top+vh))).resize((W_,H_),Image.LANCZOS)
-        if 'hl' in s:
-            a=min(1,(tt-s['s'])/0.4); y0=(s['hl'][0]-100-top)*z; y1=(s['hl'][1]-100-top)*z
-            ov=Image.new('RGBA',(W_,H_)); ImageDraw.Draw(ov).rounded_rectangle([18,y0-8,W_-18,y1+8],18,fill=(255,204,0,int(70*a)),outline=(255,204,0,int(230*a)),width=5)
+        top=SCROLL[fi]; im=Image.new('RGB',(W_,H_),(0,0,0))
+        im.paste(TALL.crop((0,round(top),W_,round(top)+H_-PTOP)),(0,PTOP))
+        li=READ[fi]
+        if li is not None:
+            y0,y1=li[0]-top+PTOP,li[1]-top+PTOP; ov=Image.new('RGBA',(W_,H_))
+            ImageDraw.Draw(ov).rounded_rectangle([10,y0-10,W_-10,y1+10],14,fill=(255,204,0,60),outline=(255,204,0,230),width=4)
             im=Image.alpha_composite(im.convert('RGBA'),ov).convert('RGB')
-        if 'hl' in s and 0.4<tt-s['s']<1.7: sweep(im,18,int(y0-8),W_-36,int(y1-y0+16),(tt-s['s']-0.4)/1.3)
-        d=ImageDraw.Draw(im)
-        d.rounded_rectangle([40,70,730,140],34,fill=(0,0,0)); d.text((66,84),SOURCE,font=F6(30),fill=(220,220,220))
-        im.paste((0,0,0),(0,1480,W_,1700)) if False else None
         band=Image.new('RGBA',(W_,H_));ImageDraw.Draw(band).rectangle([0,1470,W_,1700],fill=(0,0,0,190));im=Image.alpha_composite(im.convert('RGBA'),band).convert('RGB');d=ImageDraw.Draw(im)
+        d.rounded_rectangle([40,62,40+d.textlength(SOURCE,font=F6(30))+52,132],34,fill=(25,25,25)); d.text((66,76),SOURCE,font=F6(30),fill=(225,225,225))
         if s.get('hook'): pill(d,1300,s['hook'],62)
     else:
         bg,card=layer(s); k=SH.index(s); zin=k%2==0; z=1.0+0.09*(ease(u) if zin else 1-ease(u))

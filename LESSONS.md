@@ -109,6 +109,7 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | Animate the pictures: light flowing across, light zoom, movement on every shot. | `vo_03_render.py`, `voiceover-edit` |
 | Record every step, and turn new work into a skill. | `voiceover-edit`, this file |
 | No faces of people in pictures. | `voiceover-edit` step 7 |
+| The screen share must read properly, with the phone top cut off. Show exactly the line I am reading at that moment. | `vo_02b_post_lines.py`, `vo_03_render.py`, `voiceover-edit` step 7 |
 
 ## Found while editing voiceover video 1
 

@@ -26,14 +26,19 @@ Work in `projects/<name>/`. Never commit his voice, the script or the shot list.
    times (`cut_words.json`). If Whisper calls the opening laughter, time the first words by hand
    in `vo_opening.json`. `python3 vo_02_captions.py`. Expect 90% matched or more.
 7. **Pictures**:
-   - Post: grab stills from the screen recording, crop the status bar, find the y of each key
-     line with `tesseract <still> - --psm 4 tsv`.
+   - Post: grab a still at the top and one at the bottom of the screen recording
+     (`ffmpeg -ss <t> -i post.mp4 -frames:v 1 post/top.png`). `python3 vo_02b_post_lines.py
+     post/top.png post/bottom.png` stitches one tall page with the phone's top bar cut off,
+     and maps every word he reads to its line. Look at `post/tall.png`: no status bar, no
+     floating recorder button (paint it out with `post_blank`).
+   - While the post is on screen, the line he is reading is highlighted and the page scrolls so
+     that line sits a third of the way down, never under the captions.
    - Photos: no faces of private people, no watermarks, no graphics with claims he did not make.
      A map is drawn from Natural Earth (public domain).
    - Shot list in `vo_shots.py`: one `add('<spoken phrase>', kind, file, kick=..., y=..., hl=...)`
      per shot. A shot starts when the phrase is said. A kicker is a few words in capitals.
 8. **Look before rendering**: `python3 vo_03_render.py 0 <frame> <frame>` writes stills. Check
-   the highlight sits on the line, text is not cut at the sides, captions are readable.
+   the highlight is on the line he is reading, text is not cut at the sides, captions are readable.
 9. **Render**: `python3 vo_03_render.py` (about 10 minutes for 3 minutes).
 10. **Mix**: `python3 vo_04_mix.py`. Report the loudness (-14 LUFS) and true peak (under -1.5 dB).
 11. **Check**: transcribe the final with the medium model; no missing words, no repeats. Stills at
