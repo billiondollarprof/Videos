@@ -4,6 +4,8 @@
 #        sub bass, a warm pad and a soft pluck arpeggio. Fades in and out. Any length.
 # Why  : without music the voiceover did not flow (his note, 2026-11-07). TikTok music is added
 #        by him in the app; this bed is for the file itself (Shorts, Reels, YouTube).
+# STATUS: NOT GOOD ENOUGH (his words, 2026-11-07: "ting ting ting, fake"). The plucks and hi-hats sound
+#         artificial. Do not use it unless he asks. A soft pad alone, or TikTok's library, is better.
 # Use  : python3 make_music.py <seconds> out.wav [bpm]
 # Never: never louder than the voice: the mix (vo_04_mix.py) sits it about 18 dB under and ducks it.
 # ============================================================

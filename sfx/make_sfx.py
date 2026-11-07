@@ -105,12 +105,15 @@ def paper():
 
 # --- 7. Pops: for a picture that appears or goes away in a voiceover video (no face on camera) ---
 # A pop is a short sine that starts high and falls fast, with a tiny click on top: a soft bubble.
-def pop(f_hi=950, f_lo=330, sec=0.16, tail=0.05):
+def pop(f_start=260, f_end=820, glide=0.012, sec=0.2, tail=0.045):
+    """A bubble pop: a round tone that rises fast then dies, a soft thump under it and a tiny click.
+    Loud enough to hear over speech once mixed at about -4 dB (his note, 2026-11-07: "I can't hear any pop")."""
     n = int(sec * SR); t = np.arange(n) / SR
-    f = f_lo + (f_hi - f_lo) * np.exp(-t / 0.018)
-    body = np.sin(2 * np.pi * np.cumsum(f) / SR) * env(n, 0.001, tail)
-    click = lowpass(noise(sec), 5000) * env(n, 0.0003, 0.004)
-    return body + 0.18 * click
+    f = f_end + (f_start - f_end) * np.exp(-t / glide)
+    body = np.sin(2 * np.pi * np.cumsum(f) / SR) * env(n, 0.0015, tail)
+    thump = np.sin(2 * np.pi * 110 * t) * env(n, 0.001, 0.05) * 0.5
+    click = lowpass(noise(sec), 6000) * env(n, 0.0002, 0.003) * 0.35
+    return body + thump + click
 
 def swipe():
     # a very short breath of air, so the pop has a little movement around it
@@ -127,6 +130,6 @@ if __name__ == "__main__":
     save("camera-shutter.wav", shutter())
     save("paper-flick.wav", paper())
     save("pop-soft.wav", pop())                       # a picture arrives
-    save("pop-low.wav", pop(620, 210, 0.2, 0.07))      # the picture goes, back to the post
+    save("pop-low.wav", pop(190, 520, 0.012, 0.22, 0.06))      # the picture goes, back to the post
     save("swipe-soft.wav", swipe())
     print("made:", sorted(f for f in os.listdir(HERE) if f.endswith(".wav")))

@@ -142,3 +142,11 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | Pops, not whooshes, for pictures in a voiceover (no camera, the pictures are graphics): a soft pop with a tiny air swipe when a picture arrives, a lower pop when it goes back to the post. One camera shutter on the hook and one on the end card. | `sfx/make_sfx.py`, `vo_04_mix.py` |
 | The food came too early. Food on "delicious cuisine", the map on "Akwa Ibom", each short, with the post between. | `voiceover-edit` step 7 |
 | The last word ("accountable") was cut off. The end mark was set on the loudness plot at the end of the last word, not after it. Keep 0.4 s after his last word, then a 0.3 s breath before the end card. | `voiceover-edit` step 4 |
+
+## Voiceover video 1, notes on version 3 (2026-11-07)
+
+| Note | Now lives in |
+|---|---|
+| I can only hear whoosh, no pop. Cause: the pops sat 18 dB under the voice, and a small air swipe under each one sounded like a whoosh. Pops now mix about as loud as the voice, with no swipe and no whoosh. After mixing, measure the pop level against the voice. | `vo_04_mix.py`, `sfx/make_sfx.py` |
+| The music was not nice: "ting ting ting", fake. If no soft tone can be found, no music. Music is off by default. The code-made bed (plucks, hi-hats) is not good enough: for music, use TikTok's library or YouTube's Audio Library. | `vo_04_mix.py` (`--music`), `music/make_music.py` header |
+| Pop, pop, pop on every transition, please. | `vo_04_mix.py` |

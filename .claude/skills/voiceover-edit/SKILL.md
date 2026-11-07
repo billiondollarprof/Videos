@@ -54,8 +54,10 @@ Work in `projects/<name>/`. Never commit his voice, the script or the shot list.
      A kicker says only what is said in the kept voice. A kicker is a few words in capitals.
 8. **Look before rendering**: `python3 vo_03_render.py 0 <frame> <frame>` writes stills. Check
    the highlight is on the line he is reading, text is not cut at the sides, captions are readable.
-8a. **Music**: `python3 ../../music/make_music.py <seconds> music.wav` (our own, no licence).
+8a. **Music**: none by default. The code-made bed sounded fake to him. He adds music in TikTok, or use
+    YouTube's Audio Library for long form. `vo_04_mix.py --music` mixes a `music.wav` if he gives one.
 9. **Render**: `python3 vo_03_render.py` (about 10 minutes for 3 minutes).
-10. **Mix**: `python3 vo_04_mix.py` (pops for pictures, one shutter on the hook, whoosh and tick on the end card). Report the loudness (-14 LUFS) and true peak (under -1.5 dB).
+10. **Mix**: `python3 vo_04_mix.py` (a pop for each picture, a lower pop back to the post, one shutter on the
+    hook and the end card). No whooshes. The script must show each pop at about the voice's level. Report the loudness (-14 LUFS) and true peak (under -1.5 dB).
 11. **Check**: transcribe the final with the medium model; no missing words, no repeats. Stills at
     every shot. Send it with the caption, titles and photo credits (say which licences are unknown).
