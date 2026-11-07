@@ -1,0 +1,19 @@
+{
+ "_what": "Example. Cuts are seconds of the raw voice, each with a short label. Labels stay in the project copy only.",
+ "speed": 1.1,
+ "start": 0.0,
+ "end": 0.0,
+ "source": "Source: <author> on X, <date>",
+ "cuts": [
+  [
+   0.0,
+   0.0,
+   "label"
+  ]
+ ],
+ "pauses": {
+  "within": 0.1,
+  "between": 0.28,
+  "after_cut": 0.32
+ }
+}

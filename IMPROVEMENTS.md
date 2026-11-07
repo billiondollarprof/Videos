@@ -96,3 +96,12 @@ Ground rules proposed (to confirm with him before they become rules): questions 
 attributed on screen; photos are free-licence only, each licence checked and credited; no AI images of
 real people or real events (AI only for generic, labelled illustration); private people's names in the
 recorded posts are blurred. Make it a skill (`voiceover-edit`) once it works.
+
+## Voiceover video 1 (2026-11-07)
+
+- A new kind of video: his voice only. New skill `voiceover-edit` and scripts `vo_01` to `vo_04`.
+- Breaths at every joint come from his own room tone, never digital silence.
+- Every shot moves: alternating zoom in and out, a slow pan, a drifting backdrop, a band of
+  light across each picture and each highlighted line, kickers that slide in.
+- Shot changes: a soft 5-frame flash with a camera shutter. End card with a whoosh and a tick.
+- Frames drawn in Python straight into x264: no Remotion needed for this kind of video.

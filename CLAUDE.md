@@ -154,6 +154,7 @@ the skill in the same change and say so. Never skip a step.
 | Job | Skill |
 |---|---|
 | The whole edit of a talking video with a phone screen | `vertical-edit` |
+| A voiceover video: his voice over a post, photos, a map | `voiceover-edit` |
 | Get footage from Google Drive | `drive-footage` |
 | Line up two recordings, find the drift | `sync-recordings` |
 | Captions from his transcript | `transcript-captions` |

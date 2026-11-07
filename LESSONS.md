@@ -96,3 +96,25 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | He is getting a mic: make the sound feel like a strong mic, still his own voice. A voice profile he picks by ear. | `IMPROVEMENTS.md` plan 3 |
 | He is getting a light: a darker room, white light on his face. | `IMPROVEMENTS.md` plan 2 |
 | Prefer his own room, improved (cut him out, clean the empty background, sharpen, brighten, remove stains, put him back), over a replacement. One or several backgrounds depending on whether he moved. | CLAUDE.md 5 (Look 5a), `IMPROVEMENTS.md` plan 1 |
+
+## Voiceover video 1 (2026-11-07)
+
+| Note | Now lives in |
+|---|---|
+| Under 3 minutes. Do it once and do it well. Make it clean. | `voiceover-edit` step 3 |
+| "Our papa" means the President: put it in quotes in the captions. | `voiceover-edit` step 6 |
+| Follow the post's wording where he reads it. He said 33 states. Fix mishearings from what is on screen. | `voiceover-edit` step 6 |
+| Repetitions: the first take is usually the mistake. Keep the later one. | `voiceover-edit` step 5, `cut-plan` |
+| Do not fast-forward. Cut pauses but keep short breaths. | `vo_01_cut.py` |
+| Animate the pictures: light flowing across, light zoom, movement on every shot. | `vo_03_render.py`, `voiceover-edit` |
+| Record every step, and turn new work into a skill. | `voiceover-edit`, this file |
+| No faces of people in pictures. | `voiceover-edit` step 7 |
+
+## Found while editing voiceover video 1
+
+- A claim in his commentary (Benue) did not match his own research (Plateau). Cut it and told him.
+- A false start (a restarted phrase) hid inside one
+  2-second "word" in the raw times. Found with a loudness plot. Now `voiceover-edit` step 5.
+- The filler prompt made Whisper invent "Obi," before each sentence of the cut voice, and call
+  the first 28 s laughter. Check the cut voice without the prompt.
+- Zooming a phone post cuts text at the sides. Posts get only a 4% zoom; the highlight carries the eye.
