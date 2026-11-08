@@ -150,3 +150,12 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | I can only hear whoosh, no pop. Cause: the pops sat 18 dB under the voice, and a small air swipe under each one sounded like a whoosh. Pops now mix about as loud as the voice, with no swipe and no whoosh. After mixing, measure the pop level against the voice. | `vo_04_mix.py`, `sfx/make_sfx.py` |
 | The music was not nice: "ting ting ting", fake. If no soft tone can be found, no music. Music is off by default. The code-made bed (plucks, hi-hats) is not good enough: for music, use TikTok's library or YouTube's Audio Library. | `vo_04_mix.py` (`--music`), `music/make_music.py` header |
 | Pop, pop, pop on every transition, please. | `vo_04_mix.py` |
+
+## Voiceover video 1, notes on version 4 (2026-11-08)
+
+| Note | Now lives in |
+|---|---|
+| "This part cracked me up": show someone laughing, or his own laughing photo, not clapping hands. | `voiceover-edit/prompts.md` |
+| Kidnapping line: show people being taken away by force (illustrated, invented characters, no blood), not a candle vigil. | `voiceover-edit/prompts.md` |
+| "Playing opposition": one more picture, invented Nigerian politicians against the government, as a semi-realistic cartoon (his usual style for this). Invented characters are fine; real people are not. Inserts are quick. | `voiceover-edit/prompts.md` |
+| Match each picture to the words, not the topic around them. | `voiceover-edit` step 7 |

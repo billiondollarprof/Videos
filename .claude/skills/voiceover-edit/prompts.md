@@ -11,3 +11,10 @@ Template:
 > (or: face out of frame), no text. Portrait 9:16.
 
 He uploads them to the same Drive folder as ai1, ai2, ai3, ai4, in the order of the prompts.
+
+## Style he uses for people (2026-11-08)
+Semi-realistic cartoon illustration, bold clean outlines, painterly shading. Invented characters
+that depict Nigerians (politicians, villagers), never real people, no text, no logos, no flags, no
+party symbols, no blood. Give a pair of prompts the same style line so they look like a set.
+Photos of real events (a vigil, a crowd) are not used for a claim the words do not make.
+A laugh line uses his own laughing photo (`me-laugh`), uploaded by him.
