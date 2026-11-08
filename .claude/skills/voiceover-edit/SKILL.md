@@ -30,6 +30,8 @@ Work in `projects/<name>/`. Never commit his voice, the script or the shot list.
      inside "making" left an "m" sound).
    - Cracks at the joints: count the pieces that start already loud (the first 30 ms after a cut above
      -40 dB). It should be a handful, not dozens.
+   - Dead air: the cut voice must have 0 slices of exact silence (below -120 dB over 10 ms). The script puts a
+     faint room bed (-76 dB) under the whole voice for that.
    - Listen for a sound at the joints: the breaths must be room tone, never his voice. Transcribe the cut voice with the medium model and
    **no** filler prompt (with it, Whisper invented "Obi," tokens). A gap in the raw word times
    (a word lasting 2 s) hides a false start: plot the loudness every 50 ms, find the restart,

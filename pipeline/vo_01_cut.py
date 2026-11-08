@@ -76,7 +76,8 @@ def ends_sentence(t):
 cut_edges = [b for _, b, *_ in C["cuts"]]
 # Room tone = the quietest 10 ms slices joined together. NEVER one second taken from a single
 # spot: that spot was his voice in voiceover 1, and every joint said "Obi" (his note, 2026-11-07).
-quiet = np.sort(np.argsort(db)[:200])                   # the 200 quietest slices, in time order
+quiet = np.sort(np.argsort(np.where(db > -100, db, 0))[:200])   # the 200 quietest slices, in time order (never the dead-silent ones)
+room_raw = np.concatenate([x[q * hop:(q + 1) * hop] for q in quiet])      # the room as it really sounds (face48k_clean)
 room = np.concatenate([xp[q * hop:(q + 1) * hop] for q in quiet]) * 2.5   # the polished room is very quiet: bring it to about -75 dB, never dead silence
 assert 20 * np.log10(np.sqrt((room ** 2).mean()) / 32768 + 1e-9) < floor + 3, "room tone is not quiet"
 sm = int(0.002 * SR)                                    # tiny fades so the joins in the tone do not click
@@ -98,6 +99,11 @@ for k, (a, b) in enumerate(pieces):
             tone = np.resize(room, int(pause * SR)) * 0.9
             out.append(tone); t_out += len(tone) / SR
 y = np.concatenate(out)
+# A faint, continuous room bed under the whole voice (-76 dB, about 50 dB under him). Without it the polished pauses
+# round to exact zero (315 slices on voiceover 1): dead air makes the voice sound swallowed. (2026-11-08)
+bed = np.resize(room_raw, len(y)).astype(np.float32)
+bed *= 10 ** ((-76 - 20 * np.log10(np.sqrt((bed ** 2).mean()) / 32768 + 1e-9)) / 20)
+y = y + bed
 wo = wave.open("_voice_1x.wav", "w"); wo.setnchannels(1); wo.setsampwidth(2); wo.setframerate(SR)
 wo.writeframes(np.clip(y, -32768, 32767).astype(np.int16).tobytes()); wo.close()
 
