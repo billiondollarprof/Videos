@@ -8,7 +8,8 @@ description: The whole job for a voiceover video (his voice only, no face video)
 Built on voiceover video 1 (2026-11-07). Scripts: `pipeline/vo_01_cut.py` to `vo_04_mix.py`.
 Work in `projects/<name>/`. Never commit his voice, the script or the shot list.
 
-1. **Get the files** (skill `drive-footage`). If a download comes back as HTML, the file is not
+1. **Get the files** (skill `drive-footage`). He names pictures by hand and not always in order: open each
+   one, match it by what it shows, and say the mapping back to him. If a download comes back as HTML, the file is not
    shared: ask him to share the folder. Sharing it yourself may be refused.
 2. **Clean the voice**: `04b_clean_voice.py`, then `01b_transcribe_fillers.py` (medium) for
    `words.json`.

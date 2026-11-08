@@ -159,3 +159,5 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | Kidnapping line: show people being taken away by force (illustrated, invented characters, no blood), not a candle vigil. | `voiceover-edit/prompts.md` |
 | "Playing opposition": one more picture, invented Nigerian politicians against the government, as a semi-realistic cartoon (his usual style for this). Invented characters are fine; real people are not. Inserts are quick. | `voiceover-edit/prompts.md` |
 | Match each picture to the words, not the topic around them. | `voiceover-edit` step 7 |
+| Remove the clapping hands and the candle vigil: they make no sense for the words. Laughter line: a picture of young Nigerians laughing, one laughing hardest, shown briefly. Kidnapping line: the illustrated picture of people being taken away. Opposition lines: ballot boxes, the chamber and the politicians facing the government, each a quick insert. | `voiceover-edit` step 7 |
+| He names files by hand and not always in order: look at each picture and match it by what it shows, then say the mapping back. | `voiceover-edit` step 1 |
