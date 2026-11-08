@@ -11,7 +11,8 @@ Work in `projects/<name>/`. Never commit his voice, the script or the shot list.
 1. **Get the files** (skill `drive-footage`). He names pictures by hand and not always in order: open each
    one, match it by what it shows, and say the mapping back to him. If a download comes back as HTML, the file is not
    shared: ask him to share the folder. Sharing it yourself may be refused.
-2. **Clean the voice**: `04b_clean_voice.py`, then `01b_transcribe_fillers.py` (medium) for
+2. **Clean the voice**: `04b_clean_voice.py`, then `04c_polish_voice.py` (the last of the rumble and tiny
+   crackles, voice unchanged; it prints the pause floor before and after), then `01b_transcribe_fillers.py` (medium) for
    `words.json`.
 3. **Under the length he asked for.** Keep the post he reads whole. Cut his own commentary first.
    List the cuts with times and words for him (skill `cut-plan`).
@@ -27,6 +28,8 @@ Work in `projects/<name>/`. Never commit his voice, the script or the shot list.
    - The gaps after the cut: `silencedetect=n=-40dB:d=0.25` must find nothing.
    - Set every cut edge in a silence on the 20 ms loudness plot, never inside a word (a cut
      inside "making" left an "m" sound).
+   - Cracks at the joints: count the pieces that start already loud (the first 30 ms after a cut above
+     -40 dB). It should be a handful, not dozens.
    - Listen for a sound at the joints: the breaths must be room tone, never his voice. Transcribe the cut voice with the medium model and
    **no** filler prompt (with it, Whisper invented "Obi," tokens). A gap in the raw word times
    (a word lasting 2 s) hides a false start: plot the loudness every 50 ms, find the restart,

@@ -161,3 +161,12 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | Match each picture to the words, not the topic around them. | `voiceover-edit` step 7 |
 | Remove the clapping hands and the candle vigil: they make no sense for the words. Laughter line: a picture of young Nigerians laughing, one laughing hardest, shown briefly. Kidnapping line: the illustrated picture of people being taken away. Opposition lines: ballot boxes, the chamber and the politicians facing the government, each a quick insert. | `voiceover-edit` step 7 |
 | He names files by hand and not always in order: look at each picture and match it by what it shows, then say the mapping back. | `voiceover-edit` step 1 |
+
+## Voiceover video 1, notes on version 5 (2026-11-08)
+
+| Note | Now lives in |
+|---|---|
+| An underlying background sound and small cracks are still there. Voice cleaner, purer, without changing it. Even with no music it must sound nice. | `04c_polish_voice.py`, `vo_01_cut.py` |
+| Cause 1: low rumble (120 to 250 Hz) in the pauses, lifted by the loudness step. Fixed by a gentle second clean-up: pauses went from -64 dB to -83 dB, voice level and tone unchanged. | `04c_polish_voice.py` |
+| Cause 2: the "cracks". 67 of 91 pieces began with the voice already loud, because the lead-in was only 0.03 s, so the fade-in clipped the start of a word. Lead-in is now 0.07 s, tail 0.09 s, fades 12 and 15 ms. Now 5 of 91. | `vo_01_cut.py` |
+| The polish step delays the sound by 25 ms. It is measured and removed in the script, so cuts do not move. | `04c_polish_voice.py` |

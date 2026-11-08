@@ -110,3 +110,5 @@ recorded posts are blurred. Make it a skill (`voiceover-edit`) once it works.
 - Version 3: pictures are short inserts on the exact words, then back to the post line being read.
   Pops (and a tiny swipe) instead of whooshes for graphics; shutter only on hook and end card.
   AI pictures for the commentary, prompts kept in `voiceover-edit/prompts.md`.
+- Voiceover 1, voice: `04c_polish_voice.py` (pauses -64 to -83 dB, voice untouched), longer cut lead-in so no
+  word starts with a tick, and the 25 ms delay of the cleaner measured and removed.

@@ -27,6 +27,12 @@ PZ = C.get("pauses", {"within": 0.06, "between": 0.16, "after_cut": 0.22})
 # --- 1. The cleaned voice, and where the voice is (loudness above the room) ---
 w = wave.open("face48k_clean.wav"); SR = w.getframerate()
 x = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(np.float32)
+# The words are FOUND on face48k_clean.wav and CUT from face48k_polish.wav (04c: less noise, same timing).
+import os
+if os.path.exists("face48k_polish.wav"):
+    xp = np.frombuffer(wave.open("face48k_polish.wav").readframes(len(x)), dtype=np.int16).astype(np.float32)
+else:
+    xp = x
 hop = SR // 100
 n = len(x) // hop
 db = 20 * np.log10(np.sqrt((x[:n * hop].reshape(n, hop) ** 2).mean(1)) / 32768 + 1e-9)
@@ -54,10 +60,12 @@ for a, b, *_ in C["cuts"]:
             if a > s: nxt.append([s, a])
             if b < e: nxt.append([b, e])
     keep = nxt
+# A sound that is still going when a cut falls makes a tick (his note, 2026-11-07), so the lead-in is 0.07 s.
+LEAD = 0.07; TAIL = 0.09
 pieces = []
 for s, e in keep:
     for rs, re_ in regions:
-        a, b = max(s, rs - 0.03), min(e, re_ + 0.08)    # a hair of air before, a little after
+        a, b = max(s, rs - LEAD), min(e, re_ + TAIL)    # air before and after a word
         if b - a > 0.08: pieces.append([a, b])
 pieces.sort()
 
@@ -69,21 +77,22 @@ cut_edges = [b for _, b, *_ in C["cuts"]]
 # Room tone = the quietest 10 ms slices joined together. NEVER one second taken from a single
 # spot: that spot was his voice in voiceover 1, and every joint said "Obi" (his note, 2026-11-07).
 quiet = np.sort(np.argsort(db)[:200])                   # the 200 quietest slices, in time order
-room = np.concatenate([x[q * hop:(q + 1) * hop] for q in quiet])
+room = np.concatenate([xp[q * hop:(q + 1) * hop] for q in quiet]) * 2.5   # the polished room is very quiet: bring it to about -75 dB, never dead silence
 assert 20 * np.log10(np.sqrt((room ** 2).mean()) / 32768 + 1e-9) < floor + 3, "room tone is not quiet"
 sm = int(0.002 * SR)                                    # tiny fades so the joins in the tone do not click
 for k in range(1, len(quiet)): room[k * hop - sm:k * hop + sm] *= 0.6
 out, timeline, t_out = [], [], 0.0
-FADE = int(0.008 * SR)
+FADE_IN = int(0.012 * SR); FADE_OUT = int(0.015 * SR)
 for k, (a, b) in enumerate(pieces):
-    seg = x[int(a * SR):int(b * SR)].copy()
-    ramp = np.linspace(0, 1, FADE); seg[:FADE] *= ramp; seg[-FADE:] *= ramp[::-1]
+    seg = xp[int(a * SR):int(b * SR)].copy()
+    seg[:FADE_IN] *= np.linspace(0, 1, FADE_IN); seg[-FADE_OUT:] *= np.linspace(1, 0, FADE_OUT)
     timeline.append({"src": round(a, 3), "len": round(b - a, 3), "out": round(t_out, 3)})
     out.append(seg); t_out += len(seg) / SR
     if k + 1 < len(pieces):
         gap = pieces[k + 1][0] - b
         after_cut = any(b - 0.1 <= c <= pieces[k + 1][0] + 0.1 for c in cut_edges)
         target = PZ["after_cut"] if after_cut else (PZ["between"] if ends_sentence(b) else PZ["within"])
+        target = max(0.0, target - (LEAD - 0.03))                # the longer lead-in already gives that much air
         pause = min(target, gap) if not after_cut else target
         if pause > 0.005:
             tone = np.resize(room, int(pause * SR)) * 0.9

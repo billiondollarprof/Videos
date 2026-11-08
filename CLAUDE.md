@@ -90,6 +90,8 @@ Vertical first: **1080 x 1920, 30 fps**, for TikTok, Shorts and Reels.
    effects (his words, 2026-11-06: "I can never change my voice. My voice is very unique"). Only
    clean it, balance it (EQ) and even it out (compression). A small added warmth in the low
    voice is allowed, but only after he has heard it A/B against the natural one and said yes.
+0a. **Two passes of cleaning, never more** (`04b_clean_voice.py`, then `04c_polish_voice.py`). Check the pause floor
+   (about -83 dB) and that the voiced level and tone did not move.
 1. His voice is always the loudest thing.
 2. Clean the room noise. Master near **-14 LUFS**, peaks at or below **-1.5 dB**.
    Measure the final file, not the parts.
