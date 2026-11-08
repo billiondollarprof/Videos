@@ -170,3 +170,11 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | Cause 1: low rumble (120 to 250 Hz) in the pauses, lifted by the loudness step. Fixed by a gentle second clean-up: pauses went from -64 dB to -83 dB, voice level and tone unchanged. | `04c_polish_voice.py` |
 | Cause 2: the "cracks". 67 of 91 pieces began with the voice already loud, because the lead-in was only 0.03 s, so the fade-in clipped the start of a word. Lead-in is now 0.07 s, tail 0.09 s, fades 12 and 15 ms. Now 5 of 91. | `vo_01_cut.py` |
 | The polish step delays the sound by 25 ms. It is measured and removed in the script, so cuts do not move. | `04c_polish_voice.py` |
+
+## Voiceover video 1, notes on version 6 (2026-11-08)
+
+| Note | Now lives in |
+|---|---|
+| Opening picture: a semi-realistic AI picture of Peter Obi cooking a cap in a pot, as satire. He checked that satire is allowed. | `vo_shots.py` (his project), `voiceover-edit` |
+| An AI picture of a real person carries a small "AI-GENERATED SATIRE" tag on screen, and he switches on the platform's AI label when posting. A tall picture is shown whole (`full=True`), never cropped through the joke. | `vo_03_render.py` (`tag=`, `full=`, `focus=`) |
+| Two files can have the same name in his Drive ("ai 9"): check the creation time and say which one is used. | `voiceover-edit` step 1 |

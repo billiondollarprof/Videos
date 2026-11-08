@@ -75,7 +75,9 @@ def assets(s):
     if s["kind"] in ("photo", "map"):
         im = enhance(Image.open(s["src"])) if s["kind"] == "photo" else Image.open(s["src"]).convert("RGB")
         bg = ImageOps.fit(im, (W_, H_)).filter(ImageFilter.GaussianBlur(40)); bg = ImageEnhance.Brightness(bg).enhance(0.42)
-        cw = 960; ch = min(1150, round(im.height * cw / im.width)); big = ImageOps.fit(im, (round(cw * 1.12), round(ch * 1.12)))
+        cw = 960; ch = min(1150, round(im.height * cw / im.width))
+        if s.get("full"): ch = 1150; cw = round(ch * im.width / im.height)   # full=True: a tall picture shown whole, in a narrower card
+        big = ImageOps.fit(im, (round(cw * 1.12), round(ch * 1.12)), centering=s.get("focus", (0.5, 0.5)))   # focus=(0.5, 0.1) keeps a face at the top
         _c[s["i"]] = (bg, big, (cw, ch))
     elif s["kind"] == "post":
         bg = Image.new("RGB", (W_, H_), (8, 14, 30)); g = ImageDraw.Draw(bg)
@@ -169,7 +171,7 @@ def element(s, tt, fi):
         z = 1.0 + 0.10 * (smooth(u / D) if k % 2 else 1 - smooth(u / D))          # inside zoom, in or out
         px = 0.5 + 0.35 * (smooth(u / D) - 0.5) * (1 if k % 3 else -1)               # slow pan
         bw, bh = big.size; vw, vh = cw / (1.12 / z) * (1 / z) * z, 0
-        vw, vh = bw / z, bh / z; x0 = (bw - vw) * px; y0 = (bh - vh) / 2
+        vw, vh = bw / z, bh / z; x0 = (bw - vw) * px; y0 = (bh - vh) * s.get("focus", (0.5, 0.5))[1]
         card = big.crop((round(x0), round(y0), round(x0 + vw), round(y0 + vh))).resize((cw, ch), Image.LANCZOS)
         if 0.35 < u < 1.75: sweep(card, (u - 0.35) / 1.4)
         if 6.0 < u < 7.4: sweep(card, (u - 6.0) / 1.4)
@@ -245,6 +247,8 @@ def frame(fi):
             if s.get("kick"):
                 ch = assets(s)[2][1] if s["kind"] in ("photo", "map") else 0
                 pill(im, max(360, (1460 - ch) // 2 + 70) - 92, s["kick"], pop=(tt - s["s"] - 0.35) / 0.35)
+            if s.get("tag"):                                  # a small disclosure on an AI picture of a real person
+                pill(im, 150, s["tag"], 30, (20, 20, 20), (235, 235, 235), pop=(tt - s["s"] - 0.2) / 0.3)
             if s.get("hook"):
                 pill(im, 250, s["hook"], 64, pop=(tt - s["s"] - 0.25) / 0.4)
             caption(im, tt)
