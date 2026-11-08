@@ -112,3 +112,5 @@ recorded posts are blurred. Make it a skill (`voiceover-edit`) once it works.
   AI pictures for the commentary, prompts kept in `voiceover-edit/prompts.md`.
 - Voiceover 1, voice: `04c_polish_voice.py` (pauses -64 to -83 dB, voice untouched), longer cut lead-in so no
   word starts with a tick, and the 25 ms delay of the cleaner measured and removed.
+- Voiceover 1 was approved by him on 2026-11-08 at version 6. Best so far for a voiceover: start from it
+  (skill `voiceover-edit`, scripts `04c`, `vo_01` to `vo_04`, pops, no music, short inserts back to the post).
