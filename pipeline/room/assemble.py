@@ -71,32 +71,33 @@ def wi(text_index): return heard[text_index]['i']        # index in the finished
 H = heard
 def t_of(k): return H[k]['s']
 def e_of(k): return H[k]['e']
-CARDS = [  # picture, start, end (finished-video seconds)
-    ('pictures/scrolling_others_lives.png', t_of(41) - 0.1, e_of(46) + 0.15),
-    ('pictures/student_reading_2h.png',     t_of(253) - 0.1, e_of(269) + 0.1),
-    ('pictures/report_card_up_2.png',       t_of(277) - 0.1, e_of(291) + 0.05),
-    ('pictures/market_sale.png',            t_of(323) - 0.1, e_of(341) + 0.05),
-    ('pictures/sunrise_arms_open.png',      t_of(370) - 0.1, LENGTH),
+# Pictures and clips fill the whole screen, a screen of their own; his voice carries on underneath
+# (his note on version 1). Each: start, end (finished-video seconds).
+CARDS = [  # picture, start, end
+    ('pictures/scrolling_others_lives.png', t_of(41) - 0.05, e_of(46) + 0.05),
+    ('pictures/student_reading_2h.png',     t_of(253) - 0.05, e_of(269) + 0.05),
+    ('pictures/report_card_up_2.png',       t_of(277) - 0.05, e_of(291) + 0.02),
+    ('pictures/market_sale.png',            t_of(323) - 0.05, e_of(341) + 0.02),
+    ('pictures/sunrise_arms_open.png',      t_of(370) - 0.05, LENGTH),
 ]
-SILENT_CLIPS = [  # file, clip start, clip end, crop (x, y, w, h), video start
-    ('clips/neighbour_like_this.mp4', 36.4, 38.1, (0, 240, 720, 310), e_of(291) + 0.05),
+SILENT_CLIPS = [  # file, clip start, clip end, crop (x, y, w, h) clean of burned-in text, video start
+    ('clips/check_phone_one_person.mp4', 0.3, 2.6, (160, 300, 332, 590), e_of(46) + 0.05),   # crying girl on her phone, after "someone else's life"
+    ('clips/mr_ibu_lawyer.mp4', 12.0, 14.0, (170, 180, 462, 820), e_of(291) + 0.02),          # lawyer laughing, "That's an improvement"
 ]
-SOUND_CLIP_CROP = {'clips/pawpaw_skit.mp4': (0, 324, 596, 640),
-                   'clips/aki_pawpaw_best_of.mp4': (0, 140, 720, 560)}
-
+SOUND_CLIP_CROP = {'clips/pawpaw_skit.mp4': (130, 324, 360, 640),          # centred on Pawpaw, 9:16
+                   'clips/aki_pawpaw_best_of.mp4': (300, 140, 316, 562)}   # centred on Aki, 9:16
 # ---------- 4. Shots: a jump at each new sentence, wide and close in turn ----------
-starts = [0.0] + [H[k]['s'] - 0.05 for k in range(1, len(H)) if H[k - 1]['w'][-1] in '.?!']
+cands = [0.0] + [H[k]['s'] - 0.03 for k in range(1, len(H)) if H[k]['s'] - H[k - 1]['e'] > 0.04 or H[k - 1]['w'][-1] in '.,?!']
 for it in E['items']:
-    if it['type'] == 'room' and it['t0'] > 0: starts.append(it['t0'])
-starts = sorted(set(round(s, 2) for s in starts))
-shots = []
-for k, s in enumerate(starts):
-    e = starts[k + 1] if k + 1 < len(starts) else LENGTH
-    if shots and s - shots[-1][0] < 1.5: continue          # no jump sooner than 1.5 s after the last
-    shots.append((s, e))
-shots = [(s, shots[k + 1][0] if k + 1 < len(shots) else LENGTH) for k, (s, _) in enumerate(shots)]
-ZOOM = [1.0 if k % 2 == 0 else 1.22 for k in range(len(shots))]   # wide (iPad shows) / close
-
+    if it['type'] == 'room' and it['t0'] > 0: cands.append(it['t0'])
+cands = sorted(set(round(c, 2) for c in cands))
+starts = [0.0]
+for c in cands:
+    if (1.0 if c < 6 else 1.6) <= c - starts[-1]: starts.append(c)
+    elif c - starts[-1] > 2.6: starts.append(c)
+shots = [(s_, starts[k + 1] if k + 1 < len(starts) else LENGTH) for k, s_ in enumerate(starts)]
+LEVELS = [1.0, 1.38, 1.15, 1.6, 1.25, 1.45]          # wide (iPad shows), close, mid, very close...
+ZOOM = [LEVELS[k % len(LEVELS)] for k in range(len(shots))]
 # ---------- 5. His face, for the close shots ----------
 face = json.load(open('work/face_track.json'))            # raw frame -> (x, y) centre, 1440 x 2560
 fx = np.array(face['x']); fy = np.array(face['y'])
@@ -104,7 +105,7 @@ fx = np.array(face['x']); fy = np.array(face['y'])
 def raw_frame_at(t):
     for it in E['items']:
         if it['t0'] <= t < it['t1']:
-            return ('room', int(round((it['s'] + t - it['t0']) * FPS))) if it['type'] == 'room' else ('clip', it)
+            return ('room', int(round((it['s'] + (t - it['t0']) * E.get('speed', 1.0)) * FPS))) if it['type'] == 'room' else ('clip', it)
     last = E['items'][-1]
     return ('room', int(round((last['e'] - 0.04) * FPS)))     # tail: hold his last frame (under the card)
 
@@ -161,6 +162,13 @@ def paste_card(frame, img, cx, cy, width, alpha, lift):
     reg = frame[max(y0, 0):y1, max(x0, 0):x1]
     c = card[cy0:cy0 + reg.shape[0], cx0:cx0 + reg.shape[1]]; mm = (m[cy0:cy0 + reg.shape[0], cx0:cx0 + reg.shape[1]] * alpha)[..., None]
     reg[:] = reg * (1 - mm) + c * mm
+def full(img, z=1.0):
+    # fill the whole 1080 x 1920 screen (crop the overflow), zoomed by z about the centre, lightly sharpened
+    s_ = max(OW / img.shape[1], OH / img.shape[0]) * z
+    r = cv2.resize(img, (int(img.shape[1] * s_) + 1, int(img.shape[0] * s_) + 1), interpolation=cv2.INTER_LANCZOS4)
+    y0 = (r.shape[0] - OH) // 2; x0 = (r.shape[1] - OW) // 2
+    r = r[y0:y0 + OH, x0:x0 + OW].astype(np.float32)
+    return cv2.addWeighted(r, 1.25, cv2.GaussianBlur(r, (0, 0), 2.0), -0.25, 0)
 def cover(img, w=OW, h=OH):
     s = max(w / img.shape[1], h / img.shape[0]); r = cv2.resize(img, (int(img.shape[1] * s) + 1, int(img.shape[0] * s) + 1))
     y0 = (r.shape[0] - h) // 2; x0 = (r.shape[1] - w) // 2
@@ -168,7 +176,19 @@ def cover(img, w=OW, h=OH):
 
 yy, xx = np.mgrid[0:OH, 0:OW].astype(np.float32)
 rr = np.sqrt(((xx - OW * 0.5) / (OW * 0.62)) ** 2 + ((yy - OH * 0.42) / (OH * 0.62)) ** 2)
-VIG = (1 - 0.40 * np.clip((rr - 0.60) / 0.50, 0, 1) ** 1.3)[..., None]
+VIG = (1 - 0.55 * np.clip((rr - 0.50) / 0.55, 0, 1) ** 1.2)[..., None]   # darker edges (his note on v1)
+# cinematic grade (his colour sample): softer light, highlights rolled off, warm highlights,
+# slightly teal shadows, a touch less colour. Built once as a lookup table.
+_x = np.arange(256) / 255.0
+_tone = np.where(_x < 0.55, _x, 0.55 + (1 - np.exp(-(_x - 0.55) * 2.2)) / 2.2) * 0.94 + 0.02
+def grade(f):
+    f = f / 255.0
+    L = (0.299 * f[..., 2] + 0.587 * f[..., 1] + 0.114 * f[..., 0])[..., None]
+    f = L + (f - L) * 0.88                                   # a little less colour
+    f = np.interp(f, _x, _tone)                              # soft shoulder, slightly darker
+    sh = (1 - L) ** 2; hi = L ** 2
+    f = f + sh * np.array([0.030, 0.012, -0.020]) + hi * np.array([-0.030, 0.0, 0.030])   # BGR: teal shadows, warm highlights
+    return np.clip(f, 0, 1) * 255
 
 CAP_Y = 1330
 cap_cache = {}
@@ -205,12 +225,13 @@ TITLE = np.array(title).astype(np.float32)
 
 FLASHES = [0.20, t_of(186) - 0.05, t_of(203) - 0.05, CARDS[-1][1] + 0.05]   # opening, "Start looking inward", "For example", the ending
 cues = [{'t': t, 's': 'camera-shutter'} for t in FLASHES]
-for p, s, e in CARDS:
-    cues.append({'t': s, 's': 'pop-soft'})
-    if e < LENGTH - 0.1: cues.append({'t': e - 0.05, 's': 'pop-low'})
-for _, a, b, _, t0 in SILENT_CLIPS: cues.append({'t': t0, 's': 'whoosh-air-short'})
+for p, s_, e_ in CARDS: cues.append({'t': s_, 's': 'whoosh-air-short'})
+for _, a_, b_, _, t0 in SILENT_CLIPS: cues.append({'t': t0, 's': 'whoosh-air-short'})
 for it in E['items']:
     if it['type'] == 'clip': cues.append({'t': it['t0'], 's': 'whoosh-air-short'})
+
+import sys; sys.path.insert(0, 'scripts'); from kinetic import Kinetic
+KIN = Kinetic(cap)
 
 # ---------- 8. Render ----------
 enc = subprocess.Popen(['ffmpeg', '-loglevel', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'bgr24', '-s', f'{OW}x{OH}', '-r', str(FPS), '-i', '-',
@@ -227,38 +248,35 @@ for n in todo:
         rn = min(ref, len(fx) - 1)
         src = room.get(rn)
         s0, s1 = shots[shot_i]; prog = (t - s0) / max(s1 - s0, 0.1)
-        z = ZOOM[shot_i] * (1 + 0.035 * prog)                     # slow push-in through every shot
+        prev_z = ZOOM[shot_i - 1] if shot_i else ZOOM[0]
+        k_ = ease((t - s0) / 0.12)                               # a quick 0.12 s punch to the new level
+        z = (prev_z + (ZOOM[shot_i] - prev_z) * k_) * (1 + 0.06 * prog)
         cw, ch = IW / z, IH / z
-        cx = IW / 2 if z < 1.1 else fx[rn]
-        cy = IH / 2 if z < 1.1 else fy[rn] + ch * 0.10            # face a little above the middle
+        w_ = min(max((z - 1.0) / 0.3, 0), 1)                      # wide: frame centre; closer: his face
+        cx = IW / 2 * (1 - w_) + fx[rn] * w_
+        cy = IH / 2 * (1 - w_) + (fy[rn] + ch * 0.12) * w_
         x0 = int(np.clip(cx - cw / 2, 0, IW - cw)); y0 = int(np.clip(cy - ch / 2, 0, IH - ch))
-        fr = cv2.resize(src[y0:y0 + int(ch), x0:x0 + int(cw)], (OW, OH), interpolation=cv2.INTER_AREA).astype(np.float32)
+        fr = grade(cv2.resize(src[y0:y0 + int(ch), x0:x0 + int(cw)], (OW, OH), interpolation=cv2.INTER_AREA).astype(np.float32))
     else:
         it = ref; frames = CLIPS[it['file']]; k = min(int((t - it['t0']) * FPS), len(frames) - 1)
         c = frames[k]
-        fr = cv2.GaussianBlur(cover(c), (0, 0), 25).astype(np.float32) * 0.45
-        local = (t - it['t0']) / 0.25
-        paste_card(fr, c, OW / 2, 820, 1000, ease(local), (1 - ease(local)) * 140)
-    # picture cards over his softened picture
-    for p, s, e in CARDS:
-        if s <= t < e:
-            a_in = ease((t - s) / 0.28); a_out = 1 - ease((t - (e - 0.2)) / 0.2) if e < LENGTH - 0.1 else 1
-            al = min(a_in, a_out)
-            soft = cv2.GaussianBlur(fr, (0, 0), 16) * 0.55
-            fr = fr * (1 - al) + soft * al
-            float_y = 8 * np.sin((t - s) * 2.2)
-            paste_card(fr, PICS[p], OW / 2, 800, 860, al, (1 - a_in) * 160 + float_y)
+        zz = 1.12 - 0.12 * ease((t - it['t0']) / 0.25) + 0.03 * (t - it['t0'])   # lands with a quick settle, then drifts in
+        fr = full(c, zz)
+    # pictures: a screen of their own, a quick settle then a slow push (Ken Burns)
+    for p, s_, e_ in CARDS:
+        if s_ <= t < e_:
+            zz = 1.12 - 0.12 * ease((t - s_) / 0.25) + 0.035 * (t - s_)
+            fr = full(PICS[p], zz)
     for frames, t0 in SIL:
         L = len(frames) / FPS
         if t0 <= t < t0 + L:
-            k = min(int((t - t0) * FPS), len(frames) - 1); al = min(ease((t - t0) / 0.2), 1 - ease((t - (t0 + L - 0.15)) / 0.15))
-            soft = cv2.GaussianBlur(fr, (0, 0), 16) * 0.55; fr = fr * (1 - al) + soft * al
-            paste_card(fr, frames[k], OW / 2, 820, 1000, al, (1 - ease((t - t0) / 0.2)) * 120)
+            k = min(int((t - t0) * FPS), len(frames) - 1)
+            fr = full(frames[k], 1.12 - 0.12 * ease((t - t0) / 0.25) + 0.03 * (t - t0))
     fr *= VIG
-    if t < 3.4:
+    if False:
         a = (1 - ease((t - 2.9) / 0.5)) if t > 2.9 else ease(t / 0.3) if t > 0.05 else 0
         L_ = TITLE[..., 3:4] / 255 * a; reg = fr[60:420]; reg[:] = reg * (1 - L_) + TITLE[..., :3][..., ::-1] * L_
-    draw_caption(fr, t)
+    KIN.draw(fr, t)
     for ft in FLASHES:
         if ft <= t < ft + 0.2:
             k = (t - ft) / 0.2; fr = fr + (255 - fr) * (0.55 * (1 - k) ** 2)

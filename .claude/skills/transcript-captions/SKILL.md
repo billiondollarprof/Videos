@@ -19,3 +19,10 @@ about the words. Together they give correct words at the right times.
    the spoken word in yellow, fillers ("uh", "um") left out of the captions.
 5. After the final render, transcribe the cut voice again and compare with the kept
    words. Differences that are only accent mishearing are fine. A missing word is not.
+
+## Caption style for his talking videos (his samples, 2026-11-25)
+Plain one-line captions were "too boring". Use the kinetic style in `pipeline/room/kinetic.py`: words
+build up one by one into a short stacked phrase in the upper third (below TikTok's top buttons, never
+over his mouth); small lowercase for little words, one big bold key word per phrase in an accent colour
+(yellow; red for hard words like "distress"; peach for life words), a warm glowing italic serif for
+feeling words; each word lands on its spoken time, the key word pops; the phrase clears together.

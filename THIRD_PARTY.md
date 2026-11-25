@@ -15,3 +15,8 @@ Our own sounds in `sfx/` (whooshes, taps, tick, paper, camera shutter) are made 
 - What: a video model that separates a person from the background, steady from frame to frame.
 - From: github.com/PeterL1n/RobustVideoMatting, release v1.0.0, `rvm_mobilenetv3_fp32.torchscript`.
 - Licence: GPL-3.0. We run it as a tool on our machine; its code and weights are not in this repo.
+
+## Instrument Serif Italic (life video 1, 2026-11-25)
+- What: the italic serif for feeling words in the captions.
+- From: github.com/google/fonts, `ofl/instrumentserif/InstrumentSerif-Italic.ttf`.
+- Licence: SIL Open Font License 1.1. Downloaded at edit time, not stored in this repo.

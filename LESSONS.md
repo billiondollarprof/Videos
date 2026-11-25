@@ -259,3 +259,16 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | Study the cinematic colour sample he put in Drive and take what enriches the look. | `study-reference` |
 | The phone clip (crying girl) after "someone else's life" is the one he meant. | his project |
 | The opening is too calm: the captions and things on screen must carry energy from the first second. If 1.1 still feels calm, try 1.2 or 1.3. | `vertical-edit` step 4, `speed-change` |
+
+## His caption and colour samples (2026-11-25)
+
+- **Caption 1** (a creator talking in a warm room): words build up one by one into a stacked phrase
+  beside his head. Three voices: small lowercase, a big bold word, a glowing orange italic serif for
+  the feeling word ("crazy text", "follow"). Key words in colour (yellow "LOOKS", red "BIG", glowing "LONG").
+- **Caption 2** (a creator in a white room): one or two words at a time, large lowercase, soft shadow,
+  above her head; emphasis in a small italic serif ("to deliver", "gatekeeping") or bold red ("not").
+- **Cinematic colour sample**: warm rich skin, slightly teal shadows, muted colour elsewhere, soft
+  contrast with highlights rolled off, dark edges; small captions with one peach accent word.
+- Now in `pipeline/room/kinetic.py` (captions) and `grade()` in `pipeline/room/assemble.py` (colour).
+  Built in our own code: no outside caption tool was needed. Fonts: Plus Jakarta Sans and Instrument Serif
+  Italic (free, SIL Open Font Licence).

@@ -9,17 +9,29 @@ def load(path,ss=None,to=None):
 voice=load('face48k_polish.wav')
 def rms_db(a): return 20*np.log10(np.sqrt((a[np.abs(a)>1e-4]**2).mean())+1e-9)
 v_db=rms_db(voice)
-out=[]
+SPEED=E.get('speed',1.0)
+def tempo(a):
+    # speed his voice up, pitch kept (ffmpeg atempo), in one piece per stretch between clips
+    if SPEED==1.0: return a
+    r=subprocess.run(['ffmpeg','-loglevel','error','-f','f32le','-ar',str(SR),'-ac','1','-i','-','-af',f'atempo={SPEED}','-f','f32le','-'],input=a.astype(np.float32).tobytes(),capture_output=True).stdout
+    return np.frombuffer(r,np.float32).copy()
+out=[]; run=[]
+def flush():
+    global run
+    if run: out.append(tempo(np.concatenate(run))); run=[]
 for it in E['items']:
     if it['type']=='room':
         a=voice[int(it['s']*SR):int(it['e']*SR)].copy()
+        f=min(int(0.012*SR),len(a)//4); a[:f]*=np.linspace(0,1,f); a[-f:]*=np.linspace(1,0,f)
+        run.append(a)
     else:
+        flush()
         a=load(it['file'],it['s'],it['e'])
         n=int(round((it['e']-it['s'])*SR)); a=np.pad(a,(0,max(0,n-len(a))))[:n]
-        a*=10**((v_db-3-rms_db(a))/20)                       # 3 dB under his voice
-    f=min(int(0.012*SR),len(a)//4)
-    a[:f]*=np.linspace(0,1,f); a[-f:]*=np.linspace(1,0,f)
-    out.append(a)
+        a*=10**((v_db-3-rms_db(a))/20)
+        f=int(0.012*SR); a[:f]*=np.linspace(0,1,f); a[-f:]*=np.linspace(1,0,f)
+        out.append(a)
+flush()
 y=np.concatenate(out)
 subprocess.run(['ffmpeg','-loglevel','error','-y','-f','f32le','-ar',str(SR),'-ac','1','-i','-','-c:a','pcm_f32le','work/voice_cut.wav'],input=y.astype(np.float32).tobytes())
 print('voice_cut.wav',round(len(y)/SR,2),'s; edit list says',E['length'])

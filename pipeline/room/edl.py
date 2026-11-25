@@ -3,6 +3,7 @@
 # "clip" items are reaction clips with their own sound (his voice waits). Also maps every kept
 # word to its time in the finished video, for captions and pictures.
 import json, subprocess, numpy as np
+SPEED=1.1      # his speech at 1.1 times (his note on version 1); clips keep their own speed
 W=json.load(open('words_fillers.json'))['words']
 raw=subprocess.run(['ffmpeg','-loglevel','error','-i','face48k_polish.wav','-ac','1','-ar','16000','-f','f32le','-'],capture_output=True).stdout
 x=np.frombuffer(raw,np.float32); SR=16000; HOP=160                       # 10 ms
@@ -35,10 +36,9 @@ def target(t_before):
     if abs(k-t_before)>0.4: return 0.14
     return 0.26 if p in '.?!' else 0.18 if p in ',;:' else 0.12
 cuts2=[]
-# Real pauses from the sound (quieter than -50 dB for 0.2 s or more). Whisper stretches words over the
-# silence after them, so its gaps miss most pauses. A pause is only shortened when no word's middle
-# falls inside it (soft words like "and" stay whole).
-SIL=-50
+# Pauses (his note on version 1: about 0.3 s at most). Quiet = under -42 dB, which also counts his
+# breaths (the -50 dB test left 0.66 and 0.8 s gaps that were breaths). Never where a word's middle is.
+SIL=-42; MAXP=0.33*SPEED/1.1
 q=db<SIL; i=0; mids=np.array([(w_['s']+w_['e'])/2 for w_ in W])
 while i<len(q):
     if not q[i]: i+=1; continue
@@ -47,8 +47,8 @@ while i<len(q):
     s_,e_=i/100,j/100; i=j
     if e_-s_<0.2 or ((mids>s_+0.03)&(mids<e_-0.03)).any(): continue
     k=max([n for n,w_ in enumerate(W) if (w_['s']+w_['e'])/2<s_] or [0]); p=W[k]['w'][-1]
-    tg=0.26 if p in '.?!' else 0.18 if p in ',;:' else 0.14
-    if e_-s_>tg+0.04:
+    tg=min(MAXP, 0.30 if p in '.?!' else 0.22 if p in ',;:' else 0.16)
+    if e_-s_>tg+0.03:
         tail=tg*0.55; lead=tg-tail
         cuts2.append((s_+tail,e_-lead))
 for c in cuts2: keep=subtract(keep,c)
@@ -74,9 +74,9 @@ for it in items:
         for k,w_ in enumerate(W):
             mid=(w_['s']+w_['e'])/2
             if it['s']<=mid<it['e']:
-                words.append({'i':k,'w':w_['w'],'s':round(tl+max(w_['s'],it['s'])-it['s'],3),'e':round(tl+min(w_['e'],it['e'])-it['s'],3)})
-    tl+=it['e']-it['s']
+                words.append({'i':k,'w':w_['w'],'s':round(tl+(max(w_['s'],it['s'])-it['s'])/SPEED,3),'e':round(tl+(min(w_['e'],it['e'])-it['s'])/SPEED,3)})
+    tl+=(it['e']-it['s'])/(SPEED if it['type']=='room' else 1.0)
     it['t1']=round(tl,3)
-json.dump({'items':items,'words':words,'length':round(tl,3)},open('work/edl.json','w'),indent=1)
+json.dump({'items':items,'words':words,'length':round(tl,3),'speed':SPEED},open('work/edl.json','w'),indent=1)
 print('items',len(items),'pauses shortened',len(cuts2),'length',round(tl,2),'s (raw 137.6)')
 print(' '.join(w['w'] for w in words))
