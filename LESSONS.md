@@ -234,3 +234,11 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | A picture made as a collage (several in one image) is cut into its single pictures. | skill `reaction-clips` |
 | Flip a front-camera video so writing reads the right way, when it costs nothing else. | `vertical-edit` step 1 |
 | A new Drive folder is private by default: ask him to share the folder itself ("Anyone with the link"), so every file in it can be downloaded. | skill `drive-footage` |
+
+## Life video 1, notes on tests A2 and B (2026-11-25)
+
+| Note | Now lives in |
+|---|---|
+| Option B chosen: his ChatGPT room behind him, with the video matting edge. | `IMPROVEMENTS.md` |
+| A2: the patch over the poster shimmered and blinked. Cause: the blend was worked out again on every frame, so it changed with the noise. A patch must be computed once and held still (or tracked), never re-blended per frame. | `IMPROVEMENTS.md` (option A notes) |
+| B: the room is too bright. Calmer atmosphere: the background darker and softer, less bright green, the light focused on him, a nicer, richer quality. Take the look from his reference shorts (warm, dark room, shallow focus, bright subject). | `IMPROVEMENTS.md` clean-plate plan |
