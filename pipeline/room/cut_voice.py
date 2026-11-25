@@ -16,13 +16,25 @@ def tempo(a):
     r=subprocess.run(['ffmpeg','-loglevel','error','-f','f32le','-ar',str(SR),'-ac','1','-i','-','-af',f'atempo={SPEED}','-f','f32le','-'],input=a.astype(np.float32).tobytes(),capture_output=True).stdout
     return np.frombuffer(r,np.float32).copy()
 out=[]; run=[]
+XF=0.025
+def join(pieces):
+    n=int(XF*SR); t=np.linspace(0,np.pi/2,n); fo,fi=np.cos(t),np.sin(t)
+    y=pieces[0].copy()
+    for p in pieces[1:]:
+        y[-n:]=y[-n:]*fo+p[:n]*fi; y=np.concatenate([y,p[n:]])
+    return y
 def flush():
     global run
-    if run: out.append(tempo(np.concatenate(run))); run=[]
+    if run:
+        y=join(run); f=int(0.012*SR)
+        y=y[int(XF/2*SR):len(y)-int(XF/2*SR)]          # trim the outer extra halves
+        y[:f]*=np.linspace(0,1,f); y[-f:]*=np.linspace(1,0,f)
+        out.append(tempo(y)); run=[]
 for it in E['items']:
     if it['type']=='room':
-        a=voice[int(it['s']*SR):int(it['e']*SR)].copy()
-        f=min(int(0.012*SR),len(a)//4); a[:f]*=np.linspace(0,1,f); a[-f:]*=np.linspace(1,0,f)
+        # v3: every joint is a 25 ms equal-power crossfade (a fade out then in left a dip that "flopped").
+        # Each piece takes 12.5 ms extra on both sides, so the overlap keeps the length exact (lips in sync).
+        a=voice[max(0,int((it['s']-XF/2)*SR)):int((it['e']+XF/2)*SR)].copy()
         run.append(a)
     else:
         flush()

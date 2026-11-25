@@ -81,7 +81,7 @@ CARDS = [  # picture, start, end
     ('pictures/sunrise_arms_open.png',      t_of(370) - 0.05, LENGTH),
 ]
 SILENT_CLIPS = [  # file, clip start, clip end, crop (x, y, w, h) clean of burned-in text, video start
-    ('clips/check_phone_one_person.mp4', 0.3, 2.6, (160, 300, 332, 590), e_of(46) + 0.05),   # crying girl on her phone, after "someone else's life"
+    ('clips/check_phone_one_person.mp4', 0.3, 2.3, (160, 300, 332, 590), t_of(12) - 0.05),   # v3: crying girl on "spiraling into depression" (an early insert)
     ('clips/mr_ibu_lawyer.mp4', 12.0, 14.0, (170, 180, 462, 820), e_of(291) + 0.02),          # lawyer laughing, "That's an improvement"
 ]
 SOUND_CLIP_CROP = {'clips/pawpaw_skit.mp4': (130, 324, 360, 640),          # centred on Pawpaw, 9:16
@@ -93,8 +93,9 @@ for it in E['items']:
 cands = sorted(set(round(c, 2) for c in cands))
 starts = [0.0]
 for c in cands:
-    if (1.0 if c < 6 else 1.6) <= c - starts[-1]: starts.append(c)
-    elif c - starts[-1] > 2.6: starts.append(c)
+    is_cut = any(abs(c - it['t0']) < 0.02 for it in E['items'] if it['type'] == 'room')
+    if is_cut and c - starts[-1] > 0.3: starts.append(c)          # v3: every cut gets a zoom change
+    elif (0.9 if c < 6 else 1.3) <= c - starts[-1]: starts.append(c)
 shots = [(s_, starts[k + 1] if k + 1 < len(starts) else LENGTH) for k, s_ in enumerate(starts)]
 LEVELS = [1.0, 1.38, 1.15, 1.6, 1.25, 1.45]          # wide (iPad shows), close, mid, very close...
 ZOOM = [LEVELS[k % len(LEVELS)] for k in range(len(shots))]
@@ -113,7 +114,8 @@ def raw_frame_at(t):
 class Room:
     # the room was rendered in two halves side by side: room_A holds raw frames 0 to 2084,
     # room_B holds raw frame 2085 onwards (its 1 s warm-up was not written)
-    PARTS = [('work/room_A.mkv', 0), ('work/room_B.mkv', 2085)]
+    SUF = os.environ.get('ROOM_SUFFIX', '')          # check stills on an older render while a new one runs
+    PARTS = [(f'work/room_A{SUF}.mkv', 0), (f'work/room_B{SUF}.mkv', 2085)]
     def __init__(s):
         s.part = -1; s.p = None; s.idx = -1; s.f = None
     def _open(s, k):
@@ -169,6 +171,15 @@ def full(img, z=1.0):
     y0 = (r.shape[0] - OH) // 2; x0 = (r.shape[1] - OW) // 2
     r = r[y0:y0 + OH, x0:x0 + OW].astype(np.float32)
     return cv2.addWeighted(r, 1.25, cv2.GaussianBlur(r, (0, 0), 2.0), -0.25, 0)
+def whip(fr, k):
+    # zoom blur that fades out as k goes 0 -> 1 (k = time since the switch / 0.16 s)
+    if k >= 1: return fr
+    amt = (1 - k) ** 2 * 0.18; acc = fr.copy(); n = 5
+    for i in range(1, n):
+        z = 1 + amt * i / n; h, w = fr.shape[:2]
+        r = cv2.resize(fr, (int(w * z), int(h * z)), interpolation=cv2.INTER_LINEAR)
+        y0, x0 = (r.shape[0] - h) // 2, (r.shape[1] - w) // 2; acc += r[y0:y0 + h, x0:x0 + w]
+    return acc / n
 def cover(img, w=OW, h=OH):
     s = max(w / img.shape[1], h / img.shape[0]); r = cv2.resize(img, (int(img.shape[1] * s) + 1, int(img.shape[0] * s) + 1))
     y0 = (r.shape[0] - h) // 2; x0 = (r.shape[1] - w) // 2
@@ -176,18 +187,18 @@ def cover(img, w=OW, h=OH):
 
 yy, xx = np.mgrid[0:OH, 0:OW].astype(np.float32)
 rr = np.sqrt(((xx - OW * 0.5) / (OW * 0.62)) ** 2 + ((yy - OH * 0.42) / (OH * 0.62)) ** 2)
-VIG = (1 - 0.55 * np.clip((rr - 0.50) / 0.55, 0, 1) ** 1.2)[..., None]   # darker edges (his note on v1)
+VIG = (1 - 0.32 * np.clip((rr - 0.55) / 0.55, 0, 1) ** 1.2)[..., None]   # v3: gentler (v2 was too dark)   # darker edges (his note on v1)
 # cinematic grade (his colour sample): softer light, highlights rolled off, warm highlights,
 # slightly teal shadows, a touch less colour. Built once as a lookup table.
 _x = np.arange(256) / 255.0
-_tone = np.where(_x < 0.55, _x, 0.55 + (1 - np.exp(-(_x - 0.55) * 2.2)) / 2.2) * 0.94 + 0.02
+_tone = np.where(_x < 0.62, _x, 0.62 + (1 - np.exp(-(_x - 0.62) * 2.0)) / 2.0) * 1.0 + 0.01   # v3: no darkening, soft shoulder only
 def grade(f):
     f = f / 255.0
     L = (0.299 * f[..., 2] + 0.587 * f[..., 1] + 0.114 * f[..., 0])[..., None]
-    f = L + (f - L) * 0.88                                   # a little less colour
+    f = L + (f - L) * 0.94                                   # a touch less colour
     f = np.interp(f, _x, _tone)                              # soft shoulder, slightly darker
     sh = (1 - L) ** 2; hi = L ** 2
-    f = f + sh * np.array([0.030, 0.012, -0.020]) + hi * np.array([-0.030, 0.0, 0.030])   # BGR: teal shadows, warm highlights
+    f = f + sh * np.array([0.020, 0.008, -0.012]) + hi * np.array([-0.020, 0.0, 0.020])   # BGR: teal shadows, warm highlights
     return np.clip(f, 0, 1) * 255
 
 CAP_Y = 1330
@@ -257,21 +268,24 @@ for n in todo:
         cy = IH / 2 * (1 - w_) + (fy[rn] + ch * 0.12) * w_
         x0 = int(np.clip(cx - cw / 2, 0, IW - cw)); y0 = int(np.clip(cy - ch / 2, 0, IH - ch))
         fr = grade(cv2.resize(src[y0:y0 + int(ch), x0:x0 + int(cw)], (OW, OH), interpolation=cv2.INTER_AREA).astype(np.float32))
+        back = [e_ for _, _, e_ in CARDS] + [t0 + len(f_) / FPS for f_, t0 in SIL] + [it['t1'] for it in E['items'] if it['type'] == 'clip']
+        for b_ in back:
+            if 0 <= t - b_ < 0.16: fr = whip(fr, (t - b_) / 0.16)
     else:
         it = ref; frames = CLIPS[it['file']]; k = min(int((t - it['t0']) * FPS), len(frames) - 1)
         c = frames[k]
-        zz = 1.12 - 0.12 * ease((t - it['t0']) / 0.25) + 0.03 * (t - it['t0'])   # lands with a quick settle, then drifts in
-        fr = full(c, zz)
+        zz = 1.18 - 0.18 * ease((t - it['t0']) / 0.22) + 0.04 * (t - it['t0'])
+        fr = whip(full(c, zz), (t - it['t0']) / 0.16)
     # pictures: a screen of their own, a quick settle then a slow push (Ken Burns)
     for p, s_, e_ in CARDS:
         if s_ <= t < e_:
-            zz = 1.12 - 0.12 * ease((t - s_) / 0.25) + 0.035 * (t - s_)
-            fr = full(PICS[p], zz)
+            zz = 1.18 - 0.18 * ease((t - s_) / 0.22) + 0.045 * (t - s_)
+            fr = whip(full(PICS[p], zz), (t - s_) / 0.16)
     for frames, t0 in SIL:
         L = len(frames) / FPS
         if t0 <= t < t0 + L:
             k = min(int((t - t0) * FPS), len(frames) - 1)
-            fr = full(frames[k], 1.12 - 0.12 * ease((t - t0) / 0.25) + 0.03 * (t - t0))
+            fr = whip(full(frames[k], 1.18 - 0.18 * ease((t - t0) / 0.22) + 0.04 * (t - t0)), (t - t0) / 0.16)
     fr *= VIG
     if False:
         a = (1 - ease((t - 2.9) / 0.5)) if t > 2.9 else ease(t / 0.3) if t > 0.05 else 0

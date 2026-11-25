@@ -6,9 +6,9 @@ import sys, subprocess, numpy as np, cv2, torch
 T0,DUR,OUT,SKIP=float(sys.argv[1]),float(sys.argv[2]),sys.argv[3],float(sys.argv[4])   # SKIP: warm-up seconds not written
 IW,IH=1440,2560; OW,OH=1080,1920; FPS=30
 # --- 1. The look of the room ---
-BG_LIGHT=0.55     # room brightness (1 = as the picture is)
-BG_SAT=0.62       # colour strength of the room (the green was too loud)
-BG_BLUR=3.5       # a little soft focus, like a camera focused on him
+BG_LIGHT=0.92     # room brightness (1 = as the picture is). v3: back near his picture's own light (his note on v2)
+BG_SAT=0.90       # colour strength of the room
+BG_BLUR=2.5       # a little soft focus, like a camera focused on him
 WARM=(1.06,1.00,0.90)   # B,G,R gains... applied as R up, B down (warm, like his references)
 # --- 2. The room picture, lined up and matched to the real room ---
 H=np.load('work/H_ai.npy'); Sc=np.diag([IW/1080,IH/1920,1.0])
@@ -26,7 +26,7 @@ bg=cv2.GaussianBlur(bg,(0,0),BG_BLUR)
 # light falls off away from him: a soft pool of light behind his head, darker towards the edges
 yy,xx=np.mgrid[0:IH,0:IW].astype(np.float32)
 pool=np.exp(-(((xx-IW*0.42)/(IW*0.55))**2+((yy-IH*0.30)/(IH*0.42))**2))
-bg*= (0.70+0.30*pool)[...,None]
+bg*= (0.90+0.10*pool)[...,None]                  # only a hint of light falling off
 bg=np.clip(bg,0,255)
 OLD=cv2.resize(cv2.imread('work/plate_raw.png'),(IW,IH)).astype(np.float32)
 SEEN=cv2.GaussianBlur(seen.astype(np.float32),(0,0),3)

@@ -145,3 +145,9 @@ recorded posts are blurred. Make it a skill (`voiceover-edit`) once it works.
   kinetic captions from his samples; cinematic grade and darker edges; the 3 pictures he regenerated.
   Mix: a whoosh next to a shutter is dropped (the doubled click made the encoder overshoot to +2.6 dB).
   Checked: 20 stills, 0 fillers, 96% word match, -14.7 LUFS, peaks -1.5 dB.
+- Version 3 (1:42): speed 1.3; the room back near his ChatGPT picture's own light (the calm comes from
+  softness, not darkness); a clip in the first 4 s; Pawpaw removed (wrong moment). Joints: approved cuts
+  spliced between matching sounds ("better | life", "you | should"), every joint a 25 ms equal-power
+  crossfade with the length kept (fade out then in had left an audible dip); a zoom change at every cut;
+  a 0.16 s zoom-blur whip into and out of every insert; caption shadows doubled so text reads on the
+  bright curtain. Checked: 20 stills, 0 fillers, 96% word match, -14.7 LUFS, peaks -2.1 dB.

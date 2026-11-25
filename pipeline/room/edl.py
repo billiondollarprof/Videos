@@ -3,7 +3,7 @@
 # "clip" items are reaction clips with their own sound (his voice waits). Also maps every kept
 # word to its time in the finished video, for captions and pictures.
 import json, subprocess, numpy as np
-SPEED=1.1      # his speech at 1.1 times (his note on version 1); clips keep their own speed
+SPEED=1.3      # his speech at 1.3 times (his note on version 2); clips keep their own speed
 W=json.load(open('words_fillers.json'))['words']
 raw=subprocess.run(['ffmpeg','-loglevel','error','-i','face48k_polish.wav','-ac','1','-ar','16000','-f','f32le','-'],capture_output=True).stdout
 x=np.frombuffer(raw,np.float32); SR=16000; HOP=160                       # 10 ms
@@ -13,8 +13,9 @@ def t2i(t): return int(round(t*100))
 def quietest(t,span=0.05):
     a,b=t2i(t-span),t2i(t+span); k=a+int(np.argmin(db[a:b])); return k/100
 # --- 1. Approved content cuts (his yes, 2026-11-25), cut at the quietest 10 ms near each edge ---
-CUTS=[(quietest(48.46),quietest(49.84,0.04)),       # "a better day," -> "You are living a better life today"
-      (quietest(87.00),quietest(87.68)),            # first "you should be"
+# v3: the splice sits between two matching sounds, so the join is seamless (v2 joins "flopped")
+CUTS=[(48.94,50.24),                                # "living a better [day, a better] life today": both edges right after "better"
+      (87.20,87.78),                                # "you [should be you] should be thankful": both edges right before "should"
       (quietest(121.70),quietest(122.34))]          # one "little": "so the little things that matter"
 print('content cuts',CUTS)
 # --- 2. Keep from the first word to 0.5 s after the last ---
@@ -54,7 +55,7 @@ while i<len(q):
 for c in cuts2: keep=subtract(keep,c)
 keep=[(round(s,3),round(e,3)) for s,e in keep if e-s>0.02]
 # --- 4. Reaction clips with their own sound, after the sentence they answer (approved plan) ---
-INSERT_AFTER={70.24:('clips/pawpaw_skit.mp4',0.25,2.95),          # after "...to evaluate your life."
+INSERT_AFTER={  # Pawpaw removed (his note on v2: it came at the wrong moment)
               120.16:('clips/aki_pawpaw_best_of.mp4',1.18,2.50)} # after "...make some sales"
 items=[]
 for s,e in keep:

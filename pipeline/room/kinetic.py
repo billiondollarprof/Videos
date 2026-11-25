@@ -43,12 +43,13 @@ def word_image(text, font, colour, glow=False):
     w, h = bb[2] - bb[0] + 2 * pad, bb[3] - bb[1] + 2 * pad
     txt = Image.new('L', (w, h), 0); ImageDraw.Draw(txt).text((pad - bb[0], pad - bb[1]), text, font=font, fill=255)
     a = np.array(txt).astype(np.float32) / 255
-    sh = cv2.GaussianBlur(a, (0, 0), 9) * 0.75
+    # v3: a stronger, two-layer shadow: readable on the bright curtain too (never light text on light)
+    sh = np.clip(cv2.GaussianBlur(cv2.dilate(a, np.ones((5, 5), np.uint8)), (0, 0), 5) * 1.1 + cv2.GaussianBlur(a, (0, 0), 16) * 0.6, 0, 0.92)
     img = np.zeros((h, w, 4), np.float32)
     col = np.array(colour, np.float32)
     if glow:
         g = cv2.GaussianBlur(a, (0, 0), 14) * 0.9
-        img[..., :3] = col * g[..., None]; img[..., 3] = np.maximum(sh * 0.6, g * 0.8)
+        img[..., :3] = col * g[..., None] * 0.5; img[..., 3] = np.maximum(sh, g * 0.5)
     else:
         img[..., 3] = sh                                      # shadow is black
     img[..., :3] = img[..., :3] * (1 - a[..., None]) + col * a[..., None]
