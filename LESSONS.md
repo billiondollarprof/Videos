@@ -207,3 +207,13 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
   works on his energy and a lit, colourful room.
 - Copy the ideas (pace, punch-ins, quick inserts on exact words, icon cards over a blurred him), never
   their footage.
+
+## Life video 1, answers to the plan (2026-11-25)
+
+| Note | Now lives in |
+|---|---|
+| Cut list approved: keep "a better life today", the second "you should be", the first and last "little things" (the saying is "little things that matter"). | his project `cut list` |
+| Level the loud clip down to the quiet one, never the quiet one up. | `sound-mix` |
+| Speed: 1.1 at most, and check first whether it needs any speed-up at all. Try 1.0 and 1.05 before 1.1. | `speed-change` |
+| The iPad he holds should show some of the time, clean, with its logo visible. Close zooms may hide it. | `vertical-edit` step 4 |
+| His room should look as if he sits further from the wall: more depth behind him. Still his own room, never a fake backdrop. The bookshelf sample was only to show how clean a room can look. | `09c_soft_background.py`, clean-plate plan |
