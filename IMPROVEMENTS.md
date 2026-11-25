@@ -140,3 +140,8 @@ recorded posts are blurred. Make it a skill (`voiceover-edit`) once it works.
   words (2 with their own sound and their own captions), title hook, 4 camera flashes, captions in
   his brand font. Checked: 20 stills, edge at 16 moments, 0 fillers, 96% word match, -14.6 LUFS,
   peaks -1.7 dB. Scripts kept in `pipeline/room/` for the next talking video in a room.
+- Version 2 (2:03): speed 1.1; pauses at most 0.3 s; pictures and clips full screen with a quick settle
+  then a slow push; zoom jumps every 1.6 to 2.6 s (1.0 s in the opening) up to 1.6x with a 0.12 s punch;
+  kinetic captions from his samples; cinematic grade and darker edges; the 3 pictures he regenerated.
+  Mix: a whoosh next to a shutter is dropped (the doubled click made the encoder overshoot to +2.6 dB).
+  Checked: 20 stills, 0 fillers, 96% word match, -14.7 LUFS, peaks -1.5 dB.

@@ -13,7 +13,10 @@ while n<L:
     k=min(len(bed),L-n); y[n:n+k]+=bed[:k]*0.6; n+=k
 vrms=np.sqrt((v[np.abs(v)>1e-3]**2).mean())
 GAIN={'camera-shutter':0.55,'pop-soft':0.8,'pop-low':0.6,'whoosh-air-short':0.35}   # share of his voice level
+shutters=[c['t'] for c in C['cues'] if c['s']=='camera-shutter']
 for c in C['cues']:
+    # a whoosh right next to a shutter doubles the click (the encoder overshot to +2.6 dB): the shutter wins
+    if c['s']!='camera-shutter' and any(abs(c['t']-t)<0.2 for t in shutters): continue
     s=load(f"/home/user/Videos/sfx/{c['s']}.wav"); srms=np.sqrt((s[np.abs(s)>1e-3]**2).mean())
     s=s*(vrms/srms)*GAIN[c['s']]
     f=int(0.006*SR); s[:f]*=np.linspace(0,1,f)          # a 6 ms soft start: the encoder overshot on the raw click
@@ -30,7 +33,7 @@ g=0.0
 for _ in range(5):
     I,_p=lufs('work/mix_raw.wav') if g==0 else lufs('work/mix.wav')
     g+= -14.0-I
-    subprocess.run(['ffmpeg','-loglevel','error','-y','-i','work/mix_raw.wav','-af',f'volume={g:.2f}dB,alimiter=limit=0.72:attack=3:release=60:level=false','-ar',str(SR),'-c:a','pcm_f32le','work/mix.wav'])
+    subprocess.run(['ffmpeg','-loglevel','error','-y','-i','work/mix_raw.wav','-af',f'volume={g:.2f}dB,alimiter=limit=0.69:attack=3:release=60:level=false','-ar',str(SR),'-c:a','pcm_f32le','work/mix.wav'])
     I2,P2=lufs('work/mix.wav'); print('gain',round(g,2),'-> I',I2,'peak',P2)
     if abs(I2+14)<0.3: break
 print('mixed',round(L/SR,2),'s')
