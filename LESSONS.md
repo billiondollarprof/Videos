@@ -272,3 +272,14 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 - Now in `pipeline/room/kinetic.py` (captions) and `grade()` in `pipeline/room/assemble.py` (colour).
   Built in our own code: no outside caption tool was needed. Fonts: Plus Jakarta Sans and Instrument Serif
   Italic (free, SIL Open Font Licence).
+
+## Life video 1, notes on version 2 (2026-11-25)
+
+| Note | Now lives in |
+|---|---|
+| Far better than before. | `IMPROVEMENTS.md` |
+| The opening runs too long before the first picture or clip: put one in early (in the first 5 to 8 s). | `reaction-clips` B.2, `vertical-edit` |
+| Pawpaw's "no time for gossip" came at the wrong moment and looked like a mistake: removed. A clip must answer the line just said, or it is left out. | `reaction-clips` B.1 |
+| Too dark now: go back to the brightness of his ChatGPT room as it was given. The calm comes from softness, not darkness. | `pipeline/room/room_full.py` |
+| Some joints flop (a cut not done cleanly): check every joint, and hide each cut with a zoom change. | `pipeline/room/edl.py`, `assemble.py` |
+| Better transitions and zooms. Speed 1.3. | `assemble.py`, `speed-change` |
