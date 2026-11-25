@@ -217,3 +217,11 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | Speed: 1.1 at most, and check first whether it needs any speed-up at all. Try 1.0 and 1.05 before 1.1. | `speed-change` |
 | The iPad he holds should show some of the time, clean, with its logo visible. Close zooms may hide it. | `vertical-edit` step 4 |
 | His room should look as if he sits further from the wall: more depth behind him. Still his own room, never a fake backdrop. The bookshelf sample was only to show how clean a room can look. | `09c_soft_background.py`, clean-plate plan |
+
+## Life video 1, notes on the room test (2026-11-25)
+
+| Note | Now lives in |
+|---|---|
+| The cut-out showed: a light fringe round his head, ear and shoulder, and the edge changed as he moved. Anyone could tell it was a cut-out. Nothing may show an edge, ever. Cause: the selfie model's edge is coarse, and the darker, blurred room no longer matched the light edge pixels. | `IMPROVEMENTS.md` clean-plate plan |
+| The cleaned door looked smeared and blotchy (my fill-in of the poster and the noise removal). An area I fill in myself must look like the real thing, or it stays as filmed. | `IMPROVEMENTS.md` clean-plate plan |
+| His idea: he makes the clean empty room himself from a screenshot in ChatGPT, we put it behind him, but it must never shake or look like a cut-out. | `IMPROVEMENTS.md` clean-plate plan |
