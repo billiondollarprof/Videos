@@ -180,3 +180,11 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | Two files can have the same name in his Drive ("ai 9"): check the creation time and say which one is used. | `voiceover-edit` step 1 |
 | Dead air: the polished pauses rounded to exact zero (315 slices, 3 s). The cleaned source also has a few exact-zero stretches, and the "quietest slices" picker chose them. A faint continuous room bed (-76 dB) now runs under the whole voice, built from slices that are never dead-silent. Check: zero slices of dead silence in the cut voice. | `vo_01_cut.py` |
 | A "pause floor" measured on the finished file is not comparable to one measured on the cleaned voice (pauses are mostly word tails). Compare the same metric on the previous version. | `voiceover-edit` step 11 |
+
+## Life video 1, "Why Life is Beautiful" (2026-11-25)
+
+| Note | Now lives in |
+|---|---|
+| A new series: talking-head videos about life, raw files in the Drive folder "Video Editing / Life". | `vertical-edit` (start from it) |
+| He trims a little himself first. Still cut the awkward bits, and tighten the joins at the places he already cut. | `cut-plan` |
+| He likes the camera shutter with the light flash: keep it for this series. | `sound-mix` |
