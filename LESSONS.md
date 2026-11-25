@@ -225,3 +225,12 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | The cut-out showed: a light fringe round his head, ear and shoulder, and the edge changed as he moved. Anyone could tell it was a cut-out. Nothing may show an edge, ever. Cause: the selfie model's edge is coarse, and the darker, blurred room no longer matched the light edge pixels. | `IMPROVEMENTS.md` clean-plate plan |
 | The cleaned door looked smeared and blotchy (my fill-in of the poster and the noise removal). An area I fill in myself must look like the real thing, or it stays as filmed. | `IMPROVEMENTS.md` clean-plate plan |
 | His idea: he makes the clean empty room himself from a screenshot in ChatGPT, we put it behind him, but it must never shake or look like a cut-out. | `IMPROVEMENTS.md` clean-plate plan |
+
+## Life video 1, reaction clips and the flip (2026-11-25)
+
+| Note | Now lives in |
+|---|---|
+| Clips he downloads (Nollywood and skit reactions) are a library for every video: catalogue each clip once, by time: the 1 to 2.5 s moments worth using, the expression, the words, and what kind of line each suits. Any agent reuses the catalogue instead of watching the clips again. | skill `reaction-clips`, `clips/CATALOGUE.md` |
+| A picture made as a collage (several in one image) is cut into its single pictures. | skill `reaction-clips` |
+| Flip a front-camera video so writing reads the right way, when it costs nothing else. | `vertical-edit` step 1 |
+| A new Drive folder is private by default: ask him to share the folder itself ("Anyone with the link"), so every file in it can be downloaded. | skill `drive-footage` |
