@@ -135,3 +135,8 @@ recorded posts are blurred. Make it a skill (`voiceover-edit`) once it works.
 - Reaction clips are now a library: `clips/CATALOGUE.md`, skill `reaction-clips`, `15_clip_scan.py`.
 - Next job after this one: a vlog (his voice note over his own footage). The brief is a private Google
   Doc in his Video Editing folder, "Vlog 1 brief"; it names a client, so it never comes into this repo.
+- Version 1 delivered (2:16, 1080 x 1920, 30 fps): calm ChatGPT room behind him, wide and close shots
+  in turn at each sentence with a slow push-in, 5 picture cards and 3 reaction clips on their exact
+  words (2 with their own sound and their own captions), title hook, 4 camera flashes, captions in
+  his brand font. Checked: 20 stills, edge at 16 moments, 0 fillers, 96% word match, -14.6 LUFS,
+  peaks -1.7 dB. Scripts kept in `pipeline/room/` for the next talking video in a room.
