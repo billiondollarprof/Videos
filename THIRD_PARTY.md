@@ -10,3 +10,8 @@
 
 Our own sounds in `sfx/` (whooshes, taps, tick, paper, camera shutter) are made in code by
 `sfx/make_sfx.py` and belong to this repo.
+
+## Robust Video Matting (tested 2026-11-25, life video 1)
+- What: a video model that separates a person from the background, steady from frame to frame.
+- From: github.com/PeterL1n/RobustVideoMatting, release v1.0.0, `rvm_mobilenetv3_fp32.torchscript`.
+- Licence: GPL-3.0. We run it as a tool on our machine; its code and weights are not in this repo.

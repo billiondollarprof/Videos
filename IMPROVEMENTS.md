@@ -114,3 +114,16 @@ recorded posts are blurred. Make it a skill (`voiceover-edit`) once it works.
   word starts with a tick, and the 25 ms delay of the cleaner measured and removed.
 - Voiceover 1 was approved by him on 2026-11-08 at version 6. Best so far for a voiceover: start from it
   (skill `voiceover-edit`, scripts `04c`, `vo_01` to `vo_04`, pops, no music, short inserts back to the post).
+
+## Life video 1: "Why Life is Beautiful" (in progress, 2026-11-25)
+- First of a new series: his talking videos about life, filmed on the front camera with a mic.
+- His loud first clip (21 dB hotter) levelled down to the rest before cleaning: both parts now match.
+- Room tests: a cut-out with the selfie model showed a fringe and he rejected it. What worked:
+  - **Option A**: no cut-out at all. Flipped, gentle tone, fine sharpening, corners darker and softer,
+    the poster covered with the door's own surface (seamless clone from 200 px below, fitted shape).
+  - **Option B**: his ChatGPT picture of the empty room behind him, edge from Robust Video Matting
+    (clean, steady), the iPad and lap kept as filmed (the model drops them). A ChatGPT room is not an
+    exact copy of the real one, so it can only replace the whole background, never patch a part.
+- Reaction clips are now a library: `clips/CATALOGUE.md`, skill `reaction-clips`, `15_clip_scan.py`.
+- Next job after this one: a vlog (his voice note over his own footage). The brief is a private Google
+  Doc in his Video Editing folder, "Vlog 1 brief"; it names a client, so it never comes into this repo.

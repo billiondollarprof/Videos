@@ -139,6 +139,7 @@ His watch on his phone is the final check. Nothing is "done" before he says so.
 - `pipeline/remotion/`: the layout, captions and overlays (Remotion, which builds video
   from code).
 - `sfx/`: the sound palette. `make_sfx.py` builds our own sounds.
+- `clips/CATALOGUE.md`: every reaction clip he has given us, moment by moment (the clips stay in Drive).
 - `LESSONS.md`: every note, newest at the bottom.
 - `IMPROVEMENTS.md`: what made each video better than the last.
 - `THIRD_PARTY.md`: where anything borrowed came from, and its licence.
@@ -167,5 +168,6 @@ the skill in the same change and say so. Never skip a step.
 | Make the short that stops at a hook and sends people to YouTube | `short-cut` |
 | YouTube thumbnail from his real photo | `thumbnail` |
 | Title, description, chapters, caption for posting | `publish-copy` |
+| Reaction clips: catalogue them once, drop a 1 to 2.5 s moment on the exact words | `reaction-clips` |
 | Learn from somebody else's video | `study-reference` |
 | Turn a note from Anthony into a rule | `lesson` |
