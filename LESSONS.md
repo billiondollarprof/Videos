@@ -244,3 +244,16 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | B: the room is too bright. Calmer atmosphere: the background darker and softer, less bright green, the light focused on him, a nicer, richer quality. Take the look from his reference shorts (warm, dark room, shallow focus, bright subject). | `IMPROVEMENTS.md` clean-plate plan |
 | B v2 room approved, clip plan approved (wide eyes on "gap 2 people", "This is business!" on "sales", Pawpaw "no time for gossip" on "someone else's life"). | his project |
 | The edge round his head, neck and shoulders still showed a light rim against the darker room. Blend it: take the old room's light out of the edge pixels (un-mix with the clean plate), then let a little of the new room's light wrap onto his edge. | `IMPROVEMENTS.md` clean-plate plan |
+
+## Life video 1, notes on version 1 (2026-11-25)
+
+| Note | Now lives in |
+|---|---|
+| Speed 1.1. | `speed-change`, his project |
+| Pictures and clips fill the whole screen, as a screen of their own, his voice carrying on underneath. Never a card over his blurred picture. (His reference shorts do this.) | `reaction-clips` B.4, `vertical-edit` |
+| Captions too plain: he has put caption samples in Drive to study. | `transcript-captions` |
+| Still too bright: stronger corner darkening, softer light overall. | `pipeline/room/room_full.py`, `assemble.py` |
+| Zooms too small and too slow: zoom in further and move faster, like his reference shorts (a jump every 1 to 2 s). | `vertical-edit` step 4 |
+| Pauses at most about 0.3 s. | `cut-plan` |
+| He will regenerate the 3 narrow pictures from the collage. | his project |
+| Study the cinematic colour sample he put in Drive and take what enriches the look. | `study-reference` |
