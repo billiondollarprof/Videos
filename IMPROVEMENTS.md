@@ -124,6 +124,14 @@ recorded posts are blurred. Make it a skill (`voiceover-edit`) once it works.
   - **Option B**: his ChatGPT picture of the empty room behind him, edge from Robust Video Matting
     (clean, steady), the iPad and lap kept as filmed (the model drops them). A ChatGPT room is not an
     exact copy of the real one, so it can only replace the whole background, never patch a part.
+- **Option B chosen and made calmer** (his notes): room darker (55%), less green (62%), warm, slightly
+  soft, a pool of light behind his head and darker corners: the light is on him. Edge: Robust Video
+  Matting, pulled in where he is solid and softened by a pixel, the old room's light taken out of the
+  thin edge band, then a little of the new room's light wrapped onto his edge. No rim, no specks.
+- Cuts: only the 3 approved cuts, each at the quietest 10 ms near its edge, all three checked by
+  listening. Pauses shortened only where the sound is truly quiet and no word's middle is inside
+  (a plain loudness test swallowed soft words like "and" and "a"). His pauses were already short.
+- Speed left at 1.0: he speaks about 170 words a minute, already brisk.
 - Reaction clips are now a library: `clips/CATALOGUE.md`, skill `reaction-clips`, `15_clip_scan.py`.
 - Next job after this one: a vlog (his voice note over his own footage). The brief is a private Google
   Doc in his Video Editing folder, "Vlog 1 brief"; it names a client, so it never comes into this repo.
