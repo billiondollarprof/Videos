@@ -188,3 +188,22 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | A new series: talking-head videos about life, raw files in the Drive folder "Video Editing / Life". | `vertical-edit` (start from it) |
 | He trims a little himself first. Still cut the awkward bits, and tighten the joins at the places he already cut. | `cut-plan` |
 | He likes the camera shutter with the light flash: keep it for this series. | `sound-mix` |
+| He has a mic now: the sound is good. Enhance it and remove any distraction, still his own voice. | `sound-mix` |
+| Zoom in and out on his face through the talk (he uses it in his own videos): a punch-in or pull-out every few seconds, at phrase joins. | `vertical-edit` step 4 |
+| Short reaction clips that land on certain words (the "surprise" clips in Nigerian videos) make it lively. He brings the clips; we never take them from someone else's video. Check the licence of each, and tell him plainly when a clip is someone else's copyright. | `vertical-edit` step 4 |
+| Write him AI picture prompts for moments in what he says. | `voiceover-edit/prompts.md` |
+| The video must feel lively and flow. Speed never above 1.1. | `speed-change` |
+| His own background, cleaned up and made top notch, still real. Not a replacement. | `IMPROVEMENTS.md` clean-plate plan |
+| His first 30 s came 21 dB louder than the rest (his editing app boosted one clip): measure loudness along the whole raw file and level each clip before anything else. | `sound-mix` |
+
+## Reference videos (2026-11-25): three talking-head shorts he likes
+
+- Two from one creator (podcast mic, bookshelf, warm light, shallow depth of field): a cut or zoom
+  jump every 1.4 s on average. The frame jumps between wide and close at phrase joins.
+  On certain words a 1 to 2 s clip lands: a film or Nollywood reaction, an icon card popping over his
+  blurred picture, or a book cover on a grey gradient with a bold title. Then straight back to him.
+  Captions: small bold white capitals low in the frame, the spoken word in grey-to-white.
+- The third (a creator in front of purple lights and warm lamps): one take, no cuts, no inserts; it
+  works on his energy and a lit, colourful room.
+- Copy the ideas (pace, punch-ins, quick inserts on exact words, icon cards over a blurred him), never
+  their footage.
