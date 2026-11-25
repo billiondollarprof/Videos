@@ -257,3 +257,5 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | Pauses at most about 0.3 s. | `cut-plan` |
 | He will regenerate the 3 narrow pictures from the collage. | his project |
 | Study the cinematic colour sample he put in Drive and take what enriches the look. | `study-reference` |
+| The phone clip (crying girl) after "someone else's life" is the one he meant. | his project |
+| The opening is too calm: the captions and things on screen must carry energy from the first second. If 1.1 still feels calm, try 1.2 or 1.3. | `vertical-edit` step 4, `speed-change` |
