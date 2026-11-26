@@ -318,3 +318,14 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | New picture "appreciate little things" in Drive `Life/Pictures`: show it where he first talks about appreciating the little things, and animate it in. | his project (`assemble.py` card list) |
 | Make the video cleaner and finer overall. | `pipeline/room/assemble.py`, `room_own_full.py` |
 | Sound: he hears a voice breaking in the background. His phone app boosted the opening clip (0 to about 28 s): bring it down to match the rest. The rest is fine because he used the mic. Check the whole sound for breaking, clipping and joints. | `04b_clean_voice.py` step, `HANDOVER.md` section 5.3 |
+
+
+## Voiceover video 2 (hospital story), notes (2026-11-26)
+
+| Note | Now lives in |
+|---|---|
+| Blur a person's face only when they look at the camera. People who are not looking at it stay clear. The blur is soft, never hard or blocky. (This replaces "blur every staff face".) | `privacy-blur`, `voiceover-edit` |
+| When he names a product (Amara, StellaXafe), show a phone-sized screenshot or screen record of it, animated in. When he talks about the app he built, play a walkthrough on a phone-sized screen from login to the home page. His face and the people he meets appear where he talks about them. | `voiceover-edit` |
+| Say "millions of naira" in the voice only. No amount on screen. | `voiceover-edit` |
+| Re-rendering takes too long. Render in cached pieces, use all cores, review a small draft first, do the full render once. Manage time and usage credits: every plan says what it will cost in time. | `voiceover-edit`, `pipeline/vo_03_render.py` |
+| Background replacement must not show a halo, outline or shadow around his body, especially when he moves his neck. He bought lights. The new background must blend with a bright, well-lit talking head. | `pipeline/room/`, a future `room-replace` skill |
