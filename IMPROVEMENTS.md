@@ -157,3 +157,13 @@ recorded posts are blurred. Make it a skill (`voiceover-edit`) once it works.
   Checked: 20 stills, 0 fillers, 98% word match, -14.7 LUFS, peaks -2.1 dB.
 - Voice: `04c_polish_voice.py` now ends with a faint room bed, so no pause is dead silent (559 slices on the life video).
 
+
+## Hospital vlog (voiceover video 2), 2026-11-26
+
+- **Render time.** New `vlog_render.py`: 3 second pieces, cached by fingerprint, drawn on all 4 cores, joined with no
+  re-encode. First render 4 minutes; one change 20 seconds (voiceover 1 took about an hour for any change).
+- **Shots tied to words, not times.** A re-cut moved every picture in the first attempt; word numbers fixed that for good.
+- **Soft blur.** A feathered blur that is fully blurred inside the box and fades out beyond it (the first version only
+  half-blurred and the sign stayed readable).
+- **Clean voice notes.** `vo_01_cut.py` now compresses pauses from the voice's peak when the recording's floor is
+  extremely low.

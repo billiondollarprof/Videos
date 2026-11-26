@@ -67,3 +67,29 @@ Work in `projects/<name>/`. Never commit his voice, the script or the shot list.
     hook and the end card). No whooshes. The script must show each pop at about the voice's level. Report the loudness (-14 LUFS) and true peak (under -1.5 dB).
 11. **Check**: transcribe the final with the medium model; no missing words, no repeats. Stills at
     every shot. Send it with the caption, titles and photo credits (say which licences are unknown).
+
+## Vlog mode (voiceover video 2, 2026-11-26): his voice over his own footage, photos, phone screens and a TV
+
+Use `pipeline/vlog_render.py` and `pipeline/vlog_mix.py` instead of `vo_03` and `vo_04`. They are about 15 times faster
+to change: the picture is drawn in 3 second pieces on all cores, every piece is kept in `cache/` under a fingerprint,
+and a change redraws only the pieces it touches (a caption fix took 20 seconds, the first full render 4 minutes).
+`DRAFT=1` draws a half-size look. `python3 vlog_render.py still 12 40` writes stills.
+
+1. Steps 1 to 6 above are the same (`04b`, `04c`, transcribe, cut list for his yes, `vo_01_cut.py`, captions).
+   `vo_01_cut.py` now copes with a very clean voice note (a gate gives a floor near -95 dB): pauses are compressed
+   from the voice's peak, not from the floor.
+2. Put the words in `script.txt`. After `vo_02_captions.py`, copy `caps.json` to `caps_raw.json`.
+3. If a clip's own sound plays (one or two places, only where it is clear), `prep_timeline.py` (a project step) puts a 2.4 s
+   gap in the voice (`voice_final.wav`), moves the captions after it, and writes the clip words to `caps_extra.json`.
+4. `vlog_shots.py` (SHOTS, LENGTH, SOUND_CLIPS): every shot starts on a WORD NUMBER of `caps_raw.json`, never on a time,
+   so a re-cut cannot move a picture off its words. Kinds: `photo`, `clip`, `phone` (screenshots, next screen
+   slides in, tap ring), `phonevid` (a screen recording in a phone), `tv` (a landscape screen in a TV). Any shot can carry a
+   kicker and a flash. Blurs are SOFT (feathered): hospital name boards, number plates, phone numbers, and a face
+   only when the person looks at the camera (his rule, 2026-11-26).
+5. App walkthrough: build the client's app with made-up data and a NEUTRAL name (scripts/screens in the client repo
+   plus a brand key), screenshot each screen at 390 x 844 at 3x. Never the real name, never real data.
+6. `python3 vlog_render.py`, then `python3 vlog_mix.py` (soft whoosh when a phone or TV arrives, a tap on each tap
+   ring, a shutter on a flash, NOTHING on a caption; loudness -14 LUFS, true peak under -1.5 dB, picture not re-encoded).
+7. Check: OCR every frame at 2 to 3 per second (`OMP_THREAD_LIMIT=1 tesseract ... --psm 11`, in 4 processes) for the hospital
+   name and any long number; `12_check_final.py` on the final; stills at 20 places.
+8. For chat, make a smaller copy (`-crf 24`); the render itself is large.

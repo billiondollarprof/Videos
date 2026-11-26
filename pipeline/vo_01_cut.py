@@ -37,7 +37,10 @@ hop = SR // 100
 n = len(x) // hop
 db = 20 * np.log10(np.sqrt((x[:n * hop].reshape(n, hop) ** 2).mean(1)) / 32768 + 1e-9)
 floor, peak = np.percentile(db, 15), np.percentile(db, 95)
-voiced = db > floor + 0.35 * (peak - floor)
+# A very clean recording (a phone voice note with its own gate) has a floor near -95 dB, so a breath at -60 dB counted as voice and
+# pauses stayed 0.5 to 0.7 s. Treat anything under 55 dB below the voice's peak as room, however low the floor is.
+floor_eff = max(floor, peak - 55)
+voiced = db > floor_eff + 0.3 * (peak - floor_eff)
 regions, i = [], 0
 while i < n:                                           # voiced runs, small holes (<150 ms) closed
     if voiced[i]:
@@ -78,8 +81,10 @@ cut_edges = [b for _, b, *_ in C["cuts"]]
 # spot: that spot was his voice in voiceover 1, and every joint said "Obi" (his note, 2026-11-07).
 quiet = np.sort(np.argsort(np.where(db > -100, db, 0))[:200])   # the 200 quietest slices, in time order (never the dead-silent ones)
 room_raw = np.concatenate([x[q * hop:(q + 1) * hop] for q in quiet])      # the room as it really sounds (face48k_clean)
-room = np.concatenate([xp[q * hop:(q + 1) * hop] for q in quiet]) * 2.5   # the polished room is very quiet: bring it to about -75 dB, never dead silence
-assert 20 * np.log10(np.sqrt((room ** 2).mean()) / 32768 + 1e-9) < floor + 3, "room tone is not quiet"
+room = np.concatenate([xp[q * hop:(q + 1) * hop] for q in quiet])          # the polished room is very quiet
+room_db = 20 * np.log10(np.sqrt((room ** 2).mean()) / 32768 + 1e-9)
+room = room * min(2.5, 10 ** ((-75 - room_db) / 20))                       # bring it to about -75 dB (never louder than 2.5x): 04c already adds a -76 dB bed, so a clean recording needs no boost
+assert 20 * np.log10(np.sqrt((room ** 2).mean()) / 32768 + 1e-9) < max(floor + 3, peak - 50), "room tone is not quiet"   # also fine when it is 50 dB under his voice (a very clean recording has a floor far below the -76 dB bed)
 sm = int(0.002 * SR)                                    # tiny fades so the joins in the tone do not click
 for k in range(1, len(quiet)): room[k * hop - sm:k * hop + sm] *= 0.6
 out, timeline, t_out = [], [], 0.0
