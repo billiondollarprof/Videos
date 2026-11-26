@@ -9,7 +9,7 @@ bottom), then `IMPROVEMENTS.md`, then this file. This repo is public: nothing pr
 |---|---|
 | Video 1, "Clean your Gmail with Claude" | Done (2026-11-05). |
 | Voiceover video 1 (election post) | Approved at version 6 (2026-11-08). Skill `voiceover-edit`. |
-| **Life video 1, "Why Life is Beautiful"** | **Version 3 sent and watched. His notes on v3 are in. Version 4 plan approved. Not built yet.** |
+| **Life video 1, "Why Life is Beautiful"** | **v3 watched. v4 plan approved. Own-room test approved ("Yes", 2026-11-26). Full own-room render started 2026-11-26 07:10 UTC; if this container is gone, run it again (section 2, step 2). Steps 1 and 3 to 6 still to do.** |
 | Vlog 1 (a client story, voiceover over his footage) | Not started. Brief is a private Google Doc (see section 5). Start only after life video 1 is approved. |
 
 ## 2. Life video 1: what version 4 must be (his approved plan, 2026-11-26)
@@ -22,7 +22,12 @@ bottom), then `IMPROVEMENTS.md`, then this file. This repo is public: nothing pr
    came from putting a different (ChatGPT) room behind him. Plan: the real room plate (`work/plate_raw.png`,
    or simply the frame's own background) blurred a little, same colours, no darkening, poster blurred so
    its text cannot be read (no clone patch: it shimmered). **10 s test sent 2026-11-26** (`pipeline/room/own_room_test.py`, raw 36 to 46 s:
-   no rim, colours match). Waiting for his yes. Then turn it into the full room render (`room_full.py`, two halves side by side, about 1 hour).
+   no rim, colours match). **He said yes.** Full render script: `pipeline/room/room_own_full.py`. From
+   `projects/life_01/`, run both halves side by side (about 1 hour), then the assembly reads them:
+   `nohup python3 scripts/room_own_full.py 0 69.5 work/room_A.mkv 0 > work/room_A.log 2>&1 &`
+   `nohup python3 scripts/room_own_full.py 68.5 71.5 work/room_B.mkv 1.0 > work/room_B.log 2>&1 &`
+   Done when each log ends with `frames 2085` / `frames 2075`. Check the join (A last vs B first frame
+   should differ no more than two neighbouring frames).
 3. **One more picture in the opening**, on "the single reason why a lot of persons cannot appreciate the
    little things" (finished-word index about 21 to 32). He made it: Drive `Life/Pictures`, newest file,
    saved locally as `pictures/not_noticing_little_things.png` (a man staring at a luxury billboard, a
@@ -42,6 +47,19 @@ the lawyer laughing on "That's an improvement", Aki "This is business!" with its
 crossfaded and spliced at matching sounds, pauses at most 0.3 s, captions upper third, -14 LUFS, peaks
 at or under -1.5 dB. **Pawpaw is removed** (wrong moment).
 
+## 2b. Finishing checklist for v4 (in this order)
+
+1. Room render done (above).
+2. `edl.py`: speed per stretch (1.3 then 1.1, see step 1). Re-run `edl.py`, then `cut_voice.py`; read the
+   kept words back (only the 7 approved words missing: "day, a better", "should be you", one "little").
+3. `assemble.py`: add the opening picture (step 3); captions (step 4) in `kinetic.py`, and have
+   `kinetic.py` return the key-word times so `assemble.py` adds a `pop-soft` cue for each (step 5,
+   mixed low, about 0.35 of his voice level). `STILLS=...` mode for check stills before the full run.
+4. Render in chunks (step 6) if time allows; otherwise one full run (about 25 minutes).
+5. `mix.py`, join, measure (-14 LUFS, peaks at or under -1.5 dB on the delivered file), `12_check_final.py`,
+   20 stills. Send `why_life_is_beautiful_v4.mp4` in the chat, say what was checked.
+6. Write the version into `IMPROVEMENTS.md`, his notes into `LESSONS.md`, update this file. Push.
+
 ## 3. How to rebuild the working files in a fresh session
 
 The container is wiped between sessions. `projects/` is not in git.
@@ -51,7 +69,7 @@ The container is wiped between sessions. `projects/` is not in git.
    download the matting model:
    `curl -sSL -o models/rvm_mobilenetv3.torchscript https://github.com/PeterL1n/RobustVideoMatting/releases/download/v1.0.0/rvm_mobilenetv3_fp32.torchscript`
 3. Whisper models: run with `HF_HUB_DISABLE_XET=1` (the new Hugging Face download path is blocked).
-4. In his Drive, folder **Video Editing / Life** (shared by link): the raw video "Why Life is Beautiful.mp4",
+4. In his Drive, folder **Video Editing / Life** (shared by link): the raw video "Why Life is Beautiful.mp4", the 3 caption and colour samples ("Caption 1", "Captions 2", the cinematic LUT video), the sample shorts folder,
    and **`life_01_work.tgz`**: transcript, word times, edit list, face track, clean plate, lineup matrix,
    and the project scripts. Unpack it into `projects/life_01/`. Pictures: **Video Editing / Life/Pictures**
    (newest 3 replace the collage's report card, market, sunrise; `image collage` holds the first 5;
