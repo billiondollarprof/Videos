@@ -283,3 +283,14 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | Too dark now: go back to the brightness of his ChatGPT room as it was given. The calm comes from softness, not darkness. | `pipeline/room/room_full.py` |
 | Some joints flop (a cut not done cleanly): check every joint, and hide each cut with a zoom change. | `pipeline/room/edl.py`, `assemble.py` |
 | Better transitions and zooms. Speed 1.3. | `assemble.py`, `speed-change` |
+
+## Life video 1, notes on version 3 (2026-11-26)
+
+| Note | Now lives in |
+|---|---|
+| Speed 1.3 is right for the opening (0 to about 28 s); from there to the end 1.1. Speed can change inside a video. | `speed-change`, `pipeline/room/edl.py` |
+| The edge round him still reads as a shadow against the ChatGPT room. Try his own room again, cleaned and softly blurred; the poster blurred rather than patched (the patch looked messy). | `IMPROVEMENTS.md` clean-plate plan |
+| Do not re-render the whole video for a local change: render only the parts that changed. | `pipeline/room/assemble.py` (chunks) |
+| The opening is still a little slow: one more picture before the first one. | `vertical-edit` step 4 |
+| Caption colours: no peach, no dim red. Bright yellow, white, bright red; silver is fine. The italic serif is hard to read: drop it. | `pipeline/room/kinetic.py`, `transcript-captions` |
+| Captions that pop in get a small sound (a soft pop), as in his samples. | `pipeline/room/mix.py`, `sound-mix` |
