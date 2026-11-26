@@ -308,3 +308,13 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
   voice exists.
 - Scripts written in another session pointed at `/home/user/Videos/...` (capital V). Check paths first.
 
+
+## Life video 1, notes on version 4 (2026-11-26)
+
+| Note | Now lives in |
+|---|---|
+| The pop sound on a big caption distracts from the video. Reduce it a lot, or take it out, or use a sound that fits the video and does not pull the ear (not a cartoon pop). | `pipeline/room/mix.py`, `sound-mix` |
+| The captions cover the face. Put them low, near the stomach and chest, never over the face. They must stay engaging: improve the styling, make them beautiful. | `pipeline/room/kinetic.py`, `transcript-captions` |
+| New picture "appreciate little things" in Drive `Life/Pictures`: show it where he first talks about appreciating the little things, and animate it in. | his project (`assemble.py` card list) |
+| Make the video cleaner and finer overall. | `pipeline/room/assemble.py`, `room_own_full.py` |
+| Sound: he hears a voice breaking in the background. His phone app boosted the opening clip (0 to about 28 s): bring it down to match the rest. The rest is fine because he used the mic. Check the whole sound for breaking, clipping and joints. | `04b_clean_voice.py` step, `HANDOVER.md` section 5.3 |
