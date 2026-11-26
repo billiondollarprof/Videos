@@ -11,7 +11,7 @@ which git ignores. Finished videos go to Google Drive, never here.
 
 ## 1. Start and end of every video job
 
-1. Read this file, then `LESSONS.md` (every note Anthony has given) and `IMPROVEMENTS.md`
+1. Read this file, then `HANDOVER.md` (where the work stands), then `LESSONS.md` (every note Anthony has given) and `IMPROVEMENTS.md`
    (what made each video better than the last). Start from the best so far.
 2. Pick the skill for the job (section 8). Run it. Do not work it out again.
 3. **Write every note Anthony gives into `LESSONS.md`** the moment he gives it, with
