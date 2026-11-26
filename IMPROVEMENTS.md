@@ -114,3 +114,4 @@ recorded posts are blurred. Make it a skill (`voiceover-edit`) once it works.
   word starts with a tick, and the 25 ms delay of the cleaner measured and removed.
 - Voiceover 1 was approved by him on 2026-11-08 at version 6. Best so far for a voiceover: start from it
   (skill `voiceover-edit`, scripts `04c`, `vo_01` to `vo_04`, pops, no music, short inserts back to the post).
+- "Why Life is Beautiful" (talking video with a cleaned room): the room is cut out and replaced (matting at 1.2 s a frame on 4 CPUs, 2 halves in parallel, about 50 min), the face is tracked for close shots, kinetic captions (his samples), picture cards and sound clips on exact words. Scripts are kept in the work archive in Drive, not the repo (they hold his words).

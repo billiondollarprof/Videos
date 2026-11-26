@@ -7,6 +7,7 @@
 #                      but a word is never cut (slow release, soft knee)
 #        4. delay      the chain delays the sound by 25 ms: measured and removed, so cuts do not move
 #        5. gain       puts his voice back to the level it had before, so nothing sounds quieter
+#        6. room bed   a faint (-76 dB) bed of his own room under everything, so no pause is dead silent
 # Why  : after the final loudness step the pauses come up by about 7 dB, and the low rumble
 #        (120 to 250 Hz) in the pauses became audible, with small crackles here and there
 #        (his note, 2026-11-07: "an underlying sound ... a little cracks"). On voiceover 1 this took
@@ -64,7 +65,17 @@ ref = db0 > np.percentile(db0, 15) + 0.35 * (np.percentile(db0, 95) - np.percent
 hop = sr // 100; n = min(len(db0), len(x1) // hop)
 db1 = 20 * np.log10(np.sqrt((x1[:n * hop].reshape(n, hop) ** 2).mean(1)) / 32768 + 1e-9)   # level after lining up
 gain = float(db0[:n][ref[:n]].mean() - db1[:n][ref[:n]].mean())
-y = np.clip(x1 * 10 ** (gain / 20), -32768, 32767).astype(np.int16)
+y = x1 * 10 ** (gain / 20)
+
+# --- 3b. A faint room bed (-76 dB, about 50 dB under him) under the whole voice. The cleaner and the gate leave exact
+#         zeros in the pauses (559 slices of 10 ms on "Why Life is Beautiful", 315 on voiceover 1); dead air makes a voice
+#         sound swallowed. The bed is built from the quietest slices of the real room, never from a dead-silent one.
+hop = sr // 100; nn = len(x0) // hop
+q = np.sort(np.argsort(np.where(db0[:nn] > -100, db0[:nn], 0))[:200])
+room = np.concatenate([x0[i * hop:(i + 1) * hop] for i in q])
+bed = np.resize(room, len(y)).astype(np.float32)
+bed *= 10 ** ((-76 - 20 * np.log10(np.sqrt((bed ** 2).mean()) / 32768 + 1e-9)) / 20)
+y = np.clip(y + bed, -32768, 32767).astype(np.int16)
 with wave.open(DST, "w") as w:
     w.setnchannels(1); w.setsampwidth(2); w.setframerate(sr); w.writeframes(y.tobytes())
 
@@ -72,4 +83,4 @@ with wave.open(DST, "w") as w:
 db2, _, _ = measure(DST)
 print(f"delay of {lag} samples removed, gain restored {gain:+.2f} dB")
 for name, d in (("before", db0), ("after", db2)):
-    print(f"  {name}: pause floor {np.percentile(d, 10):6.1f} dB   voiced average {d[ref].mean():6.1f} dB")
+    print(f"  {name}: pause floor {np.percentile(d, 10):6.1f} dB   voiced average {d[ref].mean():6.1f} dB   dead-silent slices {int((d < -120).sum())}")

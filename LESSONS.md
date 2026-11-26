@@ -180,3 +180,11 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | Two files can have the same name in his Drive ("ai 9"): check the creation time and say which one is used. | `voiceover-edit` step 1 |
 | Dead air: the polished pauses rounded to exact zero (315 slices, 3 s). The cleaned source also has a few exact-zero stretches, and the "quietest slices" picker chose them. A faint continuous room bed (-76 dB) now runs under the whole voice, built from slices that are never dead-silent. Check: zero slices of dead silence in the cut voice. | `vo_01_cut.py` |
 | A "pause floor" measured on the finished file is not comparable to one measured on the cleaned voice (pauses are mostly word tails). Compare the same metric on the previous version. | `voiceover-edit` step 11 |
+
+## Found while finishing "Why Life is Beautiful" (2026-11-26)
+
+- The handover note was a private Drive doc ("Vlog 1 brief"), not a file in the repo. Look in Drive "Video Editing" first, then the repo.
+- A work archive (`life_01_work.tgz`) held the scripts but not the raw video, clips, pictures, models or fonts: list what a handover needs (raw video, clips, pictures, models, fonts, the cleaned voice) and fetch each from Drive.
+- The polish step (`04c`) left dead air in the pauses (559 slices of 10 ms on this video, 315 on voiceover 1). It now puts the faint room bed in itself, so every video gets it.
+- The raw selfie video is recorded mirrored (shirt text reversed). The room render flips it back. Check with a crop of the text, not by eye on a small contact sheet.
+- Scripts written in another session pointed at `/home/user/Videos/...` (capital V). Check paths first.
