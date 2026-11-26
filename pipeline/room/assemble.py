@@ -74,7 +74,8 @@ def e_of(k): return H[k]['e']
 # Pictures and clips fill the whole screen, a screen of their own; his voice carries on underneath
 # (his note on version 1). Each: start, end (finished-video seconds).
 CARDS = [  # picture, start, end
-    ('pictures/not_noticing_little_things.png', t_of(21) - 0.05, e_of(32) + 0.05),   # v4: opening picture, "the single reason why... the little things"
+    ('pictures/not_noticing_little_things.png', t_of(21) - 0.05, e_of(28) + 0.02),   # opening picture, "the single reason why a lot of persons cannot"
+    ('pictures/appreciate_little_things.png', t_of(29) - 0.08, e_of(37) + 0.05),   # v5 (his new picture): on "appreciate the little things", rises in
     ('pictures/scrolling_others_lives.png', t_of(41) - 0.05, e_of(46) + 0.05),
     ('pictures/student_reading_2h.png',     t_of(253) - 0.05, e_of(269) + 0.05),
     ('pictures/report_card_up_2.png',       t_of(277) - 0.05, e_of(291) + 0.02),
@@ -181,6 +182,32 @@ def whip(fr, k):
         r = cv2.resize(fr, (int(w * z), int(h * z)), interpolation=cv2.INTER_LINEAR)
         y0, x0 = (r.shape[0] - h) // 2, (r.shape[1] - w) // 2; acc += r[y0:y0 + h, x0:x0 + w]
     return acc / n
+RISE = {'pictures/appreciate_little_things.png'}; RISE_T = 0.7     # pictures that rise in as a card instead of a zoom-blur
+def ease_back(k, o=1.1):
+    k = min(max(k, 0), 1) - 1
+    return 1 + (o + 1) * k ** 3 + o * k ** 2
+def rise_in(base, pic, k):
+    # the picture rises from the bottom as a rounded card with a small overshoot, grows to fill the screen,
+    # and its corners square off as it lands (his note on v4: "animate it into that place")
+    e = ease_back(k); sc = 0.80 + 0.20 * e; dy = (1 - e) * 0.60 * OH
+    card = cv2.resize(pic, None, fx=sc, fy=sc, interpolation=cv2.INTER_AREA if sc < 1 else cv2.INTER_LINEAR)
+    h, w = card.shape[:2]; rad = int(60 * (1 - min(k * 1.15, 1)))
+    m = np.zeros((h, w), np.float32); cv2.rectangle(m, (0, 0), (w, h), 1, -1)
+    if rad > 2:
+        m[:] = 0; cv2.rectangle(m, (rad, 0), (w - rad, h), 1, -1); cv2.rectangle(m, (0, rad), (w, h - rad), 1, -1)
+        for cx, cy in ((rad, rad), (w - rad, rad), (rad, h - rad), (w - rad, h - rad)): cv2.circle(m, (cx, cy), rad, 1, -1)
+    x0 = int((OW - w) / 2); y0 = int((OH - h) / 2 + dy)
+    al = min(1.0, k * 3.0)
+    out = base.copy()
+    sh = np.zeros(base.shape[:2], np.float32); ys0, xs0 = max(y0 + 22, 0), max(x0, 0)
+    sh[ys0:min(y0 + 22 + h, OH), xs0:min(x0 + w, OW)] = 1; sh = cv2.GaussianBlur(sh, (0, 0), 24) * 0.5 * al * (1 - k * 0.7)
+    out *= (1 - sh[..., None])
+    cy0, cx0 = max(0, -y0), max(0, -x0); y1, x1 = min(y0 + h, OH), min(x0 + w, OW)
+    if y1 > max(y0, 0) and x1 > max(x0, 0):
+        reg = out[max(y0, 0):y1, max(x0, 0):x1]; c = card[cy0:cy0 + reg.shape[0], cx0:cx0 + reg.shape[1]]
+        mm = (m[cy0:cy0 + reg.shape[0], cx0:cx0 + reg.shape[1]] * al)[..., None]
+        reg[:] = reg * (1 - mm) + c * mm
+    return out
 def cover(img, w=OW, h=OH):
     s = max(w / img.shape[1], h / img.shape[0]); r = cv2.resize(img, (int(img.shape[1] * s) + 1, int(img.shape[0] * s) + 1))
     y0 = (r.shape[0] - h) // 2; x0 = (r.shape[1] - w) // 2
@@ -244,11 +271,11 @@ for it in E['items']:
 
 import sys; sys.path.insert(0, 'scripts'); from kinetic import Kinetic
 KIN = Kinetic(cap)
-for t_ in KIN.pops: cues.append({'t': t_, 's': 'pop-soft-low'})   # v4: a soft pop as each key word lands
+# v5 (his note on v4): no sound on the captions. The pop distracted from the video.
 
 # ---------- 8. Render ----------
 enc = subprocess.Popen(['ffmpeg', '-loglevel', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'bgr24', '-s', f'{OW}x{OH}', '-r', str(FPS), '-i', '-',
-                        '-c:v', 'libx264', '-crf', '16', '-preset', 'medium', '-pix_fmt', 'yuv420p', 'work/picture.mp4'], stdin=subprocess.PIPE)
+                        '-vf', 'hqdn3d=0.6:0.5:2:2,unsharp=5:5:0.5:5:5:0.0', '-c:v', 'libx264', '-crf', '14', '-preset', 'slow', '-pix_fmt', 'yuv420p', 'work/picture.mp4'], stdin=subprocess.PIPE)
 STILLS = [float(v) for v in os.environ.get('STILLS', '').split(',') if v]   # check mode: only these times, as PNGs
 todo = sorted(int(round(v * FPS)) for v in STILLS) if STILLS else range(N)
 if STILLS: enc.stdin.close()
@@ -282,7 +309,10 @@ for n in todo:
     for p, s_, e_ in CARDS:
         if s_ <= t < e_:
             zz = 1.18 - 0.18 * ease((t - s_) / 0.22) + 0.045 * (t - s_)
-            fr = whip(full(PICS[p], zz), (t - s_) / 0.16)
+            if p in RISE and t - s_ < RISE_T:
+                fr = rise_in(fr, full(PICS[p], zz), (t - s_) / RISE_T)
+            else:
+                fr = whip(full(PICS[p], zz), (t - s_) / 0.16)
     for frames, t0 in SIL:
         L = len(frames) / FPS
         if t0 <= t < t0 + L:

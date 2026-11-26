@@ -5,7 +5,8 @@
 #        out at 200 Hz, a little clarity added at 3.5 kHz, and light compression.
 # Why  : he records on a phone with no microphone. On video 1 this took the room noise down
 #        by 16 dB and put the voice about 40 dB above the room.
-# Use  : python3 04b_clean_voice.py raw/face.mov     (writes face48k_clean.wav in this folder)
+# Use  : python3 04b_clean_voice.py raw/face.mov [--boosted-start 30.55]    (writes face48k_clean.wav in this folder)
+#        --boosted-start N: the first N seconds were boosted by his phone app (clipped): 04a levels, tones and cleans them
 # Out  : face48k_clean.wav, read by 09_build_tracks.py
 # Never: never push the cleaning so hard the voice sounds underwater. mix=0.9 leaves a little
 #        of the original. If it sounds thin, lower it.
@@ -15,15 +16,18 @@ import subprocess
 import sys
 
 SRC = sys.argv[1]
+BOOSTED = float(sys.argv[sys.argv.index("--boosted-start") + 1]) if "--boosted-start" in sys.argv else None   # seconds of a clip his app boosted: see 04a
 HERE = os.path.dirname(os.path.abspath(__file__))
 MODEL = os.path.join(HERE, "..", "models", "sh.rnnn")
 if not os.path.exists(MODEL):
     sys.exit("STOP: models/sh.rnnn is missing. Run: bash pipeline/setup.sh")
 subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", SRC, "-vn", "-ac", "1", "-ar", "48000", "face48k_raw.wav"], check=True)
+if BOOSTED: subprocess.run([sys.executable, os.path.join(HERE, "04a_fix_boosted_start.py"), "pre", str(BOOSTED)], check=True)
 chain = (f"highpass=f=80,arnndn=m={MODEL}:mix=0.9,afftdn=nr=8:nf=-45,"
          "equalizer=f=200:t=q:w=1:g=-2,equalizer=f=3500:t=q:w=1.5:g=2.5,"
          "acompressor=threshold=-20dB:ratio=3:attack=10:release=150:makeup=2")
 subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", "face48k_raw.wav", "-af", chain, "-ar", "48000", "face48k_clean.wav"], check=True)
+if BOOSTED: subprocess.run([sys.executable, os.path.join(HERE, "04a_fix_boosted_start.py"), "post", str(BOOSTED)], check=True)
 
 
 def level(path, start, length):

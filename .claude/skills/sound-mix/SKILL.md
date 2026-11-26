@@ -34,3 +34,12 @@ and prints the measured result. Report those numbers.
 Not in the file unless he asks. TikTok and Instagram have licensed music in the app.
 For long-form YouTube, YouTube Studio has a free **Audio Library**. If he asks for music
 in the file, it sits 11 dB under the voice (9 to 14) and dips under speech.
+
+## A clip his phone app boosted (life video 1, 2026-11-26)
+If part of the recording is far louder than the rest (the app boosted it) it is probably hard-clipped: count the samples
+at full scale. Clipping cannot be undone (declipping filters do not rebuild a waveform that is up to a third flat).
+`04b_clean_voice.py --boosted-start N` runs `04a_fix_boosted_start.py`: it matches the clip's voiced level to the rest
+(a fixed -21 dB left it 3.6 dB too quiet), takes one extra noise pass, and after the cleaner matches the tone to the rest
+of his own recording (within 6 dB). Check: the voiced average, the pauses and the top of the 3 to 9 kHz band of the clip
+against the rest. Tell him the distortion is in the recording and can only be made less noticeable.
+Never put a pop sound on captions.

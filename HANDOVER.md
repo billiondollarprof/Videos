@@ -16,6 +16,7 @@ This repo is public: nothing private goes in it.
 | Video 1, "Clean your Gmail with Claude" | Done (2026-11-05). |
 | Voiceover video 1 (election post) | Approved, version 6 (2026-11-08). |
 | **Life video 1, "Why Life is Beautiful"** | **Version 4 sent to him 2026-11-26 09:00 UTC. Waiting for his notes on v4.** |
+| **Life v5** (notes on v4, 2026-11-26) | In progress: captions low and restyled, no pop sound, new picture "appreciate little things" rising in on "appreciate", boosted opening fixed (`04a`), finer encode. Rebuilt from this branch's scripts (not from the stale 1:42 file). Needs the own-room render (about 1 hour) before assembly. |
 | (Ignore) a file "Why Life is Beautiful (v4).mp4", 1:42 | Sent by mistake at about 11:20 UTC on 2026-11-26 by another session that rebuilt from an older archive. It lacks his v3 notes. The real v4 is the 1:56 one sent at 09:00 UTC. He has been told. |
 | Vlog 1 (a hospital client story) | Not started. Comes after life video 1 is approved. Brief: private Google Doc (section 6). |
 

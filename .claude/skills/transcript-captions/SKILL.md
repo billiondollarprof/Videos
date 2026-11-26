@@ -26,3 +26,11 @@ build up one by one into a short stacked phrase in the upper third (below TikTok
 over his mouth); small lowercase for little words, one big bold key word per phrase in an accent colour
 (yellow; red for hard words like "distress"; peach for life words), a warm glowing italic serif for
 feeling words; each word lands on its spoken time, the key word pops; the phrase clears together.
+
+## Where the captions sit and how they look (his note on life video 1 v4, 2026-11-26)
+- **Low on the screen, never over his face.** The stack of words ends at y = 1560 of 1920 (over the chest and stomach),
+  above the platforms' bottom buttons. Check a close shot (zoom 1.6): the top of the stack must stay below his chin.
+- A soft dark gradient (up to 38%) under the captions keeps them readable; it never reaches the face.
+- Key words (Anton display face): crisp outline, a light top edge, a coloured glow, a small overshoot pop and a thin
+  underline that grows out from the middle. Colours: bright white, bright yellow, bright red, silver only.
+- **No sound on the captions.** The pop on each key word distracted him. A caption never gets a sound effect.
