@@ -295,3 +295,15 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | Caption colours: no peach, no dim red. Bright yellow, white, bright red; silver is fine. The italic serif is hard to read: drop it. | `pipeline/room/kinetic.py`, `transcript-captions` |
 | Captions that pop in get a small sound (a soft pop), as in his samples. | `pipeline/room/mix.py`, `sound-mix` |
 | Plan for v4 approved. Fonts: he likes stylish fonts too, mixed (bold, italic, stylish) by what is said. Italics are fine. The rule is that everything looks good and reads easily. | `pipeline/room/kinetic.py`, `transcript-captions` |
+## Found while finishing the life video (2026-11-26, a second session)
+
+- **Process error, so it never happens again:** I rebuilt "Why Life is Beautiful" from an older work archive in Drive and
+  sent it as "v4" (1:42). A newer session had already sent the real v4 (1:56) with all his version 3 notes in it. Mine
+  was the old design (ChatGPT room, no own-room blur, one speed) and must be ignored. Before any build, read the newest
+  handover first: the Drive doc "HANDOVER - read first (video editing)" and `HANDOVER.md` on the newest branch
+  (`git fetch origin` then `git branch -r`), not only the branch you were given.
+- The polish step (`04c`) left dead air in the pauses (559 slices of 10 ms on this video, 315 on voiceover 1). It now
+  puts a faint room bed (-76 dB) in itself, so every video gets it; `vo_01_cut.py` skips its own bed when the polished
+  voice exists.
+- Scripts written in another session pointed at `/home/user/Videos/...` (capital V). Check paths first.
+

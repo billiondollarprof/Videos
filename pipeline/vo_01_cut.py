@@ -101,9 +101,10 @@ for k, (a, b) in enumerate(pieces):
 y = np.concatenate(out)
 # A faint, continuous room bed under the whole voice (-76 dB, about 50 dB under him). Without it the polished pauses
 # round to exact zero (315 slices on voiceover 1): dead air makes the voice sound swallowed. (2026-11-08)
-bed = np.resize(room_raw, len(y)).astype(np.float32)
-bed *= 10 ** ((-76 - 20 * np.log10(np.sqrt((bed ** 2).mean()) / 32768 + 1e-9)) / 20)
-y = y + bed
+if not os.path.exists("face48k_polish.wav"):                  # 04c already puts this bed in the polished voice
+    bed = np.resize(room_raw, len(y)).astype(np.float32)
+    bed *= 10 ** ((-76 - 20 * np.log10(np.sqrt((bed ** 2).mean()) / 32768 + 1e-9)) / 20)
+    y = y + bed
 wo = wave.open("_voice_1x.wav", "w"); wo.setnchannels(1); wo.setsampwidth(2); wo.setframerate(SR)
 wo.writeframes(np.clip(y, -32768, 32767).astype(np.int16).tobytes()); wo.close()
 

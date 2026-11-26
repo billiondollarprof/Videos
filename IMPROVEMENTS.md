@@ -155,3 +155,5 @@ recorded posts are blurred. Make it a skill (`voiceover-edit`) once it works.
   speed 1.3 then 1.1 from "even in times of distress"; his opening picture at 7 s; captions bright white,
   yellow, red, silver small words, Anton for some key words, a soft pop on every key word.
   Checked: 20 stills, 0 fillers, 98% word match, -14.7 LUFS, peaks -2.1 dB.
+- Voice: `04c_polish_voice.py` now ends with a faint room bed, so no pause is dead silent (559 slices on the life video).
+
