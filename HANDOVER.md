@@ -16,6 +16,7 @@ This repo is public: nothing private goes in it.
 | Video 1, "Clean your Gmail with Claude" | Done (2026-11-05). |
 | Voiceover video 1 (election post) | Approved, version 6 (2026-11-08). |
 | **Life video 1, "Why Life is Beautiful"** | **Version 4 sent to him 2026-11-26 09:00 UTC. Waiting for his notes on v4.** |
+| (Ignore) a file "Why Life is Beautiful (v4).mp4", 1:42 | Sent by mistake at about 11:20 UTC on 2026-11-26 by another session that rebuilt from an older archive. It lacks his v3 notes. The real v4 is the 1:56 one sent at 09:00 UTC. He has been told. |
 | Vlog 1 (a hospital client story) | Not started. Comes after life video 1 is approved. Brief: private Google Doc (section 6). |
 
 ## 2. Life video 1: what it is
@@ -68,7 +69,8 @@ sunrise); camera shutter + white flash at the start, "Start looking inward", "Fo
      plus "image collage" (cut into 5: the scroller and the student come from it).
    - `Video Editing / Life/Clips` -> `projects/life_01/clips/` (names in `clips/CATALOGUE.md`).
 3. Voice: turn the first 30.55 s down 21.4 dB (his app boosted that clip), then `04b_clean_voice.py`,
-   `04c_polish_voice.py`.
+   `04c_polish_voice.py` (which now adds a faint -76 dB room bed, so no pause is dead silent; the next build will
+   have it, v4 did not).
 4. Fonts in `projects/life_01/work/`: PlusJakartaSans.ttf (from `pipeline/remotion/public/*.woff2` via
    fontTools), InstrumentSerif-Italic.ttf and Anton-Regular.ttf (github.com/google/fonts, `ofl/`).
 5. Copy `pipeline/room/*.py` to `projects/life_01/scripts/`. Order: `room_own_full.py` (two halves side by

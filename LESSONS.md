@@ -295,6 +295,7 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | Caption colours: no peach, no dim red. Bright yellow, white, bright red; silver is fine. The italic serif is hard to read: drop it. | `pipeline/room/kinetic.py`, `transcript-captions` |
 | Captions that pop in get a small sound (a soft pop), as in his samples. | `pipeline/room/mix.py`, `sound-mix` |
 | Plan for v4 approved. Fonts: he likes stylish fonts too, mixed (bold, italic, stylish) by what is said. Italics are fine. The rule is that everything looks good and reads easily. | `pipeline/room/kinetic.py`, `transcript-captions` |
+
 ## Found while finishing the life video (2026-11-26, a second session)
 
 - **Process error, so it never happens again:** I rebuilt "Why Life is Beautiful" from an older work archive in Drive and
