@@ -151,3 +151,7 @@ recorded posts are blurred. Make it a skill (`voiceover-edit`) once it works.
   crossfade with the length kept (fade out then in had left an audible dip); a zoom change at every cut;
   a 0.16 s zoom-blur whip into and out of every insert; caption shadows doubled so text reads on the
   bright curtain. Checked: 20 stills, 0 fillers, 96% word match, -14.7 LUFS, peaks -2.1 dB.
+- Version 4 (1:56): his own room, softly blurred, poster blurred (no rim: the colours at his edge match);
+  speed 1.3 then 1.1 from "even in times of distress"; his opening picture at 7 s; captions bright white,
+  yellow, red, silver small words, Anton for some key words, a soft pop on every key word.
+  Checked: 20 stills, 0 fillers, 98% word match, -14.7 LUFS, peaks -2.1 dB.

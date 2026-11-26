@@ -49,7 +49,7 @@ at or under -1.5 dB. **Pawpaw is removed** (wrong moment).
 
 ## 2b. Finishing checklist for v4 (in this order)
 
-**Status 2026-11-26 07:40 UTC: steps 2 and 3 below are DONE** (two speeds, opening picture, bright captions
+**Status 2026-11-26 09:00 UTC: v4 BUILT AND SENT to him (1:56). Waiting for his notes.** Earlier status, 07:40 UTC: steps 2 and 3 below are DONE** (two speeds, opening picture, bright captions
 with the Anton display face for key words, pop cue on every key word; scripts in `pipeline/room/`). The room
 render is running, and `pipeline/room/finish_v4.sh` (copy to `projects/life_01/work/`) waits for it, then
 assembles, mixes, measures and listens. If the container is gone: re-run the room halves (section 2), then
