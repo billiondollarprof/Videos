@@ -12,12 +12,12 @@ n=len(v);
 while n<L:
     k=min(len(bed),L-n); y[n:n+k]+=bed[:k]*0.6; n+=k
 vrms=np.sqrt((v[np.abs(v)>1e-3]**2).mean())
-GAIN={'camera-shutter':0.55,'pop-soft':0.8,'pop-low':0.6,'whoosh-air-short':0.35}   # share of his voice level
+GAIN={'pop-soft-low':0.30,'camera-shutter':0.55,'pop-soft':0.8,'pop-low':0.6,'whoosh-air-short':0.35}   # share of his voice level
 shutters=[c['t'] for c in C['cues'] if c['s']=='camera-shutter']
 for c in C['cues']:
     # a whoosh right next to a shutter doubles the click (the encoder overshot to +2.6 dB): the shutter wins
     if c['s']!='camera-shutter' and any(abs(c['t']-t)<0.2 for t in shutters): continue
-    s=load(f"/home/user/Videos/sfx/{c['s']}.wav"); srms=np.sqrt((s[np.abs(s)>1e-3]**2).mean())
+    s=load(f"/home/user/Videos/sfx/{c['s'].replace('-low-x','')}.wav") if c['s']!='pop-soft-low' else load('/home/user/Videos/sfx/pop-soft.wav'); srms=np.sqrt((s[np.abs(s)>1e-3]**2).mean())
     s=s*(vrms/srms)*GAIN[c['s']]
     f=int(0.006*SR); s[:f]*=np.linspace(0,1,f)          # a 6 ms soft start: the encoder overshot on the raw click
     i=int(c['t']*SR); k=min(len(s),L-i)

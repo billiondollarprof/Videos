@@ -3,7 +3,11 @@
 # "clip" items are reaction clips with their own sound (his voice waits). Also maps every kept
 # word to its time in the finished video, for captions and pictures.
 import json, subprocess, numpy as np
-SPEED=1.3      # his speech at 1.3 times (his note on version 2); clips keep their own speed
+SPEED=1.3      # kept for older readers
+# v4 (his note on v3): 1.3 for the opening, 1.1 from "even in times of distress" (raw 37.7 s, the pause
+# after "...worth living,") to the end. Clips keep their own speed.
+SPLIT=37.7
+def speed_at(t): return 1.3 if t < SPLIT else 1.1
 W=json.load(open('words_fillers.json'))['words']
 raw=subprocess.run(['ffmpeg','-loglevel','error','-i','face48k_polish.wav','-ac','1','-ar','16000','-f','f32le','-'],capture_output=True).stdout
 x=np.frombuffer(raw,np.float32); SR=16000; HOP=160                       # 10 ms
@@ -54,19 +58,20 @@ while i<len(q):
         cuts2.append((s_+tail,e_-lead))
 for c in cuts2: keep=subtract(keep,c)
 keep=[(round(s,3),round(e,3)) for s,e in keep if e-s>0.02]
+keep=[p for s_,e_ in keep for p in ([(s_,SPLIT),(SPLIT,e_)] if s_<SPLIT<e_ else [(s_,e_)])]
 # --- 4. Reaction clips with their own sound, after the sentence they answer (approved plan) ---
 INSERT_AFTER={  # Pawpaw removed (his note on v2: it came at the wrong moment)
               120.16:('clips/aki_pawpaw_best_of.mp4',1.18,2.50)} # after "...make some sales"
 items=[]
 for s,e in keep:
-    items.append({'type':'room','s':s,'e':e})
+    items.append({'type':'room','s':s,'e':e,'speed':speed_at((s+e)/2)})
     for t,(f,cs,ce) in INSERT_AFTER.items():
         if s<t<=e+0.3 and not any(it.get('at')==t for it in items):
             # split the room item at the end of the sentence + a short breath
             cut=min(e,t+0.12)
             items[-1]['e']=round(cut,3)
             items.append({'type':'clip','file':f,'s':cs,'e':ce,'at':t})
-            if cut<e: items.append({'type':'room','s':round(cut,3),'e':e})
+            if cut<e: items.append({'type':'room','s':round(cut,3),'e':e,'speed':speed_at((cut+e)/2)})
 # --- 5. Timeline: when each kept word is heard in the finished video ---
 tl=0; words=[]
 for it in items:
@@ -75,8 +80,8 @@ for it in items:
         for k,w_ in enumerate(W):
             mid=(w_['s']+w_['e'])/2
             if it['s']<=mid<it['e']:
-                words.append({'i':k,'w':w_['w'],'s':round(tl+(max(w_['s'],it['s'])-it['s'])/SPEED,3),'e':round(tl+(min(w_['e'],it['e'])-it['s'])/SPEED,3)})
-    tl+=(it['e']-it['s'])/(SPEED if it['type']=='room' else 1.0)
+                words.append({'i':k,'w':w_['w'],'s':round(tl+(max(w_['s'],it['s'])-it['s'])/it['speed'],3),'e':round(tl+(min(w_['e'],it['e'])-it['s'])/it['speed'],3)})
+    tl+=(it['e']-it['s'])/(it['speed'] if it['type']=='room' else 1.0)
     it['t1']=round(tl,3)
 json.dump({'items':items,'words':words,'length':round(tl,3),'speed':SPEED},open('work/edl.json','w'),indent=1)
 print('items',len(items),'pauses shortened',len(cuts2),'length',round(tl,2),'s (raw 137.6)')

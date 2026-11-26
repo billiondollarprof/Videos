@@ -20,3 +20,7 @@ Our own sounds in `sfx/` (whooshes, taps, tick, paper, camera shutter) are made 
 - What: the italic serif for feeling words in the captions.
 - From: github.com/google/fonts, `ofl/instrumentserif/InstrumentSerif-Italic.ttf`.
 - Licence: SIL Open Font License 1.1. Downloaded at edit time, not stored in this repo.
+
+## Anton (life video 1 v4, 2026-11-26)
+- What: the tall condensed display face for some key words in the captions.
+- From: github.com/google/fonts, `ofl/anton/Anton-Regular.ttf`. Licence: SIL Open Font License 1.1. Not stored here.

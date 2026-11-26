@@ -13,14 +13,17 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 STOP = set('a an the to of in on at for and or but so is are was be been it its i you your we our they their them that this these those who what when how as by from with if can no not do just even get up out about there then than all some any my me he she his her us one'.split())
 FEEL = set('life beautiful inward little things improvement improvements appreciate thankful god yourself today yesterday past better living worth heart grateful gossip business'.split())
 NEG = set('distress depression spiraling last difficult cannot couldnt cant stop stopped struggle'.split())
-YELLOW = (255, 210, 63); PEACH = (240, 160, 122); RED = (232, 69, 60); WHITE = (255, 255, 255)
+# v4 colours (his note on v3): bright white, bright yellow, bright red, silver for small words. No peach, no dim red.
+YELLOW = (255, 222, 0); RED = (255, 45, 45); WHITE = (255, 255, 255); SILVER = (205, 211, 220); PEACH = YELLOW
 
 def _font(path, size, w=None):
     f = ImageFont.truetype(path, size)
     if w: f.set_variation_by_axes([w])
     return f
 SANS = 'work/PlusJakartaSans.ttf'; SERIF = 'work/InstrumentSerif-Italic.ttf'
-F_SMALL = _font(SANS, 58, 600); F_MID = _font(SANS, 70, 800); F_KEY = _font(SANS, 118, 800); F_FEEL = _font(SERIF, 104)
+DISPLAY = 'work/Anton-Regular.ttf'   # a tall condensed display face (SIL OFL, google/fonts): the stylish key words
+F_SMALL = _font(SANS, 58, 700); F_MID = _font(SANS, 72, 800); F_KEY = _font(SANS, 118, 800)
+F_KEY2 = _font(DISPLAY, 150); F_FEEL = _font(SERIF, 112)
 
 def clean(w): return ''.join(c for c in w.lower() if c.isalnum())
 
@@ -68,16 +71,17 @@ class Kinetic:
             for i, w in enumerate(p):
                 c = clean(w['w']); t = w['w'].strip(',.!?')
                 if i == key:
-                    col = RED if c in NEG else PEACH if c in FEEL else YELLOW
-                    img = word_image(t.upper(), F_KEY, col); kind = 'key'
+                    col = RED if c in NEG else YELLOW if k % 3 != 2 else WHITE
+                    img = word_image(t.upper(), F_KEY2 if k % 2 else F_KEY, col); kind = 'key'
                 elif c in FEEL:
-                    img = word_image(t.lower(), F_FEEL, PEACH, glow=True); kind = 'feel'
+                    img = word_image(t.lower(), F_FEEL, YELLOW if k % 2 == 0 else WHITE); kind = 'feel'
                 elif c in STOP:
-                    img = word_image(t.lower(), F_SMALL, WHITE); kind = 'small'
+                    img = word_image(t.lower(), F_SMALL, SILVER); kind = 'small'
                 else:
                     img = word_image(t.lower(), F_MID, WHITE); kind = 'mid'
                 items.append({'img': img, 's': w['s'], 'kind': kind})
             s._layout(items)
+            s.pops = getattr(s, 'pops', []) + [items[key]['s']]
             s.ph.append({'items': items, 's': p[0]['s'] - 0.05, 'e': p[-1]['e'] + 0.35})
         for k in range(len(s.ph) - 1):                      # a phrase clears when the next one starts
             s.ph[k]['e'] = min(s.ph[k]['e'], s.ph[k + 1]['s'])

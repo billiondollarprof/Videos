@@ -74,6 +74,7 @@ def e_of(k): return H[k]['e']
 # Pictures and clips fill the whole screen, a screen of their own; his voice carries on underneath
 # (his note on version 1). Each: start, end (finished-video seconds).
 CARDS = [  # picture, start, end
+    ('pictures/not_noticing_little_things.png', t_of(21) - 0.05, e_of(32) + 0.05),   # v4: opening picture, "the single reason why... the little things"
     ('pictures/scrolling_others_lives.png', t_of(41) - 0.05, e_of(46) + 0.05),
     ('pictures/student_reading_2h.png',     t_of(253) - 0.05, e_of(269) + 0.05),
     ('pictures/report_card_up_2.png',       t_of(277) - 0.05, e_of(291) + 0.02),
@@ -106,7 +107,7 @@ fx = np.array(face['x']); fy = np.array(face['y'])
 def raw_frame_at(t):
     for it in E['items']:
         if it['t0'] <= t < it['t1']:
-            return ('room', int(round((it['s'] + (t - it['t0']) * E.get('speed', 1.0)) * FPS))) if it['type'] == 'room' else ('clip', it)
+            return ('room', int(round((it['s'] + (t - it['t0']) * it.get('speed', E.get('speed', 1.0))) * FPS))) if it['type'] == 'room' else ('clip', it)
     last = E['items'][-1]
     return ('room', int(round((last['e'] - 0.04) * FPS)))     # tail: hold his last frame (under the card)
 
@@ -243,6 +244,7 @@ for it in E['items']:
 
 import sys; sys.path.insert(0, 'scripts'); from kinetic import Kinetic
 KIN = Kinetic(cap)
+for t_ in KIN.pops: cues.append({'t': t_, 's': 'pop-soft-low'})   # v4: a soft pop as each key word lands
 
 # ---------- 8. Render ----------
 enc = subprocess.Popen(['ffmpeg', '-loglevel', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'bgr24', '-s', f'{OW}x{OH}', '-r', str(FPS), '-i', '-',

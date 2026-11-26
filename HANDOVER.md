@@ -49,6 +49,14 @@ at or under -1.5 dB. **Pawpaw is removed** (wrong moment).
 
 ## 2b. Finishing checklist for v4 (in this order)
 
+**Status 2026-11-26 07:40 UTC: steps 2 and 3 below are DONE** (two speeds, opening picture, bright captions
+with the Anton display face for key words, pop cue on every key word; scripts in `pipeline/room/`). The room
+render is running, and `pipeline/room/finish_v4.sh` (copy to `projects/life_01/work/`) waits for it, then
+assembles, mixes, measures and listens. If the container is gone: re-run the room halves (section 2), then
+`bash work/finish_v4.sh`. Then 20 stills, send v4 in the chat, record it. Fonts needed in `work/`:
+PlusJakartaSans.ttf, InstrumentSerif-Italic.ttf, Anton-Regular.ttf (google/fonts, `ofl/anton/`).
+
+
 1. Room render done (above).
 2. `edl.py`: speed per stretch (1.3 then 1.1, see step 1). Re-run `edl.py`, then `cut_voice.py`; read the
    kept words back (only the 7 approved words missing: "day, a better", "should be you", one "little").
