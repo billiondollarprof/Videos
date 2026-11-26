@@ -21,8 +21,8 @@ bottom), then `IMPROVEMENTS.md`, then this file. This repo is public: nothing pr
 2. **Background: his own room again, softly blurred, with the video-matting edge.** The edge "shadow"
    came from putting a different (ChatGPT) room behind him. Plan: the real room plate (`work/plate_raw.png`,
    or simply the frame's own background) blurred a little, same colours, no darkening, poster blurred so
-   its text cannot be read (no clone patch: it shimmered). **Send him a 10 s test first** (raw 36 to 46 s),
-   then render the room (`room_full.py`, two halves side by side, about 1 hour).
+   its text cannot be read (no clone patch: it shimmered). **10 s test sent 2026-11-26** (`pipeline/room/own_room_test.py`, raw 36 to 46 s:
+   no rim, colours match). Waiting for his yes. Then turn it into the full room render (`room_full.py`, two halves side by side, about 1 hour).
 3. **One more picture in the opening**, on "the single reason why a lot of persons cannot appreciate the
    little things" (finished-word index about 21 to 32). He made it: Drive `Life/Pictures`, newest file,
    saved locally as `pictures/not_noticing_little_things.png` (a man staring at a luxury billboard, a
