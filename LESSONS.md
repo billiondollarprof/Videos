@@ -343,3 +343,15 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | Photos of staff must move: stronger push and pan, a second crop for long shots, a little hand-held drift. | `vlog_render.py` photo path |
 | Where he talks about building his own software, show generated pictures, not StellaXafe. StellaXafe appears only when he names it, with its own screen record at that moment. | `vlog_shots.py` |
 | An iPhone screenshot: never blur its top. Crop the status bar and browser bars off, or leave it as it is. No phone-notch overlay on top of it. | `vlog_render.py` |
+
+
+## Voiceover video 2 (hospital story), notes on version 2 (2026-11-27)
+
+| Note | Now lives in |
+|---|---|
+| He says "proffer a solution", not "provide": a caption must carry the word he SAID, and the sense depends on it ("after I proffer, I build"). Whisper hears "proffer" as "provide": check every word that changes the meaning against what he meant. | `script.txt` of the project; `voiceover-edit` step 6 |
+| A hidden name board must be painted out EXACTLY on the board's own shape. Never over the white parapet or the wall around it. Nobody should notice anything was covered. | `vlog_render.py` `erase_text` (polygon, not rectangle) |
+| When he names StellaXafe use the SCREENSHOT (it shows "Private AI that already knows your company", so people understand it is an AI platform), not the screen record. | `vlog_shots.py` |
+| Match the picture to the topic word: "Forex" shows a forex chart (a trading screen); "building software" shows the developer pictures; the screen record plays at the SECOND time he talks about building his software. | `vlog_shots.py` |
+| Captions need more personality and interest, because a voiceover has nothing else to carry it: marker highlights, tilted key words, a light sweep, brand colours for product names, number emphasis, varied entrances. | `pipeline/room/kinetic.py` (`personality`), `transcript-captions` |
+| A staff face (a woman at the pharmacy desk) gets a LIGHT blur: her face is not clear, but the blur is not heavy. | `vlog_shots.py` `blur_strength` |
