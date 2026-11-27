@@ -80,28 +80,30 @@ def soft_blur(img, rect, strength=1.0):
     img[Y0:Y1, X0:X1] = (sub * (1 - m) + blur * m).astype(np.uint8)
     return img
 
-def erase_text(img, rect, light=True):
-    # CLEAN removal of the writing on a name board (his note, 2026-11-27: the smudge looked rough). The lettering is bright on a dark board:
-    # a wide "median filter" (each pixel takes the middle value of a big area) drops the thin strokes, leaving the board's own colour and
-    # lighting; a little noise matches the photo's grain. The board then reads as a blank board. rect = the board, tight (normalised).
+def erase_text(img, poly, light=True):
+    # CLEAN removal of the writing on a name board (his notes of 2026-11-27: it must not cover the parapet or the wall, and nobody should notice).
+    # poly = the board's own four corners (normalised x, y), so ONLY the board is touched. The board is repainted in its own dark colour with the
+    # sideways lighting it had (the dark end of what is on it, left third to right third), plus the photo's grain. Edges are a pixel soft.
     h, w = img.shape[:2]
-    x0, y0, x1, y1 = int(rect[0] * w), int(rect[1] * h), int(rect[2] * w), int(rect[3] * h)
-    m = 20
-    X0, Y0, X1, Y1 = max(x0 - m, 0), max(y0 - m, 0), min(x1 + m, w), min(y1 + m, h)
-    sub = img[Y0:Y1, X0:X1].astype(np.float32)
-    # the board's own colour and lighting: for each column and each row, the dark end (the 22nd percentile) of what is there, which the white
-    # lettering cannot reach; the two are added up to a smooth plain board
-    inner = sub[y0 - Y0:y1 - Y0, x0 - X0:x1 - X0]
-    col = np.percentile(inner, 22, axis=0); row = np.percentile(inner, 22, axis=1)
-    k1 = max(9, inner.shape[1] // 5) | 1; k2 = max(5, inner.shape[0] // 6) | 1
-    col = cv2.GaussianBlur(col.astype(np.float32)[None], (k1, 1), 0)[0]; row = cv2.GaussianBlur(row.astype(np.float32)[:, None], (1, k2), 0)[:, 0]
-    base = np.median(inner.reshape(-1, 3), axis=0) * 0 + np.percentile(inner.reshape(-1, 3), 22, axis=0)
-    plain = col[None, :, :] + 0.25 * (row[:, None, :] - base[None, None, :])        # mostly the sideways lighting; only a hint of the up-and-down
-    flat = sub.copy(); flat[y0 - Y0:y1 - Y0, x0 - X0:x1 - X0] = plain
-    rng = np.random.default_rng(3); flat = flat + rng.normal(0, 2.5, flat.shape[:2])[..., None]
-    mask = np.zeros(sub.shape[:2], np.float32); mask[y0 - Y0 + 2:y1 - Y0 - 2, x0 - X0 + 2:x1 - X0 - 2] = 1.0
-    mask = cv2.GaussianBlur(mask, (0, 0), 1.6)[..., None]
-    img[Y0:Y1, X0:X1] = np.clip(sub * (1 - mask) + flat * mask, 0, 255).astype(np.uint8)
+    pts = np.array([[x * w, y * h] for x, y in poly], np.float32)
+    x0, y0 = int(pts[:, 0].min()) - 4, int(pts[:, 1].min()) - 4; x1, y1 = int(pts[:, 0].max()) + 5, int(pts[:, 1].max()) + 5
+    sub = img[y0:y1, x0:x1].astype(np.float32)
+    S = 4                                                  # draw the board's shape at 4x and shrink it: a smooth edge
+    big = np.zeros(((y1 - y0) * S, (x1 - x0) * S), np.uint8)
+    cv2.fillPoly(big, [np.round((pts - [x0, y0]) * S).astype(np.int32)], 255)
+    inside = cv2.resize(big, (x1 - x0, y1 - y0), interpolation=cv2.INTER_AREA).astype(np.float32) / 255.0
+    core = cv2.erode((inside > 0.99).astype(np.uint8), np.ones((3, 3), np.uint8)).astype(bool)      # pixels surely on the board, edge excluded
+    xs = np.arange(x1 - x0)[None, :].repeat(y1 - y0, 0)
+    lo, hi = np.percentile(xs[core], 33), np.percentile(xs[core], 67)
+    def dark(sel):
+        px = sub[sel]; g = px.mean(1); return px[g <= np.percentile(g, 10)].mean(0)       # the board's dark end: the white lettering cannot reach it
+    cl, cr = dark(core & (xs <= lo)), dark(core & (xs >= hi))
+    t = np.clip((xs - (x1 - x0) * 0.1) / ((x1 - x0) * 0.8), 0, 1)[..., None]
+    plain = cl[None, None, :] * (1 - t) + cr[None, None, :] * t
+    rng = np.random.default_rng(3)
+    grain = cv2.GaussianBlur(rng.normal(0, 3.0, sub.shape[:2]).astype(np.float32), (0, 0), 0.7)[..., None]
+    m = cv2.GaussianBlur(inside, (0, 0), 0.7)[..., None] * (inside[..., None] > 0.02)
+    img[y0:y1, x0:x1] = np.clip(sub * (1 - m) + (plain + grain) * m, 0, 255).astype(np.uint8)
     return img
 
 def rounded_mask(w, h, r):
@@ -417,7 +419,7 @@ class Renderer:
         s.ends = [order[i + 1]["t0"] + XF if i + 1 < len(order) else LENGTH for i in range(len(order))]
         s.n = len(order)
         from kinetic import Kinetic
-        s.kin = Kinetic(caps)
+        s.kin = Kinetic(caps, personality=True)
     def shot(s, i):                                       # built the first time a frame needs it
         if i not in s.cache: s.cache[i] = Shot(s.order[i], s.ends[i])
         return s.cache[i]

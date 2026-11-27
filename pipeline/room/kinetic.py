@@ -7,6 +7,9 @@
 #        v5 (his note on v4): the captions sit LOW, over the chest and stomach, never over the face;
 #        a soft dark scrim under them keeps them readable; key words get a gradient, a crisp outline,
 #        a coloured glow and a growing underline; words settle with a small overshoot. No sound.
+#        v6 (his note on the hospital vlog, 2026-11-27: a voiceover needs captions with more personality): Kinetic(..., personality=True) adds a marker
+#        highlight on some key words, key words tilted a few degrees, a light sweep across each key word, a small pulse as it ends, brand colours
+#        for product names (Amara, StellaXafe), and phrases that enter from alternate sides. Off by default: the Life video is unchanged.
 # Fonts: Plus Jakarta Sans (brand), Instrument Serif Italic (SIL Open Font Licence, google/fonts).
 # ============================================================
 import numpy as np, cv2
@@ -68,34 +71,83 @@ def word_image(text, font, colour, glow=False, key=False):
     img[..., 3] = np.maximum(img[..., 3], a)
     return img, bb[3] - bb[1], pad
 
+BRAND = {'amara': (236, 198, 104), 'stellaxafe': (150, 166, 255)}      # product names get their own colour (personality mode)
+
+def brand_of(word):
+    c = clean(word)
+    for b, col in BRAND.items():
+        if c.startswith(b): return col
+    return None
+
+def tilt_image(img, th, pad, deg):
+    # the same word turned a few degrees: the canvas grows so nothing is cut, and the layout keeps the word's own width
+    h, w = img.shape[:2]; m = int(0.14 * max(h, w))
+    big = np.zeros((h + 2 * m, w + 2 * m, 4), np.float32); big[m:m + h, m:m + w] = img
+    M = cv2.getRotationMatrix2D((big.shape[1] / 2, big.shape[0] / 2), deg, 1.0)
+    return cv2.warpAffine(big, M, (big.shape[1], big.shape[0]), flags=cv2.INTER_LINEAR), th, pad + m
+
+def marker_image(text, font, bg=(255, 222, 0), ink=(14, 18, 40)):
+    # a highlighter swipe behind the word, the word in dark ink on it: the "marker" look
+    pad = 48; px, py = 34, 14
+    d0 = ImageDraw.Draw(Image.new('L', (1, 1))); bb = d0.textbbox((0, 0), text, font=font)
+    tw, th = bb[2] - bb[0], bb[3] - bb[1]
+    w, h = tw + 2 * px + 2 * pad, th + 2 * py + 2 * pad
+    rect = Image.new('L', (w * 2, h * 2), 0)
+    ImageDraw.Draw(rect).rounded_rectangle([pad * 2, pad * 2, (w - pad) * 2, (h - pad) * 2], radius=20, fill=255)
+    rect = np.array(rect.resize((w, h), Image.LANCZOS)).astype(np.float32) / 255
+    txt = Image.new('L', (w, h), 0); ImageDraw.Draw(txt).text((pad + px - bb[0], pad + py - bb[1]), text, font=font, fill=255)
+    a = np.array(txt).astype(np.float32) / 255
+    sh = cv2.GaussianBlur(rect, (0, 0), 9) * 0.55
+    img = np.zeros((h, w, 4), np.float32)
+    img[..., :3] = np.array(bg, np.float32) * rect[..., None] * (1 - a[..., None]) + np.array(ink, np.float32) * a[..., None]
+    img[..., 3] = np.maximum(np.maximum(rect, sh), a)
+    return img, th + 2 * py, pad
+
+def ease_out_k(k):
+    k = min(max(k, 0), 1); return 1 - (1 - k) ** 3
+
 def _ease_back(k, o=1.5):
     k = min(max(k, 0), 1) - 1
     return 1 + (o + 1) * k ** 3 + o * k ** 2
 
 class Kinetic:
-    def __init__(s, cap, OW=1080, bottom=1560, width=900, OH=1920):   # low on the screen, above TikTok's bottom buttons
+    def __init__(s, cap, OW=1080, bottom=1560, width=900, OH=1920, personality=False):   # low on the screen, above TikTok's bottom buttons
         s.OW, s.bottom, s.width, s.OH = OW, bottom, width, OH
-        s.ph = []
+        s.personality = personality; s.ph = []; kc = 0
         for k, p in enumerate(phrases(cap)):
             words = [w['w'] for w in p]
             cands = [i for i, w in enumerate(words) if clean(w) not in STOP]
             key = max(cands, key=lambda i: (len(clean(words[i])), i)) if cands else len(words) - 1
+            if personality:
+                br = [i for i, w in enumerate(words) if brand_of(w)]
+                if br: key = br[0]
             items = []
             for i, w in enumerate(p):
                 c = clean(w['w']); t = w['w'].strip(',.!?')
                 if i == key:
                     col = RED if c in NEG else YELLOW if k % 3 != 2 else WHITE
-                    img = word_image(t.upper(), F_KEY2 if k % 2 else F_KEY, col, key=True); kind = 'key'
+                    style = 'pop'
+                    if personality:
+                        brand = brand_of(w['w'])
+                        if brand: col = brand
+                        else: style = ('tilt', 'marker', 'pop', 'tilt2')[kc % 4]
+                        kc += 1
+                    fnt = F_KEY2 if k % 2 else F_KEY
+                    if style == 'marker': img = marker_image(t.upper(), fnt)
+                    else:
+                        img = word_image(t.upper(), fnt, col, key=True)
+                        if style in ('tilt', 'tilt2'): img = tilt_image(*img, 3.5 if style == 'tilt' else -3.5)
+                    kind = 'key'
                 elif c in FEEL:
                     img = word_image(t.lower(), F_FEEL, YELLOW if k % 2 == 0 else WHITE, glow=True); kind = 'feel'
                 elif c in STOP:
                     img = word_image(t.lower(), F_SMALL, SILVER); kind = 'small'
                 else:
                     img = word_image(t.lower(), F_MID, WHITE); kind = 'mid'
-                items.append({'img': img, 's': w['s'], 'kind': kind})
-                if kind == 'key': items[-1]['ucol'] = col
+                items.append({'img': img, 's': w['s'], 'e': w['e'], 'kind': kind})
+                if kind == 'key': items[-1]['ucol'] = col; items[-1]['style'] = style if personality else 'pop'
             s._layout(items)
-            s.ph.append({'items': items, 's': p[0]['s'] - 0.05, 'e': p[-1]['e'] + 0.35, 'top': items[0]['y']})
+            s.ph.append({'items': items, 's': p[0]['s'] - 0.05, 'e': p[-1]['e'] + 0.35, 'top': items[0]['y'], 'dir': (0, -1, 1)[k % 3] if personality else 0})
         for k in range(len(s.ph) - 1):                      # a phrase clears when the next one starts
             s.ph[k]['e'] = min(s.ph[k]['e'], s.ph[k + 1]['s'])
 
@@ -142,12 +194,18 @@ class Kinetic:
                 if dt < 0: continue
                 k = min(dt / 0.16, 1.0); e = _ease_back(k, 1.2) if it['kind'] != 'key' else _ease_back(k, 1.7)
                 img = it['img'][0]
-                if it['kind'] == 'key' and k < 1:               # the key word pops in with a small overshoot
-                    sc = 1.0 + 0.30 * (1 - e)
+                pulse = 0.0
+                if s.personality and it['kind'] == 'key' and k >= 1:           # a small pulse as the key word ends
+                    de = t - it['e']
+                    if 0 <= de < 0.20: pulse = 0.07 * np.sin(np.pi * de / 0.20)
+                if it['kind'] == 'key' and (k < 1 or pulse > 0):               # the key word pops in with a small overshoot (and pulses as it ends)
+                    sc = 1.0 + 0.30 * (1 - e) + pulse
                     img = cv2.resize(img, None, fx=sc, fy=sc, interpolation=cv2.INTER_LINEAR)
                     ox = it['x'] - (img.shape[1] - it['img'][0].shape[1]) // 2; oy = it['y'] - (img.shape[0] - it['img'][0].shape[0]) // 2
                 else:
-                    ox, oy = it['x'], it['y'] + int(18 * (1 - e))
+                    ox, oy = it['x'] + int(p['dir'] * 46 * (1 - e)), it['y'] + int(18 * (1 - e))
+                if s.personality and it.get('style') == 'marker' and k < 1:    # the highlighter swipes across, left to right
+                    wipe = ease_out_k(min(1.0, dt / 0.20)); img = img.copy(); cut = int(img.shape[1] * wipe); img[:, cut:, 3] = 0
                 oy -= lift
                 al = min(1.0, k * 1.6) * fade_out
                 a = img[..., 3:4] * al
@@ -157,7 +215,13 @@ class Kinetic:
                 sub = img[y0 - oy:y1 - oy, x0 - ox:x1 - ox]; aa = a[y0 - oy:y1 - oy, x0 - ox:x1 - ox]
                 reg = frame[y0:y1, x0:x1]
                 reg[:] = reg * (1 - aa) + sub[..., :3][..., ::-1] * aa
-                if it['kind'] == 'key':                          # a thin underline grows out from the middle
+                if s.personality and it['kind'] == 'key' and it.get('style') != 'marker':      # a light sweeps across the word once, just after it lands
+                    u = (dt - 0.14) / 0.55
+                    if 0 < u < 1:
+                        hh, ww = sub.shape[:2]; xx = np.arange(ww, dtype=np.float32)[None, :] - np.arange(hh, dtype=np.float32)[:, None] * 0.45
+                        band = np.exp(-((xx - (u * (ww + 160) - 80)) / 34.0) ** 2)[..., None]
+                        reg[:] = reg + 150.0 * band * aa * (sub[..., 3:4] > 0.5)
+                if it['kind'] == 'key' and it.get('style') != 'marker':       # a thin underline grows out from the middle (not on a marker)
                     th, pad = it['img'][1], it['img'][2]; wid = it['img'][0].shape[1] - 2 * pad
                     grow = min(1.0, max(0.0, (dt - 0.10) / 0.22)); grow = 1 - (1 - grow) ** 3
                     ux = it['x'] + pad + wid // 2; half = int(wid * 0.5 * grow * 0.92); uy = it['y'] + pad + th + 16 - lift
