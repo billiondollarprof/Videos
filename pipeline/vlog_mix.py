@@ -14,7 +14,7 @@ import importlib.util, json, os, subprocess, sys
 S = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "sfx") + "/"
 spec = importlib.util.spec_from_file_location("vlog_shots", "vlog_shots.py"); m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
 SH = sorted(m.SHOTS, key=lambda x: x["t0"]); LENGTH = m.LENGTH
-DEVICE = ("phone", "phonevid", "tv")
+DEVICE = ("phone", "phonevid", "tv", "screen", "wide")
 
 # --- 1. Cues: (time, file, gain in dB) ---
 cues = [(0.10, S + "camera-shutter.wav", -17)]

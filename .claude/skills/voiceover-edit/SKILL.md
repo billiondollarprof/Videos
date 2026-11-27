@@ -93,3 +93,16 @@ and a change redraws only the pieces it touches (a caption fix took 20 seconds, 
 7. Check: OCR every frame at 2 to 3 per second (`OMP_THREAD_LIMIT=1 tesseract ... --psm 11`, in 4 processes) for the hospital
    name and any long number; `12_check_final.py` on the final; stills at 20 places.
 8. For chat, make a smaller copy (`-crf 24`); the render itself is large.
+
+### Vlog mode, version 2 additions (2026-11-27)
+- Screens (app, a landing page, a screen recording) are shown FULL SCREEN, kind `screen` (1080 x 1920). Shoot app screens at 390 x 693 (9:16)
+  at 2.77x so they fit exactly; crop an iPhone screenshot's status bar and browser bars off (`crop=(0, 0.092, 1, 0.925)`); never put a phone-notch
+  overlay on it and never blur it.
+- A landing page or hero zooms in and out: `path=[(0, 1.0, x, y), (0.5, 1.4, x, y - 0.08), (1, 1.0, x, y)]`. A landscape page (a TV display) is kind `wide`.
+- Photos always move: a push of 1.0 to 1.28 with a pan, plus a little hand-held drift. Long shots are cut into shorter ones with different pictures.
+- A name board is PAINTED OUT (`erase=[tight board rect]`: the board's own colour and lighting, a little grain), never smudged. Small things
+  (a number plate) get a small soft blur. Check by OCR afterwards.
+- Pictures for "I was building my own software" can be generated (Canva `generate-image`, 9:16, no text, no logos), then put on a Canva design and exported
+  at 1080 x 1920: the image tool itself only returns a tiny preview.
+- The cache key includes a fingerprint of `vlog_render.py`, so any code change redraws everything (4 minutes); a shot-list or caption change redraws only
+  its own pieces.

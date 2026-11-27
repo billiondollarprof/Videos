@@ -167,3 +167,10 @@ recorded posts are blurred. Make it a skill (`voiceover-edit`) once it works.
   half-blurred and the sign stayed readable).
 - **Clean voice notes.** `vo_01_cut.py` now compresses pauses from the voice's peak when the recording's floor is
   extremely low.
+
+## Hospital vlog version 2, 2026-11-27
+
+- A name board is painted out cleanly (per-column colour from the board's own dark pixels) instead of smudged: it reads as a blank board.
+- Screens full screen at 9:16, hero pages zoom in and out, photos have a push, pan and drift, long shots are split. 45 shots in 2:45 (mean 3.7 s).
+- Generated pictures (Canva) cover "building my own software"; StellaXafe's own screen record plays only where he names it.
+- The render cache is keyed on the renderer's own fingerprint, so a stale piece can never be reused.

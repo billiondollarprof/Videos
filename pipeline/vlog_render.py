@@ -21,7 +21,7 @@
 # In   : vlog_shots.py (SHOTS, LENGTH), caps.json, the files the shots name
 # Never: never show a hospital name, a phone number or a looking-at-the-camera face unblurred.
 #        Blurs are SOFT (his note, 2026-11-26): feathered edges, never a hard block.
-#        Never put a sound on a caption. Never change the cache key without bumping VERSION.
+#        Never put a sound on a caption. The cache key includes a fingerprint of this file, so a stale piece is never reused.
 # ============================================================
 import hashlib
 import importlib.util
@@ -37,7 +37,7 @@ from PIL import Image, ImageDraw
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "room"))         # the caption drawing lives with the room pipeline
-VERSION = "vlog-2"                                      # bump when this file's drawing changes
+VERSION = hashlib.sha1(open(__file__, "rb").read()).hexdigest()[:10]       # the fingerprint of THIS file: any change to the drawing code redraws every piece, so a stale piece can never be reused
 W, H, FPS, CH = 1080, 1920, 30, 90                      # size, frames per second, frames per cached piece
 XF = 0.18                                               # seconds a new shot takes to fade in over the old one
 DRAFT = os.environ.get("DRAFT") == "1"
@@ -78,6 +78,30 @@ def soft_blur(img, rect, strength=1.0):
     m = np.minimum(np.minimum(xx - x0, x1 - xx), np.minimum(yy - y0, y1 - yy)) / f + 1.0   # 1 inside the box, fading to 0 one feather outside it
     m = np.clip(m, 0, 1)[..., None]
     img[Y0:Y1, X0:X1] = (sub * (1 - m) + blur * m).astype(np.uint8)
+    return img
+
+def erase_text(img, rect, light=True):
+    # CLEAN removal of the writing on a name board (his note, 2026-11-27: the smudge looked rough). The lettering is bright on a dark board:
+    # a wide "median filter" (each pixel takes the middle value of a big area) drops the thin strokes, leaving the board's own colour and
+    # lighting; a little noise matches the photo's grain. The board then reads as a blank board. rect = the board, tight (normalised).
+    h, w = img.shape[:2]
+    x0, y0, x1, y1 = int(rect[0] * w), int(rect[1] * h), int(rect[2] * w), int(rect[3] * h)
+    m = 20
+    X0, Y0, X1, Y1 = max(x0 - m, 0), max(y0 - m, 0), min(x1 + m, w), min(y1 + m, h)
+    sub = img[Y0:Y1, X0:X1].astype(np.float32)
+    # the board's own colour and lighting: for each column and each row, the dark end (the 22nd percentile) of what is there, which the white
+    # lettering cannot reach; the two are added up to a smooth plain board
+    inner = sub[y0 - Y0:y1 - Y0, x0 - X0:x1 - X0]
+    col = np.percentile(inner, 22, axis=0); row = np.percentile(inner, 22, axis=1)
+    k1 = max(9, inner.shape[1] // 5) | 1; k2 = max(5, inner.shape[0] // 6) | 1
+    col = cv2.GaussianBlur(col.astype(np.float32)[None], (k1, 1), 0)[0]; row = cv2.GaussianBlur(row.astype(np.float32)[:, None], (1, k2), 0)[:, 0]
+    base = np.median(inner.reshape(-1, 3), axis=0) * 0 + np.percentile(inner.reshape(-1, 3), 22, axis=0)
+    plain = col[None, :, :] + 0.25 * (row[:, None, :] - base[None, None, :])        # mostly the sideways lighting; only a hint of the up-and-down
+    flat = sub.copy(); flat[y0 - Y0:y1 - Y0, x0 - X0:x1 - X0] = plain
+    rng = np.random.default_rng(3); flat = flat + rng.normal(0, 2.5, flat.shape[:2])[..., None]
+    mask = np.zeros(sub.shape[:2], np.float32); mask[y0 - Y0 + 2:y1 - Y0 - 2, x0 - X0 + 2:x1 - X0 - 2] = 1.0
+    mask = cv2.GaussianBlur(mask, (0, 0), 1.6)[..., None]
+    img[Y0:Y1, X0:X1] = np.clip(sub * (1 - mask) + flat * mask, 0, 255).astype(np.uint8)
     return img
 
 def rounded_mask(w, h, r):
@@ -168,6 +192,10 @@ def fit_cover(im, w, h):                                # scale to cover w x h, 
     y0, x0 = (r.shape[0] - h) // 2, (r.shape[1] - w) // 2
     return r[y0:y0 + h, x0:x0 + w]
 
+def crop_image(im, crop):
+    h, w = im.shape[:2]
+    return im[int(crop[1] * h):int(crop[3] * h), int(crop[0] * w):int(crop[2] * w)]
+
 def screen_image(path, pw, ph, crop=None):
     im = load_image(path)
     if crop:
@@ -192,6 +220,28 @@ class Video:                                            # frames of a clip, read
         try: s.p.stdout.close(); s.p.kill()
         except Exception: pass
 
+def cam(sp, lt, dur, z0=1.0, z1=1.14, drift=True):
+    # where the camera is, lt seconds into a shot: (zoom, centre x, centre y). A "path" [(fraction, zoom, x, y), ...] is followed with smooth moves
+    # (a zoom in and out); otherwise a straight push z0 -> z1. A little hand-held drift keeps a photo alive (his note: not still).
+    k = min(1.0, max(0.0, lt / max(dur, 0.1)))
+    if "path" in sp:
+        P = sp["path"]
+        if k <= P[0][0]: z, fx, fy = P[0][1:]
+        elif k >= P[-1][0]: z, fx, fy = P[-1][1:]
+        else:
+            for a, b in zip(P, P[1:]):
+                if a[0] <= k <= b[0]:
+                    e = ease((k - a[0]) / max(b[0] - a[0], 1e-6))
+                    z, fx, fy = (a[i] + (b[i] - a[i]) * e for i in (1, 2, 3)); break
+    else:
+        e = ease(k); z0, z1 = sp.get("z0", z0), sp.get("z1", z1)
+        fx0, fy0 = sp.get("fx0", sp.get("fx", 0.5)), sp.get("fy0", sp.get("fy", 0.5))
+        z = z0 + (z1 - z0) * e
+        fx = fx0 + (sp.get("fx1", sp.get("fx", 0.5)) - fx0) * e; fy = fy0 + (sp.get("fy1", sp.get("fy", 0.5)) - fy0) * e
+    if drift and sp.get("drift", True):
+        fx += 0.005 * np.sin(2 * np.pi * 0.31 * lt + 1.3); fy += 0.004 * np.sin(2 * np.pi * 0.23 * lt)
+    return z, fx, fy
+
 # ---------- 4. One shot = one object with frame(t) ----------
 class Shot:
     def __init__(s, spec, t_end):
@@ -201,12 +251,18 @@ class Shot:
         k = s.kind
         if k == "photo":
             im = load_image(spec["file"]).copy()
-            for r in spec.get("blur", []): soft_blur(im, r, spec.get("blur_strength", 1.0))
+            for r in spec.get("erase", []): erase_text(im, r)                  # a name board: painted out cleanly
+            for r in spec.get("blur", []): soft_blur(im, r, spec.get("blur_strength", 1.0))   # small things (a number plate): a soft blur
             s.base = fit_cover_keep(im, 1.3)
         elif k in ("phone", "phonevid"):
             s.pw = spec.get("pw", 620); s.ph = int(s.pw * spec.get("aspect", 844 / 390))
             s.phone = build_phone(s.pw, s.ph)
             if k == "phone": s.screens = [(screen_image(f, s.pw, s.ph, spec.get("crop")), ti, tap) for f, ti, tap in spec["screens"]]
+        elif k == "screen":
+            s.screens = [(fit_cover(load_image(f) if not spec.get("crop") else crop_image(load_image(f), spec["crop"]), int(W * 1.5), int(H * 1.5)), ti, tap) for f, ti, tap in spec["screens"]]
+        elif k == "wide":
+            im = load_image(spec["file"]); s.wide_img = cv2.resize(im, (W, int(W * im.shape[0] / im.shape[1])), interpolation=cv2.INTER_AREA)
+            bg = fit_cover(im, W // 8, H // 8); bg = cv2.GaussianBlur(bg, (0, 0), 5); s.bg = (cv2.resize(bg, (W, H), interpolation=cv2.INTER_CUBIC) * 0.45).astype(np.uint8)
         elif k == "tv":
             s.tw = spec.get("tw", 960); s.th = int(s.tw * 9 / 16)
             s.img = screen_image(spec["file"], s.tw, s.th)
@@ -218,15 +274,14 @@ class Shot:
         lt = t - s.t0; dur = max(s.t1 - s.t0, 0.1)
         if k == "photo": return s.photo(t, lt, dur)
         if k == "clip": return s.clip(t, lt, dur)
+        if k == "screen": return s.screen(t, lt, dur)
+        if k == "wide": return s.wide(t, lt, dur)
         if k in ("phone", "phonevid", "tv"):
             f = background(); s.device(f, t, lt, dur); return f
         raise SystemExit("unknown shot kind " + k)
 
     def photo(s, t, lt, dur):
-        sp = s.spec; z0, z1 = sp.get("z0", 1.0), sp.get("z1", 1.14); k = ease(lt / dur)
-        z = z0 + (z1 - z0) * k
-        fx = sp.get("fx0", sp.get("fx", 0.5)) + (sp.get("fx1", sp.get("fx", 0.5)) - sp.get("fx0", sp.get("fx", 0.5))) * k
-        fy = sp.get("fy0", sp.get("fy", 0.5)) + (sp.get("fy1", sp.get("fy", 0.5)) - sp.get("fy0", sp.get("fy", 0.5))) * k
+        z, fx, fy = cam(s.spec, lt, dur, 1.0, 1.22)
         return window(s.base, z, fx, fy)
 
     def clip(s, t, lt, dur):
@@ -239,8 +294,40 @@ class Shot:
         for b in sp.get("blur", []):                    # {"keys": [(source_t, rect), ...], "strength": 1.0}
             r = interp_rect(b["keys"], src_t)
             if r: soft_blur(fr, r, b.get("strength", 1.0))
-        z0, z1 = sp.get("z0", 1.0), sp.get("z1", 1.08)
-        return window(fr, z0 + (z1 - z0) * ease(lt / dur), sp.get("fx", 0.5), sp.get("fy", 0.5), base_scale=1.0)
+        z, fx, fy = cam(sp, lt, dur, 1.0, 1.1)
+        return window(fr, z, fx, fy, base_scale=1.0)
+
+    def screen(s, t, lt, dur):
+        # a screenshot or app screen shown FULL SCREEN; the next screen pushes it out; a ring shows each tap
+        sp = s.spec
+        cur = 0
+        for i, (_, ti, _) in enumerate(s.screens):
+            if t >= ti: cur = i
+        z, fx, fy = cam(sp, lt, dur, 1.0, 1.04, drift=False)
+        out = window(s.screens[cur][0], z, fx, fy, base_scale=1.5)
+        if cur > 0:
+            p = (t - s.screens[cur][1]) / 0.30
+            if p < 1:
+                off = int((1 - ease_out(p)) * W); prev = window(s.screens[cur - 1][0], z, fx, fy, base_scale=1.5)
+                comp = np.empty_like(out); comp[:, :W - off] = prev[:, off:]; comp[:, W - off:] = out[:, :off]; out = comp
+        for _, ti, tap in s.screens:
+            if tap and ti - 0.45 <= t < ti:
+                p = (t - (ti - 0.45)) / 0.45; cx_, cy_ = int(tap[0] * W), int(tap[1] * H)
+                ring = out.copy(); cv2.circle(ring, (cx_, cy_), int(40 + 70 * ease_out(p)), (255, 255, 255), 8, cv2.LINE_AA)
+                cv2.circle(ring, (cx_, cy_), int(22 * (1 - p) + 8), (255, 220, 120), -1, cv2.LINE_AA)
+                a_ = 0.85 * (1 - p * 0.6); out = cv2.addWeighted(ring, a_, out, 1 - a_, 0)
+        return out
+
+    def wide(s, t, lt, dur):
+        # a landscape page (the TV display) as wide as the screen, on a soft blurred copy of itself, zooming in and out
+        sp = s.spec; z, _, _ = cam(sp, lt, dur, 1.0, 1.0, drift=False)
+        out = s.bg.copy(); fg = s.wide_img
+        if abs(z - 1) > 1e-3: fg = cv2.resize(fg, None, fx=z, fy=z, interpolation=cv2.INTER_LINEAR)
+        h_, w_ = fg.shape[:2]; cy = int(H * sp.get("cyf", 0.42))
+        x0, y0 = (W - w_) // 2, cy - h_ // 2
+        X0, Y0, X1, Y1 = max(x0, 0), max(y0, 0), min(x0 + w_, W), min(y0 + h_, H)
+        out[Y0:Y1, X0:X1] = fg[Y0 - y0:Y1 - y0, X0 - x0:X1 - x0]
+        return out
 
     def device(s, f, t, lt, dur):
         k, sp = s.kind, s.spec
@@ -350,7 +437,7 @@ class Renderer:
                 if st <= t <= en:
                     a = min(1.0, (t - st) / 0.25) * min(1.0, (en - t) / 0.2)
                     lay = kicker_layer(kt)
-                    paste(fr, lay, (W - lay.shape[1]) // 2, sh.spec.get("ky", 150 if sh.kind in ("phone", "phonevid", "tv") else 250) + int(24 * (1 - ease_out((t - st) / 0.3))), a)
+                    paste(fr, lay, (W - lay.shape[1]) // 2, sh.spec.get("ky", 40 if sh.kind == "screen" else 150 if sh.kind in ("phone", "phonevid", "tv", "wide") else 250) + int(24 * (1 - ease_out((t - st) / 0.3))), a)
         f = fr.astype(np.float32)
         s.kin.draw(f, t)
         out = np.clip(f, 0, 255).astype(np.uint8)
