@@ -329,3 +329,17 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | Say "millions of naira" in the voice only. No amount on screen. | `voiceover-edit` |
 | Re-rendering takes too long. Render in cached pieces, use all cores, review a small draft first, do the full render once. Manage time and usage credits: every plan says what it will cost in time. | `voiceover-edit`, `pipeline/vo_03_render.py` |
 | Background replacement must not show a halo, outline or shadow around his body, especially when he moves his neck. He bought lights. The new background must blend with a bright, well-lit talking head. | `pipeline/room/`, a future `room-replace` skill |
+
+
+## Voiceover video 2 (hospital story), notes on version 1 (2026-11-27)
+
+| Note | Now lives in |
+|---|---|
+| The pacing of the voice and sound is right: calm, not rushed. Keep it. | `vo_01_cut.py` settings, `vlog_mix.py` |
+| More pictures in places: long single-picture shots feel thin. Cut them into shorter shots with different pictures. | `vlog_shots.py` |
+| A hidden name must look clean, not rough: no smudge. Paint the board out so it reads as a blank board; keep a soft edge. | `vlog_render.py` `erase_text` |
+| Screens are shown FULL SCREEN (the whole 1080 x 1920), not small inside a phone frame. Shoot app screens at 9:16 so they fit. | `vlog_render.py` kind `screen` |
+| A landing page or hero section (Amara, StellaXafe) zooms in and out slowly, so it is not a still. | `vlog_render.py` zoom path |
+| Photos of staff must move: stronger push and pan, a second crop for long shots, a little hand-held drift. | `vlog_render.py` photo path |
+| Where he talks about building his own software, show generated pictures, not StellaXafe. StellaXafe appears only when he names it, with its own screen record at that moment. | `vlog_shots.py` |
+| An iPhone screenshot: never blur its top. Crop the status bar and browser bars off, or leave it as it is. No phone-notch overlay on top of it. | `vlog_render.py` |
