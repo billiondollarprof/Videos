@@ -34,3 +34,8 @@ feeling words; each word lands on its spoken time, the key word pops; the phrase
 - Key words (Anton display face): crisp outline, a light top edge, a coloured glow, a small overshoot pop and a thin
   underline that grows out from the middle. Colours: bright white, bright yellow, bright red, silver only.
 - **No sound on the captions.** The pop on each key word distracted him. A caption never gets a sound effect.
+
+## Change the captions a little on every video (his rule, 2026-11-28)
+Read `docs/CAPTION-IDEAS.md`. Each video uses our base plus ONE new idea from the bank (never the whole of one reference),
+and a different mix from the video before. Log the recipe and his note there. When he shares a caption video, study it
+(skill `study-reference`), pick its ONE best idea, add it to the bank, and use it next.

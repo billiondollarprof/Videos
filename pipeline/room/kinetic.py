@@ -10,6 +10,8 @@
 #        v6 (his note on the hospital vlog, 2026-11-27: a voiceover needs captions with more personality): Kinetic(..., personality=True) adds a marker
 #        highlight on some key words, key words tilted a few degrees, a light sweep across each key word, a small pulse as it ends, brand colours
 #        for product names (Amara, StellaXafe), and phrases that enter from alternate sides. Off by default: the Life video is unchanged.
+#        karaoke=True (idea taken from a reference, 2026-11-28): ordinary words turn yellow while they are being said, then back to white.
+#        Each video uses a different mix of these ideas on purpose (docs/CAPTION-IDEAS.md): the same look every time gets boring.
 # Fonts: Plus Jakarta Sans (brand), Instrument Serif Italic (SIL Open Font Licence, google/fonts).
 # ============================================================
 import numpy as np, cv2
@@ -111,9 +113,9 @@ def _ease_back(k, o=1.5):
     return 1 + (o + 1) * k ** 3 + o * k ** 2
 
 class Kinetic:
-    def __init__(s, cap, OW=1080, bottom=1560, width=900, OH=1920, personality=False):   # low on the screen, above TikTok's bottom buttons
+    def __init__(s, cap, OW=1080, bottom=1560, width=900, OH=1920, personality=False, karaoke=False):   # low on the screen, above TikTok's bottom buttons
         s.OW, s.bottom, s.width, s.OH = OW, bottom, width, OH
-        s.personality = personality; s.ph = []; kc = 0
+        s.personality = personality; s.karaoke = karaoke; s.ph = []; kc = 0
         for k, p in enumerate(phrases(cap)):
             words = [w['w'] for w in p]
             cands = [i for i, w in enumerate(words) if clean(w) not in STOP]
@@ -145,6 +147,8 @@ class Kinetic:
                 else:
                     img = word_image(t.lower(), F_MID, WHITE); kind = 'mid'
                 items.append({'img': img, 's': w['s'], 'e': w['e'], 'kind': kind})
+                if karaoke and kind in ('small', 'mid'):                     # the same word in yellow, for the moment it is being said
+                    items[-1]['act'] = word_image(t.lower(), F_SMALL if kind == 'small' else F_MID, YELLOW)[0]
                 if kind == 'key': items[-1]['ucol'] = col; items[-1]['style'] = style if personality else 'pop'
             s._layout(items)
             s.ph.append({'items': items, 's': p[0]['s'] - 0.05, 'e': p[-1]['e'] + 0.35, 'top': items[0]['y'], 'dir': (0, -1, 1)[k % 3] if personality else 0})
@@ -194,6 +198,9 @@ class Kinetic:
                 if dt < 0: continue
                 k = min(dt / 0.16, 1.0); e = _ease_back(k, 1.2) if it['kind'] != 'key' else _ease_back(k, 1.7)
                 img = it['img'][0]
+                if s.karaoke and 'act' in it:                          # the walking highlight: white, yellow while it is said, white again (idea from a reference, 2026-11-28)
+                    wa = min(1.0, max(0.0, (t - it['s']) / 0.05)) * (1.0 - min(1.0, max(0.0, (t - it['e'] - 0.02) / 0.08)))
+                    if wa > 0: img = img * (1 - wa) + it['act'] * wa
                 pulse = 0.0
                 if s.personality and it['kind'] == 'key' and k >= 1:           # a small pulse as the key word ends
                     de = t - it['e']

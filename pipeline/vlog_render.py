@@ -419,7 +419,7 @@ class Renderer:
         s.ends = [order[i + 1]["t0"] + XF if i + 1 < len(order) else LENGTH for i in range(len(order))]
         s.n = len(order)
         from kinetic import Kinetic
-        s.kin = Kinetic(caps, personality=True)
+        s.kin = Kinetic(caps, personality=True, karaoke=True)
     def shot(s, i):                                       # built the first time a frame needs it
         if i not in s.cache: s.cache[i] = Shot(s.order[i], s.ends[i])
         return s.cache[i]
