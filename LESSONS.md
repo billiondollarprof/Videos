@@ -355,3 +355,19 @@ He did not use version 3. He cut version 2 by hand, because version 3 "was too m
 | Match the picture to the topic word: "Forex" shows a forex chart (a trading screen); "building software" shows the developer pictures; the screen record plays at the SECOND time he talks about building his software. | `vlog_shots.py` |
 | Captions need more personality and interest, because a voiceover has nothing else to carry it: marker highlights, tilted key words, a light sweep, brand colours for product names, number emphasis, varied entrances. | `pipeline/room/kinetic.py` (`personality`), `transcript-captions` |
 | A staff face (a woman at the pharmacy desk) gets a LIGHT blur: her face is not clear, but the blur is not heavy. | `vlog_shots.py` `blur_strength` |
+
+
+## Reference studied: "30 Bricks on Caption" (a TikTok tutorial on text animation), 2026-11-28
+
+Measured, not watched whole: 94 s, 576 x 1024, 188 words a minute, 7 pauses over 0.4 s, no dead air. Ideas only; none of its footage or graphics is copied.
+
+| What it does | Rule for our captions |
+|---|---|
+| **Two layers.** A running caption low on the screen (about 80 percent down), and now and then a big "headline" in the middle for the one idea. | Keep our low caption. Add a headline layer for the key phrase of a scene. |
+| **The running caption is calm:** all capitals, one bold clean sans (Inter or Poppins style), a dark outline, 2 to 4 words in one line, centred. The line stays still while he speaks it. | Calm and readable first. The movement belongs to the highlight, not the position. |
+| **The highlight walks through the words.** White text; the word being said turns yellow, then the next, in step with the voice (checked at 0.1 s steps). Yellow is the "now" marker, not a decoration. | Karaoke highlight: the active word yellow, the rest white. |
+| **The headline builds word by word, with font contrast.** "THIS" small wide white, "TEXT" huge wide heavy yellow, "animation." red soft italic serif. It appears on the spoken words and leaves with the phrase. Wide extended display face for the strong words, an italic serif for the idea word. | Headline: one small word, one huge word, one italic-serif word in red. Never more than 3 words, never every sentence. |
+| **Emphasis is rare** (his own advice: "if every word is screaming for attention, your audience may not know where to look"). | A headline only for the few phrases that carry the point. |
+| **Show the thing he talks about:** the fonts as a card on a dark grid, an editing app inside a phone on a dark grid, a "reply to comment" sticker as the hook. The low caption stays on the whole time. | Cutaways keep the low caption; use a dark grid backdrop for explainer screens. |
+| **Transitions are short and bright** (an orange light swirl between the face and a cutaway). | Light flashes, short. |
+| **His sound advice:** a soft ping or pop as each word lands "makes it satisfying". | Anthony disliked a pop on captions (2026-11-26): none, unless he asks. |
